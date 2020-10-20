@@ -10,5 +10,4 @@ const OrderSchema = new Schema({
   dni: { type: String },
   status: { type: String, enum: ["0", "1", "2"] },
 });
-
 module.exports = mongoose.model("Order", OrderSchema);
