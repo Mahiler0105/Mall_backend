@@ -18,7 +18,15 @@ const { UserService } = require("../services");
 const { UserRepository } = require("../repositories");
 
 // MODELS
-const { User } = require("../models");
+const {
+  Customer,
+  Business,
+  Product,
+  Calification,
+  Order,
+  Service,
+  Purchase,
+} = require("../models");
 
 // INICIALIZAR APP
 const container = createContainer();
@@ -43,6 +51,12 @@ container.register({
   UserRepository: asClass(UserRepository).singleton(),
   /*------------------*/
   // MODELS REGISTER  //
-  User: asValue(User),
+  Customer: asValue(Customer),
+  Business: asValue(Business),
+  Product: asValue(Product),
+  Calification: asValue(Calification),
+  Order: asValue(Order),
+  Service: asValue(Service),
+  Purchase: asValue(Purchase),
 });
 module.exports = container;
