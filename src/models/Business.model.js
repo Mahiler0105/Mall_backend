@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
+const { compareSync, genSaltSync, hashSync } = require("bcryptjs");
 const { Schema } = mongoose;
+
+let validateEmail = function (email) {
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+};
 
 const BusinessSchema = new Schema({
   name: { type: String },
@@ -10,10 +16,14 @@ const BusinessSchema = new Schema({
   },
   logo: { type: String },
   images: [{ type: String }],
-  email: { type: String, required: true },
+  email: {
+    type: String,
+    required: true,
+    validate: [validateEmail, "Please fill a valid email address"],
+  },
   phone: { type: String },
   telephone: { type: String },
-  category: { type: String, enum: [""] },
+  category: { type: String, enum: ["Deportes"] },
   subCategories: [{ type: String }],
   owner: {
     name: { type: String },
@@ -26,22 +36,25 @@ const BusinessSchema = new Schema({
   },
   delivery: { type: Boolean },
   bankAccount: { type: String },
-  billing: new Schema({
-    cardNumber: { type: String },
-    cvv: { type: String },
-    expireDate: { type: Date },
-  }),
+  billing: new Schema(
+    {
+      cardNumber: { type: String },
+      cvv: { type: String },
+      expireDate: { type: Date },
+    },
+    { _id: false },
+  ),
   advertisement: {
     title: { type: String },
     description: { type: String },
   },
   openClose: {
-    m: {
+    l: {
       open: { type: Date },
       close: { type: Date },
       enabled: { type: Boolean },
     },
-    t: {
+    m: {
       open: { type: Date },
       close: { type: Date },
       enabled: { type: Boolean },
@@ -51,12 +64,12 @@ const BusinessSchema = new Schema({
       close: { type: Date },
       enabled: { type: Boolean },
     },
-    t: {
+    j: {
       open: { type: Date },
       close: { type: Date },
       enabled: { type: Boolean },
     },
-    f: {
+    v: {
       open: { type: Date },
       close: { type: Date },
       enabled: { type: Boolean },
@@ -66,7 +79,7 @@ const BusinessSchema = new Schema({
       close: { type: Date },
       enabled: { type: Boolean },
     },
-    x: {
+    d: {
       open: { type: Date },
       close: { type: Date },
       enabled: { type: Boolean },
@@ -75,11 +88,40 @@ const BusinessSchema = new Schema({
   plan: { type: Boolean },
   active: { type: Boolean },
   socialNetwork: {
-    facebook: { link: { type: String } },
-    instagram: { link: { type: String } },
-    twitter: { link: { type: String } },
+    facebook: { type: String },
+    instagram: { type: String },
+    twitter: { type: String },
   },
   password: { type: String, required: true },
+});
+
+BusinessSchema.methods.toJSON = function () {
+  let business = this.toObject();
+  delete business.password;
+  return business;
+};
+
+BusinessSchema.methods.comparePasswords = function (pass) {
+  return compareSync(pass, this.password);
+};
+
+BusinessSchema.pre("save", async function (next) {
+  const business = this;
+  const salt = genSaltSync(10);
+  const hashedPassword = hashSync(business.password, salt);
+  business.password = hashedPassword;
+  next();
+});
+
+BusinessSchema.pre("findOneAndUpdate", async function (next) {
+  const business = this;
+  if (business._update.password) {
+    const salt = genSaltSync(10);
+    const hashedPassword = hashSync(business._update.password, salt);
+    business._update.password = hashedPassword;
+    next();
+  }
+  next();
 });
 
 module.exports = mongoose.model("Business", BusinessSchema);

@@ -2,11 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
+// const bodyParse = require("body-parser");
+
 require("express-async-errors");
 
 const { NotFoundMiddleware, ErrorMiddleware } = require("../middlewares");
 
-module.exports = function ({ UserRoutes }) {
+module.exports = function ({
+  AuthRoutes,
+  BusinessRoutes,
+  CalificationRoutes,
+  CustomerRoutes,
+}) {
   const router = express.Router();
   const apiRoutes = express.Router();
 
@@ -14,7 +21,10 @@ module.exports = function ({ UserRoutes }) {
   apiRoutes.use(express.json()).use(cors()).use(helmet()).use(compression());
 
   // URL BASE ENDPOINTS
-  // apiRoutes.use("/user", UserRoutes);
+  apiRoutes.use("/auth", AuthRoutes);
+  apiRoutes.use("/business", BusinessRoutes);
+  apiRoutes.use("/calification", CalificationRoutes);
+  apiRoutes.use("/customer", CustomerRoutes);
 
   // URL BASE
   router.use("/v1/api", apiRoutes);

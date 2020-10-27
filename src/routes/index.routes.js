@@ -1,3 +1,6 @@
 module.exports = {
-  // UserRoutes: require("./user.routes"),
+  AuthRoutes: require("./Auth.routes"),
+  BusinessRoutes: require("./Business.routes"),
+  CalificationRoutes: require("./Calification.routes"),
+  CustomerRoutes: require("./Customer.routes"),
 };

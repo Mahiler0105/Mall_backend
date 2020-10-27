@@ -12,12 +12,10 @@ class BaseRepository {
     return await this.model.create(entity);
   }
   async update(id, entity) {
-    let num = await this.model.findByIdAndUpdate(id, entity, { new: true });
-    return num;
+    return await this.model.findByIdAndUpdate(id, entity, { new: true });
   }
   async delete(id) {
-    await this.model.findByIdAndDelete(id);
-    return true;
+    return await this.model.findByIdAndDelete(id);
   }
 }
 module.exports = BaseRepository;

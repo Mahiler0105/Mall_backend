@@ -34,7 +34,14 @@ class BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    return await this.repository.update(id, entity);
+    let entityRes = await this.repository.update(id, entity);
+    if (!entityRes) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "Entity does not found";
+      throw error;
+    }
+    return entityRes;
   }
 
   async delete(id) {
@@ -44,7 +51,14 @@ class BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    return await this.repository.delete(id);
+    let entityDel = await this.repository.delete(id);
+    if (!entityDel) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "Entity does not found";
+      throw error;
+    }
+    return true;
   }
 }
 

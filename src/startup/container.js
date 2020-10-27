@@ -5,17 +5,40 @@ const config = require("../config");
 const app = require(".");
 
 // ROTUTES
-const { UserRoutes } = require("../routes/index.routes");
 const Routes = require("../routes");
+const {
+  AuthRoutes,
+  BusinessRoutes,
+  CalificationRoutes,
+  CustomerRoutes,
+} = require("../routes/index.routes");
 
 // CONTROLERS
-const { UserController } = require("../controllers");
+const {
+  AuthController,
+  CalificationController,
+  CustomerController,
+  BusinessController,
+} = require("../controllers");
 
 // SERVICES
-const { UserService } = require("../services");
+const {
+  BusinessService,
+  CalificationService,
+  CustomerService,
+  AuthService,
+} = require("../services");
 
 // REPOSITORIES
-const { UserRepository } = require("../repositories");
+const {
+  BusinessRepository,
+  CalificationRepository,
+  CustomerRepository,
+  OrderRepository,
+  ProductRepository,
+  PurchaseRepository,
+  ServiceRepository,
+} = require("../repositories");
 
 // MODELS
 const {
@@ -39,16 +62,37 @@ container.register({
   config: asValue(config),
   /*------------------*/
   // ROUTES REGISTER  //
-  UserRoutes: asFunction(UserRoutes).singleton(),
+  BusinessRoutes: asFunction(BusinessRoutes).singleton(),
+  AuthRoutes: asFunction(AuthRoutes).singleton(),
+  CalificationRoutes: asFunction(CalificationRoutes).singleton(),
+  CustomerRoutes: asFunction(CustomerRoutes).singleton(),
   /*-----------------------*/
   // CONTROLLERS REGISTER  //
-  UserController: asClass(UserController.bind(UserController)).singleton(),
+  AuthController: asClass(AuthController.bind(AuthController)).singleton(),
+  CalificationController: asClass(
+    CalificationController.bind(CalificationController),
+  ).singleton(),
+  BusinessController: asClass(
+    BusinessController.bind(BusinessController),
+  ).singleton(),
+  CustomerController: asClass(
+    CustomerController.bind(CustomerController),
+  ).singleton(),
   /*--------------------*/
   // SERVICES REGISTER  //
-  UserService: asClass(UserService).singleton(),
+  AuthService: asClass(AuthService).singleton(),
+  BusinessService: asClass(BusinessService).singleton(),
+  CustomerService: asClass(CustomerService).singleton(),
+  CalificationService: asClass(CalificationService).singleton(),
   /*------------------*/
   // REPOSITORIES REGISTER  //
-  UserRepository: asClass(UserRepository).singleton(),
+  BusinessRepository: asClass(BusinessRepository).singleton(),
+  CalificationRepository: asClass(CalificationRepository).singleton(),
+  CustomerRepository: asClass(CustomerRepository).singleton(),
+  OrderRepository: asClass(OrderRepository).singleton(),
+  ProductRepository: asClass(ProductRepository).singleton(),
+  PurchaseRepository: asClass(PurchaseRepository).singleton(),
+  ServiceRepository: asClass(ServiceRepository).singleton(),
   /*------------------*/
   // MODELS REGISTER  //
   Customer: asValue(Customer),
@@ -59,4 +103,5 @@ container.register({
   Service: asValue(Service),
   Purchase: asValue(Purchase),
 });
+
 module.exports = container;

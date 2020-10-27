@@ -41,4 +41,33 @@ const CustomerSchema = new Schema({
   password: { type: String, required: true },
 });
 
+CustomerSchema.methods.toJSON = function () {
+  let customer = this.toObject();
+  delete customer.password;
+  return customer;
+};
+
+CustomerSchema.methods.comparePasswords = function (pass) {
+  return compareSync(pass, this.password);
+};
+
+CustomerSchema.pre("save", async function (next) {
+  const customer = this;
+  const salt = genSaltSync(10);
+  const hashedPassword = hashSync(customer.password, salt);
+  customer.password = hashedPassword;
+  next();
+});
+
+CustomerSchema.pre("findOneAndUpdate", async function (next) {
+  const customer = this;
+  if (customer._update.password) {
+    const salt = genSaltSync(10);
+    const hashedPassword = hashSync(customer._update.password, salt);
+    customer._update.password = hashedPassword;
+    next();
+  }
+  next();
+});
+
 module.exports = mongoose.model("Customer", CustomerSchema);

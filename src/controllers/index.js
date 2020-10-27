@@ -1,3 +1,6 @@
 module.exports = {
-  // UserController: require("./user.controller"),
+  AuthController: require("./Auth.controller"),
+  BusinessController: require("./Business.controller"),
+  CalificationController: require("./Calification.controller"),
+  CustomerController: require("./Customer.controller"),
 };
