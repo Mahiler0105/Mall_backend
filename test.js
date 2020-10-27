@@ -1,9 +1,9 @@
-// let business = {
+// {
 //   "name": "Lerietbool",
 //   "description":"Empresa de E-commerce",
 //   "location":{
 //         "latitude": "-45182",
-//         "longitude": "-45182",
+//         "longitude": "-45182"
 //    },
 //    "logo":"https://www.siama.app",
 //    "images":["https://www.siama.app", "https://www.siama.app" , "https://www.siama.app"],
@@ -76,4 +76,5 @@
 //        "fecebook":"https://www.siama.com",
 //        "instagram":"https://www.siama.com"
 //    }
-// };
+
+// }
