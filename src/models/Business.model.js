@@ -115,7 +115,7 @@ BusinessSchema.pre("save", async function (next) {
 
 BusinessSchema.pre("findOneAndUpdate", async function (next) {
   const business = this;
-  if (business._update.password) {
+  if (business._update && business._update.password) {
     const salt = genSaltSync(10);
     const hashedPassword = hashSync(business._update.password, salt);
     business._update.password = hashedPassword;

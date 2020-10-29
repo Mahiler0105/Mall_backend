@@ -12,7 +12,8 @@ class BaseRepository {
     return await this.model.create(entity);
   }
   async update(id, entity) {
-    return await this.model.findByIdAndUpdate(id, entity, { new: true });
+    let a = await this.model.findByIdAndUpdate(id, entity, { new: true });
+    return a;
   }
   async delete(id) {
     return await this.model.findByIdAndDelete(id);

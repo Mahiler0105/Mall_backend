@@ -14,14 +14,20 @@ class BusinessController {
     return res.send(businesses);
   }
   async update(req, res) {
-    const { body } = req;
-    const { businessId } = req.params;
-    const updateBusiness = await _businessService.update(businessId, body);
+    const {
+      body,
+      user: u,
+      params: { businessId },
+    } = req;
+    const updateBusiness = await _businessService.update(businessId, body, u);
     return res.send(updateBusiness);
   }
   async delete(req, res) {
-    const { businessId } = req.params;
-    const deletedBusiness = await _businessService.delete(businessId);
+    const {
+      params: { businessId },
+      user,
+    } = req;
+    const deletedBusiness = await _businessService.delete(businessId, user);
     return res.send(deletedBusiness);
   }
 }

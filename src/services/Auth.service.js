@@ -63,8 +63,9 @@ class AuthService {
       throw error;
     }
     const businessToEncode = {
-      email: businessExist.email,
       id: businessExist._id,
+      email: businessExist.email,
+      rol: "business",
     };
     const token = generateToken(businessToEncode);
     return { token, business: businessExist };
@@ -94,6 +95,7 @@ class AuthService {
       id: customerExist._id,
       email: customerExist.email,
       dni: customerExist.dni,
+      rol: "customer",
     };
     const token = generateToken(customerToEncode);
     return { token, customer: customerExist };

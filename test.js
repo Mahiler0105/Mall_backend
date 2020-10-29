@@ -76,5 +76,35 @@
 //        "fecebook":"https://www.siama.com",
 //        "instagram":"https://www.siama.com"
 //    }
+// }
 
+// {
+//     "name": "Fernando",
+//     "first_lname":"Chullo",
+//     "second_lname":"Mamani",
+//     "birthdate":"",
+//     "sex": true,
+//     "dni":"72797033",
+//     "phone": "945373476",
+//     "email":"fernan@gmail.com",
+//     "address":{
+//         "latitude": "-50.000",
+//         "longitude": "-50.000",
+//         "department": "Arequipa",
+//         "province": "Arequipa",
+//         "district": "Distrito",
+//     },
+//     "billing":{
+//         "cardNumber": "94512121313",
+//         "cvv":"123",
+//         "expireDate":""
+//     },
+//     "cart":[
+//         {"productId":"4646461613131",
+//         "quantity": 2,
+//         "specifications":{ "color": "Red", "size":"xl"}
+//         }
+//     ],
+//     "preferences":["aea", "anuma"],
+//     "password": "123"
 // }

@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
+const { compareSync, genSaltSync, hashSync } = require("bcryptjs");
 const { Schema } = mongoose;
+
+let validateEmail = function (email) {
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+};
 
 const CustomerSchema = new Schema({
   name: { type: String },
@@ -9,7 +15,11 @@ const CustomerSchema = new Schema({
   sex: { type: Boolean },
   dni: { type: String, required: true },
   phone: { type: String },
-  email: { type: String, required: true },
+  email: {
+    type: String,
+    required: true,
+    validate: [validateEmail, "Please fill a valid email address"],
+  },
   address: {
     latitude: { type: String, default: "" },
     longitude: { type: String, default: "" },
@@ -29,7 +39,12 @@ const CustomerSchema = new Schema({
     {
       type: new Schema(
         {
-          productId: { type: Schema.Types.ObjectId },
+          productId: {
+            type: Schema.Types.ObjectId,
+            ref: "product",
+            required: false,
+            autopopulate: false,
+          },
           quantity: { type: Number },
           specifications: { color: { type: String }, size: { type: String } },
         },
@@ -61,7 +76,7 @@ CustomerSchema.pre("save", async function (next) {
 
 CustomerSchema.pre("findOneAndUpdate", async function (next) {
   const customer = this;
-  if (customer._update.password) {
+  if (customer._update && customer._update.password) {
     const salt = genSaltSync(10);
     const hashedPassword = hashSync(customer._update.password, salt);
     customer._update.password = hashedPassword;
