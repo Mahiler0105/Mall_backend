@@ -108,3 +108,19 @@
 //     "preferences":["aea", "anuma"],
 //     "password": "123"
 // }
+
+// v1/api/auth/signup/business
+// v1/api/auth/signin/business
+
+// v1/api/business               GETALL
+// v1/api/business/:businessid   GET
+// v1/api/business/:businessid   UPDATE
+// v1/api/business/:businessid   DELETE
+
+// v1/api/auth/signup/customer
+// v1/api/auth/signin/customer
+
+// v1/api/customer              GETALL
+// v1/api/customer/:customerid  GET
+// v1/api/customer/:customerid  UPDATE
+// v1/api/customer/:customerid  DELETE

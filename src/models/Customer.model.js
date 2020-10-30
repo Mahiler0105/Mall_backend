@@ -59,6 +59,7 @@ const CustomerSchema = new Schema({
 CustomerSchema.methods.toJSON = function () {
   let customer = this.toObject();
   delete customer.password;
+  delete customer.billing;
   return customer;
 };
 

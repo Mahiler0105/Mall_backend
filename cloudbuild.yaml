@@ -5,3 +5,6 @@ steps:
   args: ['push', 'gcr.io/lerietmall/lerietmall_apirest:$SHORT_SHA']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['run', 'deploy', 'lerietmallapirest', '--region=us-east1', '--platform=managed', '--image=gcr.io/lerietmall/lerietmall_apirest:$SHORT_SHA']
+
+
+
