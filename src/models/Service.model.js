@@ -26,6 +26,12 @@ const ServiceSchema = new Schema({
     ),
   },
   category: { type: String },
+  businessId: {
+    type: Schema.Types.ObjectId,
+    ref: "business",
+    required: false,
+    autopopulate: false,
+  },
 });
 
 module.exports = mongoose.model("Service", ServiceSchema);

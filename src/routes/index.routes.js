@@ -3,4 +3,5 @@ module.exports = {
   BusinessRoutes: require("./Business.routes"),
   CalificationRoutes: require("./Calification.routes"),
   CustomerRoutes: require("./Customer.routes"),
+  ProductRoutes: require("./Product.routes"),
 };

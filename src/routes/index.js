@@ -13,6 +13,7 @@ module.exports = function ({
   BusinessRoutes,
   CalificationRoutes,
   CustomerRoutes,
+  ProductRoutes,
 }) {
   const router = express.Router();
   const apiRoutes = express.Router();
@@ -25,6 +26,7 @@ module.exports = function ({
   apiRoutes.use("/business", BusinessRoutes);
   apiRoutes.use("/calification", CalificationRoutes);
   apiRoutes.use("/customer", CustomerRoutes);
+  apiRoutes.use("/product", ProductRoutes);
 
   // URL BASE
   router.use("/v1/api", apiRoutes);

@@ -11,6 +11,7 @@ const {
   BusinessRoutes,
   CalificationRoutes,
   CustomerRoutes,
+  ProductRoutes,
 } = require("../routes/index.routes");
 
 // CONTROLERS
@@ -19,6 +20,7 @@ const {
   CalificationController,
   CustomerController,
   BusinessController,
+  ProductController,
 } = require("../controllers");
 
 // SERVICES
@@ -27,6 +29,7 @@ const {
   CalificationService,
   CustomerService,
   AuthService,
+  ProductService,
 } = require("../services");
 
 // REPOSITORIES
@@ -66,9 +69,13 @@ container.register({
   AuthRoutes: asFunction(AuthRoutes).singleton(),
   CalificationRoutes: asFunction(CalificationRoutes).singleton(),
   CustomerRoutes: asFunction(CustomerRoutes).singleton(),
+  ProductRoutes: asFunction(ProductRoutes).singleton(),
   /*-----------------------*/
   // CONTROLLERS REGISTER  //
   AuthController: asClass(AuthController.bind(AuthController)).singleton(),
+  ProductController: asClass(
+    ProductController.bind(ProductController),
+  ).singleton(),
   CalificationController: asClass(
     CalificationController.bind(CalificationController),
   ).singleton(),
@@ -84,6 +91,7 @@ container.register({
   BusinessService: asClass(BusinessService).singleton(),
   CustomerService: asClass(CustomerService).singleton(),
   CalificationService: asClass(CalificationService).singleton(),
+  ProductService: asClass(ProductService).singleton(),
   /*------------------*/
   // REPOSITORIES REGISTER  //
   BusinessRepository: asClass(BusinessRepository).singleton(),

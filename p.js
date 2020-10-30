@@ -109,6 +109,29 @@
 //     "password": "123"
 // }
 
+// {
+//     "name":"Coca Cola",
+//     "price":2.50,
+//     "images":["http", "http"],
+//     "description": "Bebida energetica",
+//     "stock":20,
+//     "available":true,
+//     "promotion":{
+//         "type": true,
+//         "dates":{
+//             "start":"2020-10-25T21:06:30.696+00:00"
+//             "end":"2020-10-25T21:06:30.696+00:00"
+//         },
+//         "value": 15
+//     },
+//     "category":"Nuenva",
+//     "specificacion":{
+//         "color":["rojo","azul"],
+//         "size":["xl","xxl"]
+//     },
+//     "businessId":"5f9b4d844c990017f381a76a"
+// }
+
 // v1/api/auth/signup/business
 // v1/api/auth/signin/business
 

@@ -31,8 +31,8 @@ class CalificationController {
   }
   async create(req, res) {
     const { body } = req;
-    const createStatusPatient = await _calificationService.create(body);
-    return res.status(201).send(createStatusPatient);
+    const createCalification = await _calificationService.create(body);
+    return res.status(201).send(createCalification);
   }
 }
 

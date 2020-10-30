@@ -2,13 +2,28 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PurchaseSchema = new Schema({
-  idClient: { type: Schema.Types.ObjectId },
-  idBusiness: { type: Schema.Types.ObjectId },
+  idClient: {
+    type: Schema.Types.ObjectId,
+    ref: "customer",
+    required: false,
+    autopopulate: false,
+  },
+  idBusiness: {
+    type: Schema.Types.ObjectId,
+    ref: "business",
+    required: false,
+    autopopulate: false,
+  },
   body: [
     {
       type: new Schema(
         {
-          idProduct: { type: Schema.Types.ObjectId },
+          idProduct: {
+            type: Schema.Types.ObjectId,
+            ref: "product",
+            required: false,
+            autopopulate: false,
+          },
           quantity: { type: Number },
           specification: {
             type: new Schema(

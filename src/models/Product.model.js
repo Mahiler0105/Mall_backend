@@ -36,6 +36,12 @@ const ProductSchema = new Schema({
       { _id: false },
     ),
   },
+  businessId: {
+    type: Schema.Types.ObjectId,
+    ref: "business",
+    required: false,
+    autopopulate: false,
+  },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);
