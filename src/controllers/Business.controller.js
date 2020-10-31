@@ -44,8 +44,8 @@ class BusinessController {
       params: { businessId },
       file: { filename },
     } = req;
-    const logoImages = await _businessService.saveImages(filename, businessId);
-    return res.send(logoImages);
+    const imagesSave = await _businessService.saveImages(filename, businessId);
+    return res.send(imagesSave);
   }
 }
 

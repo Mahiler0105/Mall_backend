@@ -9,6 +9,7 @@ let validateEmail = function (email) {
 
 const CustomerSchema = new Schema({
   name: { type: String },
+  avatar: { type: String },
   first_lname: { type: String },
   second_lname: { type: String },
   birthdate: { type: String },

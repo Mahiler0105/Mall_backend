@@ -24,6 +24,14 @@ class CustomerController {
     const deletedCustomer = await _customerService.delete(customerId);
     return res.send(deletedCustomer);
   }
+  async saveAvatar(req, res) {
+    const {
+      params: { customerId },
+      file: { filename },
+    } = req;
+    const avatarSave = await _customerService.saveAvatar(filename, customerId);
+    return res.send(avatarSave);
+  }
 }
 
 module.exports = CustomerController;
