@@ -29,6 +29,14 @@ class ProductController {
     const createProduct = await _productService.create(body);
     return res.status(201).send(createProduct);
   }
+  async saveImage(req, res) {
+    const {
+      params: { productId },
+      file: { filename },
+    } = req;
+    const imageSave = await _productService.saveImage(filename, productId);
+    return res.send(imageSave);
+  }
 }
 
 module.exports = ProductController;
