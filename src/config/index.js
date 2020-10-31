@@ -8,4 +8,5 @@ module.exports = {
   APPLICATION_NAME: process.env.APPLICATION_NAME,
   JWT_SECRET: process.env.JWT_SECRET,
   CACHE_KEY: process.env.CACHE_KEY,
+  BUCKET_NAME: process.env.BUCKET_NAME,
 };

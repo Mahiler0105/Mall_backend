@@ -1,3 +1,4 @@
+const { StorageMiddleware } = require("../middlewares");
 let _businessService = null;
 
 class BusinessController {
@@ -29,6 +30,22 @@ class BusinessController {
     } = req;
     const deletedBusiness = await _businessService.delete(businessId, user);
     return res.send(deletedBusiness);
+  }
+  async saveLogo(req, res) {
+    const {
+      params: { businessId },
+      file: { filename },
+    } = req;
+    const logoSave = await _businessService.saveLogo(filename, businessId);
+    return res.send(logoSave);
+  }
+  async saveImages(req, res) {
+    const {
+      params: { businessId },
+      file: { filename },
+    } = req;
+    const logoImages = await _businessService.saveImages(filename, businessId);
+    return res.send(logoImages);
   }
 }
 
