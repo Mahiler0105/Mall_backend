@@ -24,6 +24,11 @@ class AuthController {
     let customer = await _authService.signInCustomer(body);
     return res.send(customer);
   }
+  async getDni(req, res) {
+    const { dni } = req.params;
+    let userDni = await _authService.getDni(dni);
+    return res.send(userDni);
+  }
 }
 
 module.exports = AuthController;

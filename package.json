@@ -21,7 +21,7 @@
   "dependencies": {
     "@google-cloud/storage": "^5.4.0",
     "awilix": "^4.2.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
@@ -30,11 +30,13 @@
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "helmet": "^3.23.3",
+    "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "memory-cache": "^0.2.0",
     "mongoose": "^5.9.26",
     "mongoose-autopopulate": "^0.12.2",
     "multer": "^1.4.2",
+    "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.13",
     "swagger-ui-express": "^4.1.4",
     "uuid": "^8.3.0"

@@ -1,4 +1,5 @@
 const { generateToken } = require("../helpers/jwt.helper");
+const { getDni } = require("./Custom.handler");
 
 let _businessService = null;
 let _customerService = null;
@@ -47,8 +48,11 @@ class AuthService {
    * @param {*} business
    */
   async signInBusiness(business) {
-    const { email, password } = business;
-    const businessExist = await _businessService.getBusinessByEmail(email);
+    const { email, dni, password } = business;
+    let businessExist;
+    if (email) businessExist = await _businessService.getBusinessByEmail(email);
+    else businessExist = await _businessService.getBusinessByDni(dni);
+
     if (!businessExist) {
       const error = new Error();
       error.status = 404;
@@ -99,6 +103,9 @@ class AuthService {
     };
     const token = generateToken(customerToEncode);
     return { token, customer: customerExist };
+  }
+  async getDni(dni) {
+    return await getDni(dni);
   }
 }
 

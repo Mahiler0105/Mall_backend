@@ -9,6 +9,9 @@ class BusinessRepository extends BaseRepository {
   async getBusinessByEmail(email) {
     return await _businessModel.findOne({ email });
   }
+  async getBusinessByDni(dni) {
+    return await _businessModel.findOne({ "owner.dni": dni });
+  }
 }
 
 module.exports = BusinessRepository;

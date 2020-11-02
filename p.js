@@ -132,6 +132,13 @@
 //     "businessId":"5f9b4d844c990017f381a76a"
 // }
 
+// {
+// "review":"Me parece un buen producto",
+// "stars":2,
+// "idClient":"5f9b40f72689d77ae41c5abe",
+// "idProduct":"5f9c8ba8264c9a78e9301dd2"
+// }
+
 // v1/api/auth/signup/business
 // v1/api/auth/signin/business
 

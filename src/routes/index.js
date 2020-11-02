@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-// const bodyParse = require("body-parser");
+const bodyParser = require("body-parser");
 
 require("express-async-errors");
 
@@ -19,7 +19,12 @@ module.exports = function ({
   const apiRoutes = express.Router();
 
   //   MIDDLEWARES POR DEFECTO
-  apiRoutes.use(express.json()).use(cors()).use(helmet()).use(compression());
+  apiRoutes
+    .use(express.json({ limit: "50mb" }))
+    .use(bodyParser.urlencoded({ limit: "50mb" }))
+    .use(cors())
+    .use(helmet())
+    .use(compression());
 
   // URL BASE ENDPOINTS
   apiRoutes.use("/auth", AuthRoutes);

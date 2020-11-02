@@ -19,6 +19,14 @@ class BusinessService extends BaseService {
 
   /**
    *
+   * @param {*} dni
+   */
+  async getBusinessByDni(dni) {
+    return await _businessRepository.getBusinessByDni(dni);
+  }
+
+  /**
+   *
    * @param {*} id
    * @param {*} entity
    * @param {*} jwt

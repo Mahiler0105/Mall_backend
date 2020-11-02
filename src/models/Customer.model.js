@@ -7,55 +7,58 @@ let validateEmail = function (email) {
   return re.test(email);
 };
 
-const CustomerSchema = new Schema({
-  name: { type: String },
-  avatar: { type: String },
-  first_lname: { type: String },
-  second_lname: { type: String },
-  birthdate: { type: String },
-  sex: { type: Boolean },
-  dni: { type: String, required: true, maxlength: 8, minlength: 8 },
-  phone: { type: String, maxlength: 9, minlength: 9 },
-  email: {
-    type: String,
-    required: true,
-    validate: [validateEmail, "Please fill a valid email address"],
-  },
-  address: {
-    latitude: { type: String, default: "" },
-    longitude: { type: String, default: "" },
-    department: { type: String, default: "" },
-    province: { type: String, default: "" },
-    district: { type: String, default: "" },
-  },
-  billing: new Schema(
-    {
-      cardNumber: { type: String },
-      cvv: { type: String, maxlength: 3, minlength: 3 },
-      expireDate: { type: Date },
+const CustomerSchema = new Schema(
+  {
+    name: { type: String },
+    avatar: { type: String },
+    first_lname: { type: String },
+    second_lname: { type: String },
+    birthdate: { type: String },
+    sex: { type: Boolean },
+    dni: { type: String, required: true, maxlength: 8, minlength: 8 },
+    phone: { type: String, maxlength: 9, minlength: 9 },
+    email: {
+      type: String,
+      required: true,
+      validate: [validateEmail, "Please fill a valid email address"],
     },
-    { _id: false },
-  ),
-  cart: [
-    {
-      type: new Schema(
-        {
-          productId: {
-            type: Schema.Types.ObjectId,
-            ref: "product",
-            required: false,
-            autopopulate: false,
+    address: {
+      latitude: { type: String, default: "" },
+      longitude: { type: String, default: "" },
+      department: { type: String, default: "" },
+      province: { type: String, default: "" },
+      district: { type: String, default: "" },
+    },
+    billing: new Schema(
+      {
+        cardNumber: { type: String },
+        cvv: { type: String, maxlength: 3, minlength: 3 },
+        expireDate: { type: Date },
+      },
+      { _id: false },
+    ),
+    cart: [
+      {
+        type: new Schema(
+          {
+            productId: {
+              type: Schema.Types.ObjectId,
+              ref: "product",
+              required: false,
+              autopopulate: false,
+            },
+            quantity: { type: Number },
+            specifications: { color: { type: String }, size: { type: String } },
           },
-          quantity: { type: Number },
-          specifications: { color: { type: String }, size: { type: String } },
-        },
-        { _id: false },
-      ),
-    },
-  ],
-  preferences: [{ type: String }],
-  password: { type: String, required: true },
-});
+          { _id: false },
+        ),
+      },
+    ],
+    preferences: [{ type: String }],
+    password: { type: String, required: true },
+  },
+  { timestamps: { createdAt: true, updatedAt: true } },
+);
 
 CustomerSchema.methods.toJSON = function () {
   let customer = this.toObject();

@@ -7,109 +7,112 @@ let validateEmail = function (email) {
   return re.test(email);
 };
 
-const BusinessSchema = new Schema({
-  name: { type: String },
-  description: { type: String },
-  location: {
-    latitude: { type: String, default: "" },
-    longitude: { type: String, default: "" },
-  },
-  logo: { type: String },
-  images: [{ type: String }],
-  email: {
-    type: String,
-    required: true,
-    validate: [validateEmail, "Please fill a valid email address"],
-  },
-  phone: { type: String, maxlength: 9, minlength: 9 },
-  telephone: { type: String, maxlength: 9, minlength: 9 },
-  category: {
-    type: String,
-    enum: [
-      "electronic",
-      "clothing",
-      "home",
-      "health",
-      "yewerly",
-      "computer",
-      "babies",
-      "sport",
-      "books",
-      "cars",
-      "improments",
-      "services",
-    ],
-  },
-  subCategories: [{ type: String }],
-  owner: {
+const BusinessSchema = new Schema(
+  {
     name: { type: String },
-    first_lname: { type: String },
-    second_lname: { type: String },
-    birthdate: { type: String },
-    sex: { type: Boolean },
-    dni: { type: String, required: true, maxlength: 8, minlength: 8 },
-    phone: { type: String, maxlength: 9, minlength: 9 },
-  },
-  delivery: { type: Boolean },
-  bankAccount: { type: String },
-  billing: new Schema(
-    {
-      cardNumber: { type: String },
-      cvv: { type: String, maxlength: 3, minlength: 3 },
-      expireDate: { type: Date },
-    },
-    { _id: false },
-  ),
-  advertisement: {
-    title: { type: String },
     description: { type: String },
+    location: {
+      latitude: { type: String, default: "" },
+      longitude: { type: String, default: "" },
+    },
+    logo: { type: String },
+    images: [{ type: String }],
+    email: {
+      type: String,
+      required: true,
+      validate: [validateEmail, "Please fill a valid email address"],
+    },
+    phone: { type: String, maxlength: 9, minlength: 9 },
+    telephone: { type: String, maxlength: 9, minlength: 9 },
+    category: {
+      type: String,
+      enum: [
+        "electronic",
+        "clothing",
+        "home",
+        "health",
+        "yewerly",
+        "computer",
+        "babies",
+        "sport",
+        "books",
+        "cars",
+        "improments",
+        "services",
+      ],
+    },
+    subCategories: [{ type: String }],
+    owner: {
+      name: { type: String },
+      first_lname: { type: String },
+      second_lname: { type: String },
+      birthdate: { type: String },
+      sex: { type: Boolean },
+      dni: { type: String, required: true, maxlength: 8, minlength: 8 },
+      phone: { type: String, maxlength: 9, minlength: 9 },
+    },
+    delivery: { type: Boolean },
+    bankAccount: { type: String },
+    billing: new Schema(
+      {
+        cardNumber: { type: String },
+        cvv: { type: String, maxlength: 3, minlength: 3 },
+        expireDate: { type: Date },
+      },
+      { _id: false },
+    ),
+    advertisement: {
+      title: { type: String },
+      description: { type: String },
+    },
+    openClose: {
+      l: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      m: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      w: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      j: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      v: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      s: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+      d: {
+        open: { type: Date },
+        close: { type: Date },
+        enabled: { type: Boolean },
+      },
+    },
+    plan: { type: Boolean },
+    active: { type: Boolean },
+    socialNetwork: {
+      facebook: { type: String },
+      instagram: { type: String },
+      twitter: { type: String },
+    },
+    password: { type: String, required: true },
   },
-  openClose: {
-    l: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    m: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    w: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    j: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    v: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    s: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-    d: {
-      open: { type: Date },
-      close: { type: Date },
-      enabled: { type: Boolean },
-    },
-  },
-  plan: { type: Boolean },
-  active: { type: Boolean },
-  socialNetwork: {
-    facebook: { type: String },
-    instagram: { type: String },
-    twitter: { type: String },
-  },
-  password: { type: String, required: true },
-});
+  { timestamps: { createdAt: true, updatedAt: true } },
+);
 
 BusinessSchema.methods.toJSON = function () {
   let business = this.toObject();
