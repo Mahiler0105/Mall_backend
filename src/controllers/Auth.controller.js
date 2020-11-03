@@ -29,6 +29,11 @@ class AuthController {
     let userDni = await _authService.getDni(dni);
     return res.send(userDni);
   }
+  async validateUser(req, res) {
+    const { emailUser } = req.params;
+    let validate = await _authService.validateUser(emailUser);
+    return res.send(validate);
+  }
 }
 
 module.exports = AuthController;

@@ -5,6 +5,7 @@ module.exports = function ({ BusinessController }) {
   const router = Router();
   router.get("", BusinessController.getAll);
   router.get("/:businessId", [AuthMiddleware], BusinessController.get);
+  router.post("/forgotpassword/:email", BusinessController.forgotPassword);
   router.post(
     "/logo/:businessId",
     [StorageMiddleware],

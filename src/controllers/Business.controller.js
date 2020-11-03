@@ -31,6 +31,13 @@ class BusinessController {
     const deletedBusiness = await _businessService.delete(businessId, user);
     return res.send(deletedBusiness);
   }
+
+  async forgotPassword(req, res) {
+    const { email } = req.params;
+    const response = await _businessService.forgotPassword(email);
+    return res.send(response);
+  }
+
   async saveLogo(req, res) {
     const {
       params: { businessId },

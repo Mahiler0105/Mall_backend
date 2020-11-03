@@ -1,4 +1,5 @@
 const { generateToken } = require("../helpers/jwt.helper");
+const { sendEmail } = require("../helpers/email.helper");
 const { getDni } = require("./Custom.handler");
 
 let _businessService = null;
@@ -23,9 +24,14 @@ class AuthService {
       error.message = "Business already exists";
       throw error;
     } else {
-      return await _businessService.create(business);
+      let businessCreated = await _businessService.create(business);
+      sendEmail(businessCreated.email, "Comfirmación de cuenta", "confirm", {
+        id: "josejose",
+      });
+      return businessCreated;
     }
   }
+
   /**
    *
    * @param {*} customer
@@ -106,6 +112,13 @@ class AuthService {
   }
   async getDni(dni) {
     return await getDni(dni);
+  }
+
+  async validateUser(email) {
+    let business = await _businessService.getBusinessByEmail(email);
+    let customer = await _customerService.getCustomerByEmail(email);
+    if (business || customer) return true;
+    return false;
   }
 }
 

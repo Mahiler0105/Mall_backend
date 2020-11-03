@@ -1,4 +1,5 @@
 const BaseService = require("./base.service");
+const { sendEmail } = require("../helpers/email.helper");
 const { imageSave } = require("./Custom.handler");
 const { BUCKET_NAME } = require("../config");
 let _businessRepository = null;
@@ -7,6 +8,27 @@ class BusinessService extends BaseService {
   constructor({ BusinessRepository }) {
     super(BusinessRepository);
     _businessRepository = BusinessRepository;
+  }
+
+  async forgotPassword(email) {
+    let businessExists = await _businessRepository.getBusinessByEmail(email);
+    if (!businessExists) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "Business does not found";
+      throw error;
+    }
+    let responseEmail = await sendEmail(
+      email,
+      "Recuperacion de contraseña",
+      "reset",
+      {
+        id: businessExists._id,
+        name: businessExists.name.toUpperCase(),
+      },
+    );
+    console.log(responseEmail);
+    return responseEmail;
   }
 
   /**
