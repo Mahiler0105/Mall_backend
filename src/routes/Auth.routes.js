@@ -10,5 +10,6 @@ module.exports = function ({ AuthController }) {
   router.post("/forgotpassword/:email", AuthController.forgotPassword);
   router.get("/dni/:dni", AuthController.getDni);
   router.get("/validatekey/:userId/:key", AuthController.validateKey);
+  router.delete("/deletekeys", AuthController.deleteKeys);
   return router;
 };

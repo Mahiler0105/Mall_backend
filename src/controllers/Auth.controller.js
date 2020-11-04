@@ -46,6 +46,11 @@ class AuthController {
     let response = await _authService.validateKey(userId, key);
     return res.send(response);
   }
+
+  async deleteKeys(req, res) {
+    let response = await _authService.deleteKeys();
+    return res.send(response);
+  }
 }
 
 module.exports = AuthController;

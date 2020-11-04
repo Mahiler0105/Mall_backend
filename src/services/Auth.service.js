@@ -1,6 +1,7 @@
 const { generateToken } = require("../helpers/jwt.helper");
 const { GetDNI, SendEmail } = require("../helpers");
 const { genSaltSync, hashSync } = require("bcryptjs");
+const moment = require("moment");
 
 const { JWT_SECRET } = require("../config");
 
@@ -224,6 +225,26 @@ class AuthService {
     let customer = await _customerRepository.getCustomerByEmail(email);
     if (business || customer) return true;
     return false;
+  }
+
+  async deleteKeys() {
+    let businesses = await _businessRepository.getAll();
+    let customers = await _customerRepository.getAll();
+    businesses.map(async (key) => {
+      if (moment().diff(key.urlReset.created, "hours") >= 4) {
+        await _businessRepository.update(key._id, {
+          urlReset: { url: "", created: new Date() },
+        });
+      }
+    });
+    customers.map(async (key) => {
+      if (moment().diff(key.urlReset.created, "hours") >= 4) {
+        await _customerRepository.update(key._id, {
+          urlReset: { url: "", created: new Date() },
+        });
+      }
+    });
+    return true;
   }
 }
 
