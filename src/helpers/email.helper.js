@@ -2,11 +2,8 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 const hbs = require("nodemailer-express-handlebars");
 const { USER_EMAIL, PASS_EMAIL } = require("../config");
-console.log(USER_EMAIL, PASS_EMAIL);
 
-// confirm,
-// reset
-module.exports.sendEmail = function (email, subject, kind, context) {
+module.exports = function sendEmail(email, subject, kind, context) {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {

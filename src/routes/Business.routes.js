@@ -5,7 +5,6 @@ module.exports = function ({ BusinessController }) {
   const router = Router();
   router.get("", BusinessController.getAll);
   router.get("/:businessId", [AuthMiddleware], BusinessController.get);
-  router.post("/forgotpassword/:email", BusinessController.forgotPassword);
   router.post(
     "/logo/:businessId",
     [StorageMiddleware],
@@ -16,7 +15,7 @@ module.exports = function ({ BusinessController }) {
     [StorageMiddleware],
     BusinessController.saveImages,
   );
-  router.patch("/:businessId", [AuthMiddleware], BusinessController.update);
+  router.patch("/:businessId", BusinessController.update);
   router.delete("/:businessId", [AuthMiddleware], BusinessController.delete);
   return router;
 };

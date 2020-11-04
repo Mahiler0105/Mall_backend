@@ -17,10 +17,9 @@ class BusinessController {
   async update(req, res) {
     const {
       body,
-      user: u,
       params: { businessId },
     } = req;
-    const updateBusiness = await _businessService.update(businessId, body, u);
+    const updateBusiness = await _businessService.update(businessId, body);
     return res.send(updateBusiness);
   }
   async delete(req, res) {
@@ -30,12 +29,6 @@ class BusinessController {
     } = req;
     const deletedBusiness = await _businessService.delete(businessId, user);
     return res.send(deletedBusiness);
-  }
-
-  async forgotPassword(req, res) {
-    const { email } = req.params;
-    const response = await _businessService.forgotPassword(email);
-    return res.send(response);
   }
 
   async saveLogo(req, res) {

@@ -10,7 +10,7 @@ module.exports = function ({ CustomerController }) {
     [StorageMiddleware],
     CustomerController.saveAvatar,
   );
-  router.patch("/:customerId", [AuthMiddleware], CustomerController.update);
+  router.patch("/:customerId", CustomerController.update);
   router.delete("/:customerId", [AuthMiddleware], CustomerController.delete);
   return router;
 };

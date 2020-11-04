@@ -11,6 +11,10 @@ const BusinessSchema = new Schema(
   {
     name: { type: String },
     description: { type: String },
+    urlReset: {
+      url: { type: String, default: "" },
+      created: { type: Date, default: new Date() },
+    },
     location: {
       latitude: { type: String, default: "" },
       longitude: { type: String, default: "" },

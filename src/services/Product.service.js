@@ -1,5 +1,5 @@
 const BaseService = require("./base.service");
-const { imageSave } = require("./Custom.handler");
+const { CloudStorage } = require("../helpers");
 const { BUCKET_NAME } = require("../config");
 let _productRepository = null;
 
@@ -17,7 +17,7 @@ class ProductService extends BaseService {
       throw error;
     }
     const urlImages = `${productExist.businessId}/products/${productExist._id}/${filename}`;
-    await imageSave(filename, urlImages);
+    await CloudStorage.saveImage(filename, urlImages);
     let images = productExist.images;
     images.push(`https://storage.googleapis.com/${BUCKET_NAME}/${urlImages}`);
     await _productRepository.update(id, { images });

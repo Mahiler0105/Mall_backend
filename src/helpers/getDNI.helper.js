@@ -1,14 +1,5 @@
-const { Storage } = require("@google-cloud/storage");
 const https = require("https");
-const path = require("path");
 const fetch = require("node-fetch");
-const fs = require("fs");
-const { BUCKET_NAME } = require("../config");
-
-const gc = new Storage({
-  keyFilename: path.join(__dirname, "../../lerietmall-be9efc3ee5d7.json"),
-  projectId: "lerietmall",
-});
 
 const httpAgent = new https.Agent({ rejectUnauthorized: false });
 
@@ -17,7 +8,7 @@ const dniHandler = {
     operationName: "createToken",
     variables: { email: "benjy01278@gmail.com", password: "Benja271999" },
     query: `query createToken($email: String!, $password: String!)
-      {login(email: $email, password: $password) {authentication}}`,
+        {login(email: $email, password: $password) {authentication}}`,
   },
   dniSave: (numdoc) => {
     return {
@@ -83,33 +74,14 @@ const dniHandler = {
   },
 };
 
-module.exports = {
-  imageSave: async (filename, urlPublic) => {
-    await gc.bucket(BUCKET_NAME).upload(filename, {
-      destination: urlPublic,
-      gzip: true,
-      metadata: {
-        cacheContro: "no-cache",
-      },
-    });
-    try {
-      fs.unlinkSync(filename);
-    } catch (err) {
-      const error = new Error();
-      error.status = 500;
-      error.message = "Internal server error";
-      throw error;
-    }
-  },
-  getDni: async (dni) => {
-    return await dniHandler
-      .operation(dniHandler.token)
-      .then(async (token) => {
-        return await dniHandler.operation(dniHandler.dniSave(dni), token);
-      })
-      .then(async (data) => {
-        return dniHandler.result(data);
-      })
-      .catch((error) => new Error(error));
-  },
+module.exports = getDni = async (dni) => {
+  return await dniHandler
+    .operation(dniHandler.token)
+    .then(async (token) => {
+      return await dniHandler.operation(dniHandler.dniSave(dni), token);
+    })
+    .then(async (data) => {
+      return dniHandler.result(data);
+    })
+    .catch((error) => new Error(error));
 };

@@ -1,6 +1,5 @@
 const BaseService = require("./base.service");
-const { sendEmail } = require("../helpers/email.helper");
-const { imageSave } = require("./Custom.handler");
+const { CloudStorage } = require("../helpers");
 const { BUCKET_NAME } = require("../config");
 let _businessRepository = null;
 
@@ -8,27 +7,6 @@ class BusinessService extends BaseService {
   constructor({ BusinessRepository }) {
     super(BusinessRepository);
     _businessRepository = BusinessRepository;
-  }
-
-  async forgotPassword(email) {
-    let businessExists = await _businessRepository.getBusinessByEmail(email);
-    if (!businessExists) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "Business does not found";
-      throw error;
-    }
-    let responseEmail = await sendEmail(
-      email,
-      "Recuperacion de contraseña",
-      "reset",
-      {
-        id: businessExists._id,
-        name: businessExists.name.toUpperCase(),
-      },
-    );
-    console.log(responseEmail);
-    return responseEmail;
   }
 
   /**
@@ -53,7 +31,7 @@ class BusinessService extends BaseService {
    * @param {*} entity
    * @param {*} jwt
    */
-  async update(id, entity, jwt) {
+  async update(id, entity) {
     if (!id) {
       const error = new Error();
       error.status = 400;
@@ -67,11 +45,8 @@ class BusinessService extends BaseService {
       error.message = "Business does not found";
       throw error;
     }
-    if (businessExists._id.toString() !== jwt.id) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "Don't have permissions";
-      throw error;
+    if (entity.password) {
+      entity.urlReset = { url: "", date: new Date() };
     }
     return await _businessRepository.update(id, entity);
   }
@@ -95,11 +70,13 @@ class BusinessService extends BaseService {
       error.message = "Business does not found";
       throw error;
     }
-    if (businessExists._id.toString() !== jwt.id) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "Don't have permissions";
-      throw error;
+    if (jwt) {
+      if (businessExists._id.toString() !== jwt.id) {
+        const error = new Error();
+        error.status = 400;
+        error.message = "Don't have permissions";
+        throw error;
+      }
     }
     await _businessRepository.delete(id);
     return true;
@@ -119,7 +96,7 @@ class BusinessService extends BaseService {
       throw error;
     }
     const urlLogo = `${id}/${filename}`;
-    await imageSave(filename, urlLogo);
+    await CloudStorage.saveImage(filename, urlLogo);
     await _businessRepository.update(id, {
       logo: `https://storage.googleapis.com/${BUCKET_NAME}/${urlLogo}`,
     });
@@ -134,7 +111,7 @@ class BusinessService extends BaseService {
       throw error;
     }
     const urlImages = `${id}/images/${filename}`;
-    await imageSave(filename, urlImages);
+    await CloudStorage.saveImage(filename, urlImages);
     let images = businessExists.images;
     images.push(`https://storage.googleapis.com/${BUCKET_NAME}/${urlImages}`);
     await _businessRepository.update(id, { images });

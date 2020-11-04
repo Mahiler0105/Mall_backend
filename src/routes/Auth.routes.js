@@ -7,6 +7,8 @@ module.exports = function ({ AuthController }) {
   router.post("/signup/customer", AuthController.signUpCustomer);
   router.post("/signin/customer", AuthController.signInCustomer);
   router.post("/validate/:emailUser", AuthController.validateUser);
+  router.post("/forgotpassword/:email", AuthController.forgotPassword);
   router.get("/dni/:dni", AuthController.getDni);
+  router.get("/validatekey/:userId/:key", AuthController.validateKey);
   return router;
 };

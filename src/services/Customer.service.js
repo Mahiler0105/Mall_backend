@@ -1,5 +1,5 @@
 const BaseService = require("./base.service");
-const { imageSave } = require("./Custom.handler");
+const { CloudStorage } = require("../helpers");
 const { BUCKET_NAME } = require("../config");
 let _customerRepository = null;
 
@@ -12,7 +12,7 @@ class CustomerService extends BaseService {
     return await _customerRepository.getCustomerByEmail(email);
   }
 
-  async update(id, entity, jwt) {
+  async update(id, entity) {
     if (!id) {
       const error = new Error();
       error.status = 400;
@@ -26,11 +26,8 @@ class CustomerService extends BaseService {
       error.message = "Customer does not found";
       throw error;
     }
-    if (customerExists._id.toString() !== jwt.id) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "Don't have permissions";
-      throw error;
+    if (entity.password) {
+      entity.urlReset = { url: "", date: new Date() };
     }
     return await _customerRepository.update(id, entity);
   }
@@ -49,11 +46,13 @@ class CustomerService extends BaseService {
       error.message = "Customer does not found";
       throw error;
     }
-    if (customerExists._id.toString() !== jwt.id) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "Don't have permissions";
-      throw error;
+    if (jwt) {
+      if (customerExists._id.toString() !== jwt.id) {
+        const error = new Error();
+        error.status = 400;
+        error.message = "Don't have permissions";
+        throw error;
+      }
     }
     await _customerRepository.delete(id);
     return true;
@@ -67,7 +66,7 @@ class CustomerService extends BaseService {
       throw error;
     }
     const urlAvatar = `avatar/${filename}`;
-    await imageSave(filename, urlAvatar);
+    await CloudStorage.saveImage(filename, urlAvatar);
     await _customerRepository.update(id, {
       avatar: `https://storage.googleapis.com/${BUCKET_NAME}/${urlAvatar}`,
     });

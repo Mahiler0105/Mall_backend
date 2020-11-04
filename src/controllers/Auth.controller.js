@@ -29,10 +29,22 @@ class AuthController {
     let userDni = await _authService.getDni(dni);
     return res.send(userDni);
   }
+
+  async forgotPassword(req, res) {
+    const { email } = req.params;
+    const response = await _authService.forgotPassword(email);
+    return res.send(response);
+  }
+
   async validateUser(req, res) {
     const { emailUser } = req.params;
     let validate = await _authService.validateUser(emailUser);
     return res.send(validate);
+  }
+  async validateKey(req, res) {
+    const { userId, key } = req.params;
+    let response = await _authService.validateKey(userId, key);
+    return res.send(response);
   }
 }
 

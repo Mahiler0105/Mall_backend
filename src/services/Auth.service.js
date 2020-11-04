@@ -1,14 +1,16 @@
 const { generateToken } = require("../helpers/jwt.helper");
-const { sendEmail } = require("../helpers/email.helper");
-const { getDni } = require("./Custom.handler");
+const { GetDNI, SendEmail } = require("../helpers");
+const { genSaltSync, hashSync } = require("bcryptjs");
 
-let _businessService = null;
-let _customerService = null;
+const { JWT_SECRET } = require("../config");
+
+let _businessRepository = null;
+let _customerRepository = null;
 
 class AuthService {
-  constructor({ BusinessService, CustomerService }) {
-    _businessService = BusinessService;
-    _customerService = CustomerService;
+  constructor({ BusinessRepository, CustomerRepository }) {
+    _businessRepository = BusinessRepository;
+    _customerRepository = CustomerRepository;
   }
 
   /**
@@ -17,16 +19,31 @@ class AuthService {
    */
   async signUpBusiness(business) {
     const { email } = business;
-    const businessExist = await _businessService.getBusinessByEmail(email);
+    const businessExist = await _businessRepository.getBusinessByEmail(email);
     if (businessExist) {
       const error = new Error();
       error.status = 400;
       error.message = "Business already exists";
       throw error;
     } else {
-      let businessCreated = await _businessService.create(business);
-      sendEmail(businessCreated.email, "Comfirmación de cuenta", "confirm", {
-        id: "josejose",
+      let businessCreated = await _businessRepository.create(business);
+      const salt = genSaltSync(5);
+      const hashedPassowrd = hashSync(
+        `${JWT_SECRET}${businessCreated._id}`,
+        salt,
+      );
+      let keyReset = Buffer.from(hashedPassowrd).toString("base64");
+      await SendEmail(
+        businessCreated.email,
+        "Verificación de contraseña",
+        "confirm",
+        {
+          urlReset: `${keyReset}/${businessCreated._id}`,
+          name: businessCreated.name.toUpperCase(),
+        },
+      );
+      await _businessRepository.update(businessCreated._id, {
+        urlReset: { url: keyReset, created: new Date() },
       });
       return businessCreated;
     }
@@ -38,14 +55,33 @@ class AuthService {
    */
   async signUpCustomer(customer) {
     const { email } = customer;
-    const customerExist = await _customerService.getCustomerByEmail(email);
+    const customerExist = await _customerRepository.getCustomerByEmail(email);
     if (customerExist) {
       const error = new Error();
       error.status = 400;
       error.message = "Customer already exists";
       throw error;
     } else {
-      return await _customerService.create(customer);
+      let customerCreated = await _customerRepository.create(customer);
+      const salt = genSaltSync(5);
+      const hashedPassowrd = hashSync(
+        `${JWT_SECRET}${customerCreated._id}`,
+        salt,
+      );
+      let keyReset = Buffer.from(hashedPassowrd).toString("base64");
+      await SendEmail(
+        customerCreated.email,
+        "Verificación de contraseña",
+        "confirm",
+        {
+          urlReset: `${keyReset}/${customerCreated._id}`,
+          name: customerCreated.name.toUpperCase(),
+        },
+      );
+      await _customerRepository.update(customerCreated._id, {
+        urlReset: { url: keyReset, created: new Date() },
+      });
+      return customerCreated;
     }
   }
 
@@ -56,8 +92,9 @@ class AuthService {
   async signInBusiness(business) {
     const { email, dni, password } = business;
     let businessExist;
-    if (email) businessExist = await _businessService.getBusinessByEmail(email);
-    else businessExist = await _businessService.getBusinessByDni(dni);
+    if (email)
+      businessExist = await _businessRepository.getBusinessByEmail(email);
+    else businessExist = await _businessRepository.getBusinessByDni(dni);
 
     if (!businessExist) {
       const error = new Error();
@@ -87,7 +124,7 @@ class AuthService {
    */
   async signInCustomer(customer) {
     const { email, password } = customer;
-    const customerExist = await _customerService.getCustomerByEmail(email);
+    const customerExist = await _customerRepository.getCustomerByEmail(email);
     if (!customerExist) {
       const error = new Error();
       error.status = 404;
@@ -111,12 +148,80 @@ class AuthService {
     return { token, customer: customerExist };
   }
   async getDni(dni) {
-    return await getDni(dni);
+    return await GetDNI(dni);
+  }
+
+  async forgotPassword(email) {
+    let businessExists = await _businessRepository.getBusinessByEmail(email);
+    let customerExists = await _customerRepository.getCustomerByEmail(email);
+    if (!businessExists && !customerExists) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "User does not found";
+      throw error;
+    }
+    if (
+      (businessExists && businessExists.urlReset.url !== "") ||
+      (customerExists && customerExists.urlReset.url !== "")
+    ) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "Operation not valid";
+      throw error;
+    }
+    const salt = genSaltSync(5);
+    const hashedPassowrd = hashSync(
+      `${JWT_SECRET}${
+        businessExists ? businessExists._id : customerExists._id
+      }`,
+      salt,
+    );
+    let keyReset = Buffer.from(hashedPassowrd).toString("base64");
+    let responseEmail = await SendEmail(
+      email,
+      "Recuperación de contraseña",
+      "reset",
+      {
+        urlReset: `${keyReset}/${
+          businessExists ? businessExists._id : customerExists._id
+        }`,
+        name: businessExists
+          ? businessExists.name.toUpperCase()
+          : customerExists.name.toUpperCase(),
+      },
+    );
+    if (businessExists)
+      await _businessRepository.update(businessExists._id, {
+        urlReset: { url: keyReset, created: new Date() },
+      });
+    else
+      await _customerRepository.update(customerExists._id, {
+        urlReset: { url: keyReset, created: new Date() },
+      });
+    return responseEmail;
+  }
+
+  async validateKey(id, key) {
+    let businessExists = await _businessRepository.get(id);
+    let customerExists = await _customerRepository.get(id);
+    if (!businessExists && !customerExists) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "User does not found";
+      throw error;
+    }
+    if (
+      (businessExists && businessExists.urlReset.url !== key) ||
+      (customerExists && customerExists.urlReset.url !== key)
+    ) {
+      return false;
+    }
+    return true;
   }
 
   async validateUser(email) {
-    let business = await _businessService.getBusinessByEmail(email);
-    let customer = await _customerService.getCustomerByEmail(email);
+    let business = await _businessRepository.getBusinessByEmail(email);
+    let customer = await _customerRepository.getCustomerByEmail(email);
     if (business || customer) return true;
     return false;
   }
