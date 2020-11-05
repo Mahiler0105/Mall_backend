@@ -157,7 +157,7 @@ class AuthService {
     let customerExists = await _customerRepository.getCustomerByEmail(email);
     if (!businessExists && !customerExists) {
       const error = new Error();
-      error.status = 400;
+      error.status = 403;
       error.message = "User does not found";
       throw error;
     }
