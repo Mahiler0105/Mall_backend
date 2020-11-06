@@ -27,7 +27,7 @@ class CustomerService extends BaseService {
       throw error;
     }
     if (entity.password) {
-      entity.urlReset = { url: "", date: new Date() };
+      entity.urlReset = { url: "", created: new Date() };
     }
     return await _customerRepository.update(id, entity);
   }
