@@ -7,7 +7,9 @@ const bodyParser = require("body-parser");
 require("express-async-errors");
 
 const { NotFoundMiddleware, ErrorMiddleware } = require("../middlewares");
-
+const swaggerUI = require("swagger-ui-express");
+const { SWAGGER_PATH } = require("../config");
+const swaggerDocument = require(SWAGGER_PATH);
 module.exports = function ({
   AuthRoutes,
   BusinessRoutes,
@@ -35,7 +37,7 @@ module.exports = function ({
 
   // URL BASE
   router.use("/v1/api", apiRoutes);
-
+  router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
   // ADD LOGIC MIDDLEWARE
   router.use(NotFoundMiddleware);
   router.use(ErrorMiddleware);

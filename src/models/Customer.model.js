@@ -59,7 +59,7 @@ const CustomerSchema = new Schema(
       },
     ],
     preferences: [{ type: String }],
-    password: { type: String, required: true },
+    password: { type: String },
   },
   { timestamps: { createdAt: true, updatedAt: true } },
 );
