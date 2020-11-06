@@ -128,14 +128,6 @@ BusinessSchema.methods.comparePasswords = function (pass) {
   return compareSync(pass, this.password);
 };
 
-BusinessSchema.pre("save", async function (next) {
-  const business = this;
-  const salt = genSaltSync(10);
-  const hashedPassword = hashSync(business.password, salt);
-  business.password = hashedPassword;
-  next();
-});
-
 BusinessSchema.pre("findOneAndUpdate", async function (next) {
   const business = this;
   if (business._update && business._update.password) {
