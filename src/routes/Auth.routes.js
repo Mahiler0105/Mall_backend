@@ -13,3 +13,6 @@ module.exports = function ({ AuthController }) {
   router.delete("/deletekeys", AuthController.deleteKeys);
   return router;
 };
+
+// 0 => CustomerModel
+// 1=> business

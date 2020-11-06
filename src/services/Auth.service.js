@@ -41,6 +41,7 @@ class AuthService {
         {
           urlReset: `${keyReset}/${businessCreated._id}`,
           name: businessCreated.name.toUpperCase(),
+          rol: 1,
         },
       );
       await _businessRepository.update(businessCreated._id, {
@@ -77,6 +78,7 @@ class AuthService {
         {
           urlReset: `${keyReset}/${customerCreated._id}`,
           name: customerCreated.name.toUpperCase(),
+          rol: 0,
         },
       );
       await _customerRepository.update(customerCreated._id, {
@@ -189,6 +191,7 @@ class AuthService {
         name: businessExists
           ? businessExists.name.toUpperCase()
           : customerExists.name.toUpperCase(),
+        rol: businessExists ? 1 : 0,
       },
     );
     if (businessExists)
