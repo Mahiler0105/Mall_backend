@@ -4,7 +4,7 @@ const hbs = require("nodemailer-express-handlebars");
 const { USER_EMAIL, PASS_EMAIL } = require("../config");
 
 module.exports = function sendEmail(email, subject, kind, context) {
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: USER_EMAIL,
@@ -24,15 +24,15 @@ module.exports = function sendEmail(email, subject, kind, context) {
 
   transporter.use("compile", hbs(handlebarOptions));
 
-  let mail_options = {
+  const mailOptions = {
     from: "fernando.mahiler@gmail.com",
     to: email,
-    subject: subject,
+    subject,
     template: kind,
-    context: context,
+    context,
   };
-  return new Promise(async (r, e) => {
-    await transporter.sendMail(mail_options, (error, info) => {
+  return new Promise((r) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
         console.log(error);
         r(false);

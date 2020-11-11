@@ -1,4 +1,5 @@
 const BaseRepository = require("./base.repository");
+
 let _customerModel = null;
 
 class CustomerRepository extends BaseRepository {
@@ -6,8 +7,9 @@ class CustomerRepository extends BaseRepository {
     super(Customer);
     _customerModel = Customer;
   }
+
   async getCustomerByEmail(email) {
-    return await _customerModel.findOne({ email });
+    return _customerModel.findOne({ email });
   }
 }
 

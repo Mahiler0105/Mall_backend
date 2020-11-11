@@ -1,11 +1,12 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 
 const OrderSchema = new Schema(
   {
     idPurchase: {
       type: Schema.Types.ObjectId,
-      ref: "purchase",
+      ref: 'purchase',
       required: false,
       autopopulate: false,
     },
@@ -14,9 +15,9 @@ const OrderSchema = new Schema(
     deliveredPersonName: { type: String },
     phone: { type: String },
     dni: { type: String },
-    status: { type: String, enum: ["0", "1", "2"] },
+    status: { type: String, enum: ['0', '1', '2'] },
   },
   { timestamps: { createdAt: true, updatedAt: true } },
 );
 
-module.exports = mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model('Order', OrderSchema);

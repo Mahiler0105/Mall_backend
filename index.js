@@ -1,10 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const container = require("./src/startup/container");
-const server = container.resolve("app");
-const { MONGO_URI } = container.resolve("config");
+const container = require('./src/startup/container');
 
-mongoose.set("useCreateIndex", true);
+const server = container.resolve('app');
+const { MONGO_URI } = container.resolve('config');
+
+mongoose.set('useCreateIndex', true);
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,

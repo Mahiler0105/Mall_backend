@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 
 const ServiceSchema = new Schema(
@@ -29,7 +30,7 @@ const ServiceSchema = new Schema(
     category: { type: String },
     businessId: {
       type: Schema.Types.ObjectId,
-      ref: "business",
+      ref: 'business',
       required: false,
       autopopulate: false,
     },
@@ -37,4 +38,4 @@ const ServiceSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: true } },
 );
 
-module.exports = mongoose.model("Service", ServiceSchema);
+module.exports = mongoose.model('Service', ServiceSchema);

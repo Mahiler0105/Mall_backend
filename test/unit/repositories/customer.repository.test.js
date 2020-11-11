@@ -1,8 +1,8 @@
+const mockingoose = require("mockingoose").default;
 const { CustomerRepository } = require("../../../src/repositories");
 const { Customer } = require("../../../src/models");
-const mockingoose = require("mockingoose").default;
-let {
-  CustomerModelMock: { customer, customers },
+const {
+  CustomerModelMock: { customer },
 } = require("../../mocks");
 
 describe("Customer Repository Test", () => {

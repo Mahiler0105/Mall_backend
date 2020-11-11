@@ -8,11 +8,12 @@ class Server {
     _config = config;
     _server = express().use(router);
   }
+
   start() {
     return new Promise((resolve) => {
       _server.listen(_config.PORT, () => {
         console.log(
-          _config.APPLICATION_NAME + " running on port " + _config.PORT,
+          `${_config.APPLICATION_NAME} running on port ${_config.PORT}`,
         );
       });
       resolve();

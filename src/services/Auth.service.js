@@ -1,7 +1,7 @@
-const { generateToken } = require("../helpers/jwt.helper");
-const { GetDNI, SendEmail } = require("../helpers");
 const { genSaltSync, hashSync } = require("bcryptjs");
 const moment = require("moment");
+const { generateToken } = require("../helpers/jwt.helper");
+const { GetDNI, SendEmail } = require("../helpers");
 
 const { JWT_SECRET } = require("../config");
 
@@ -27,13 +27,13 @@ class AuthService {
       error.message = "Business already exists";
       throw error;
     } else {
-      let businessCreated = await _businessRepository.create(business);
+      const businessCreated = await _businessRepository.create(business);
       const salt = genSaltSync(5);
       const hashedPassowrd = hashSync(
         `${JWT_SECRET}${businessCreated._id}`,
         salt,
       );
-      let keyReset = Buffer.from(hashedPassowrd).toString("base64");
+      const keyReset = Buffer.from(hashedPassowrd).toString("base64");
       await SendEmail(
         businessCreated.email,
         "Verificación de contraseña",
@@ -64,13 +64,13 @@ class AuthService {
       error.message = "Customer already exists";
       throw error;
     } else {
-      let customerCreated = await _customerRepository.create(customer);
+      const customerCreated = await _customerRepository.create(customer);
       const salt = genSaltSync(5);
       const hashedPassowrd = hashSync(
         `${JWT_SECRET}${customerCreated._id}`,
         salt,
       );
-      let keyReset = Buffer.from(hashedPassowrd).toString("base64");
+      const keyReset = Buffer.from(hashedPassowrd).toString("base64");
       await SendEmail(
         customerCreated.email,
         "Verificación de contraseña",
@@ -95,8 +95,7 @@ class AuthService {
   async signInBusiness(business) {
     const { email, dni, password } = business;
     let businessExist;
-    if (email)
-      businessExist = await _businessRepository.getBusinessByEmail(email);
+    if (email) businessExist = await _businessRepository.getBusinessByEmail(email);
     else businessExist = await _businessRepository.getBusinessByDni(dni);
 
     if (!businessExist) {
@@ -150,13 +149,14 @@ class AuthService {
     const token = generateToken(customerToEncode);
     return { token, customer: customerExist };
   }
+
   async getDni(dni) {
-    return await GetDNI(dni);
+    return GetDNI(dni);
   }
 
   async forgotPassword(email) {
-    let businessExists = await _businessRepository.getBusinessByEmail(email);
-    let customerExists = await _customerRepository.getCustomerByEmail(email);
+    const businessExists = await _businessRepository.getBusinessByEmail(email);
+    const customerExists = await _customerRepository.getCustomerByEmail(email);
     if (!businessExists && !customerExists) {
       const error = new Error();
       error.status = 403;
@@ -164,8 +164,8 @@ class AuthService {
       throw error;
     }
     if (
-      (businessExists && businessExists.urlReset.url !== "") ||
-      (customerExists && customerExists.urlReset.url !== "")
+      (businessExists && businessExists.urlReset.url !== "")
+      || (customerExists && customerExists.urlReset.url !== "")
     ) {
       const error = new Error();
       error.status = 400;
@@ -179,8 +179,8 @@ class AuthService {
       }`,
       salt,
     );
-    let keyReset = Buffer.from(hashedPassowrd).toString("base64");
-    let responseEmail = await SendEmail(
+    const keyReset = Buffer.from(hashedPassowrd).toString("base64");
+    const responseEmail = await SendEmail(
       email,
       "Recuperación de contraseña",
       "reset",
@@ -194,20 +194,21 @@ class AuthService {
         rol: businessExists ? 1 : 0,
       },
     );
-    if (businessExists)
+    if (businessExists) {
       await _businessRepository.update(businessExists._id, {
         urlReset: { url: keyReset, created: new Date() },
       });
-    else
+    } else {
       await _customerRepository.update(customerExists._id, {
         urlReset: { url: keyReset, created: new Date() },
       });
+    }
     return responseEmail;
   }
 
   async validateKey(id, key) {
-    let businessExists = await _businessRepository.get(id);
-    let customerExists = await _customerRepository.get(id);
+    const businessExists = await _businessRepository.get(id);
+    const customerExists = await _customerRepository.get(id);
     if (!businessExists && !customerExists) {
       const error = new Error();
       error.status = 400;
@@ -215,8 +216,8 @@ class AuthService {
       throw error;
     }
     if (
-      (businessExists && businessExists.urlReset.url !== key) ||
-      (customerExists && customerExists.urlReset.url !== key)
+      (businessExists && businessExists.urlReset.url !== key)
+      || (customerExists && customerExists.urlReset.url !== key)
     ) {
       return false;
     }
@@ -224,15 +225,15 @@ class AuthService {
   }
 
   async validateUser(email) {
-    let business = await _businessRepository.getBusinessByEmail(email);
-    let customer = await _customerRepository.getCustomerByEmail(email);
+    const business = await _businessRepository.getBusinessByEmail(email);
+    const customer = await _customerRepository.getCustomerByEmail(email);
     if (business || customer) return true;
     return false;
   }
 
   async deleteKeys() {
-    let businesses = await _businessRepository.getAll();
-    let customers = await _customerRepository.getAll();
+    const businesses = await _businessRepository.getAll();
+    const customers = await _customerRepository.getAll();
     businesses.map(async (key) => {
       if (moment().diff(key.urlReset.created, "hours") >= 4) {
         await _businessRepository.update(key._id, {

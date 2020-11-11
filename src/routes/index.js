@@ -6,10 +6,12 @@ const bodyParser = require("body-parser");
 
 require("express-async-errors");
 
-const { NotFoundMiddleware, ErrorMiddleware } = require("../middlewares");
 const swaggerUI = require("swagger-ui-express");
+const { NotFoundMiddleware, ErrorMiddleware } = require("../middlewares");
 const { SWAGGER_PATH } = require("../config");
+
 const swaggerDocument = require(SWAGGER_PATH);
+
 module.exports = function ({
   AuthRoutes,
   BusinessRoutes,

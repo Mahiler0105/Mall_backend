@@ -1,7 +1,7 @@
 module.exports = {
-  Cache_time: require("./cache-time.helper"),
-  JwtHelper: require("./jwt.helper"),
-  SendEmail: require("./email.helper"),
-  CloudStorage: require("./cloudStorage.helper"),
-  GetDNI: require("./getDNI.helper"),
+  Cache_time: require('./cache-time.helper'),
+  JwtHelper: require('./jwt.helper'),
+  SendEmail: require('./email.helper'),
+  CloudStorage: require('./cloudStorage.helper'),
+  GetDNI: require('./getDNI.helper'),
 };

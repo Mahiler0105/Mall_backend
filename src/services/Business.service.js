@@ -1,6 +1,7 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
 const { BUCKET_NAME } = require("../config");
+
 let _businessRepository = null;
 
 class BusinessService extends BaseService {
@@ -14,7 +15,7 @@ class BusinessService extends BaseService {
    * @param {*} email
    */
   async getBusinessByEmail(email) {
-    return await _businessRepository.getBusinessByEmail(email);
+    return _businessRepository.getBusinessByEmail(email);
   }
 
   /**
@@ -22,7 +23,7 @@ class BusinessService extends BaseService {
    * @param {*} dni
    */
   async getBusinessByDni(dni) {
-    return await _businessRepository.getBusinessByDni(dni);
+    return _businessRepository.getBusinessByDni(dni);
   }
 
   /**
@@ -38,17 +39,18 @@ class BusinessService extends BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let businessExists = await _businessRepository.get(id);
+    const businessExists = await _businessRepository.get(id);
     if (!businessExists) {
       const error = new Error();
       error.status = 400;
       error.message = "Business does not found";
       throw error;
     }
-    if (entity.password) {
-      entity.urlReset = { url: "", created: new Date() };
+    const newEntity = entity;
+    if (newEntity.password) {
+      newEntity.urlReset = { url: "", created: new Date() };
     }
-    return await _businessRepository.update(id, entity);
+    return _businessRepository.update(id, newEntity);
   }
 
   /**
@@ -63,7 +65,7 @@ class BusinessService extends BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let businessExists = await _businessRepository.get(id);
+    const businessExists = await _businessRepository.get(id);
     if (!businessExists) {
       const error = new Error();
       error.status = 400;
@@ -88,7 +90,7 @@ class BusinessService extends BaseService {
    * @param {*} id
    */
   async saveLogo(filename, id) {
-    let businessExists = await _businessRepository.get(id);
+    const businessExists = await _businessRepository.get(id);
     if (!businessExists) {
       const error = new Error();
       error.status = 400;
@@ -102,8 +104,9 @@ class BusinessService extends BaseService {
     });
     return true;
   }
+
   async saveImages(filename, id) {
-    let businessExists = await _businessRepository.get(id);
+    const businessExists = await _businessRepository.get(id);
     if (!businessExists) {
       const error = new Error();
       error.status = 400;
@@ -112,7 +115,7 @@ class BusinessService extends BaseService {
     }
     const urlImages = `${id}/images/${filename}`;
     await CloudStorage.saveImage(filename, urlImages);
-    let images = businessExists.images;
+    const { images } = businessExists;
     images.push(`https://storage.googleapis.com/${BUCKET_NAME}/${urlImages}`);
     await _businessRepository.update(id, { images });
     return true;

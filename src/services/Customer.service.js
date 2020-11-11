@@ -1,6 +1,7 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
 const { BUCKET_NAME } = require("../config");
+
 let _customerRepository = null;
 
 class CustomerService extends BaseService {
@@ -8,8 +9,9 @@ class CustomerService extends BaseService {
     super(CustomerRepository);
     _customerRepository = CustomerRepository;
   }
+
   async getCustomerByEmail(email) {
-    return await _customerRepository.getCustomerByEmail(email);
+    return _customerRepository.getCustomerByEmail(email);
   }
 
   async update(id, entity) {
@@ -19,17 +21,18 @@ class CustomerService extends BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let customerExists = await _customerRepository.get(id);
+    const customerExists = await _customerRepository.get(id);
     if (!customerExists) {
       const error = new Error();
       error.status = 400;
       error.message = "Customer does not found";
       throw error;
     }
-    if (entity.password) {
-      entity.urlReset = { url: "", created: new Date() };
+    const newEntity = entity;
+    if (newEntity.password) {
+      newEntity.urlReset = { url: "", created: new Date() };
     }
-    return await _customerRepository.update(id, entity);
+    return _customerRepository.update(id, newEntity);
   }
 
   async delete(id, jwt) {
@@ -39,7 +42,7 @@ class CustomerService extends BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let customerExists = await _customerRepository.get(id);
+    const customerExists = await _customerRepository.get(id);
     if (!customerExists) {
       const error = new Error();
       error.status = 400;
@@ -57,8 +60,9 @@ class CustomerService extends BaseService {
     await _customerRepository.delete(id);
     return true;
   }
+
   async saveAvatar(filename, id) {
-    let customerExists = await _customerRepository.get(id);
+    const customerExists = await _customerRepository.get(id);
     if (!customerExists) {
       const error = new Error();
       error.status = 400;

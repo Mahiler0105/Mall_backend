@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 
 const ProductSchema = new Schema(
@@ -39,7 +40,7 @@ const ProductSchema = new Schema(
     },
     businessId: {
       type: Schema.Types.ObjectId,
-      ref: "business",
+      ref: 'business',
       required: false,
       autopopulate: false,
     },
@@ -47,4 +48,4 @@ const ProductSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: true } },
 );
 
-module.exports = mongoose.model("Product", ProductSchema);
+module.exports = mongoose.model('Product', ProductSchema);

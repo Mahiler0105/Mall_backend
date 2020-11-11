@@ -1,12 +1,12 @@
-const { Storage } = require("@google-cloud/storage");
-const path = require("path");
-const fs = require("fs");
+const { Storage } = require('@google-cloud/storage');
+const path = require('path');
+const fs = require('fs');
 
-const { BUCKET_NAME } = require("../config");
+const { BUCKET_NAME } = require('../config');
 
 const gc = new Storage({
-  keyFilename: path.join(__dirname, "../../lerietmall-be9efc3ee5d7.json"),
-  projectId: "lerietmall",
+  keyFilename: path.join(__dirname, '../../lerietmall-be9efc3ee5d7.json'),
+  projectId: 'lerietmall',
 });
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       destination: urlPublic,
       gzip: true,
       metadata: {
-        cacheContro: "no-cache",
+        cacheContro: 'no-cache',
       },
     });
     try {
@@ -23,7 +23,7 @@ module.exports = {
     } catch (err) {
       const error = new Error();
       error.status = 500;
-      error.message = "Internal server error";
+      error.message = 'Internal server error';
       throw error;
     }
   },

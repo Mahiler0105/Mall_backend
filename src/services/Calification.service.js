@@ -1,10 +1,11 @@
 const BaseService = require("./base.service");
-let _calificationRepository = null;
+
+// let _calificationRepository = null;
 
 class CalificationService extends BaseService {
   constructor({ CalificationRepository }) {
     super(CalificationRepository);
-    _calificationRepository = CalificationRepository;
+    // _calificationRepository = CalificationRepository;
   }
 }
 

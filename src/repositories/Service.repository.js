@@ -1,10 +1,11 @@
 const BaseRepository = require("./base.repository");
-let _serviceModel = null;
+
+// let _serviceModel = null;
 
 class ServiceRepository extends BaseRepository {
   constructor({ Service }) {
     super(Service);
-    _serviceModel = Service;
+    // _serviceModel = Service;
   }
 }
 

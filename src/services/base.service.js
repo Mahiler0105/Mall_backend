@@ -2,6 +2,7 @@ class BaseService {
   constructor(repository) {
     this.repository = repository;
   }
+
   async get(id) {
     if (!id) {
       const error = new Error();
@@ -20,11 +21,11 @@ class BaseService {
   }
 
   async getAll() {
-    return await this.repository.getAll();
+    return this.repository.getAll();
   }
 
   async create(entity) {
-    return await this.repository.create(entity);
+    return this.repository.create(entity);
   }
 
   async update(id, entity) {
@@ -34,7 +35,7 @@ class BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let entityRes = await this.repository.update(id, entity);
+    const entityRes = await this.repository.update(id, entity);
     if (!entityRes) {
       const error = new Error();
       error.status = 400;
@@ -51,7 +52,7 @@ class BaseService {
       error.message = "ID must be sent";
       throw error;
     }
-    let entityDel = await this.repository.delete(id);
+    const entityDel = await this.repository.delete(id);
     if (!entityDel) {
       const error = new Error();
       error.status = 400;

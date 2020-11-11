@@ -1,4 +1,5 @@
 const BaseRepository = require("./base.repository");
+
 let _businessModel = null;
 
 class BusinessRepository extends BaseRepository {
@@ -6,11 +7,13 @@ class BusinessRepository extends BaseRepository {
     super(Business);
     _businessModel = Business;
   }
+
   async getBusinessByEmail(email) {
-    return await _businessModel.findOne({ email });
+    return _businessModel.findOne({ email });
   }
+
   async getBusinessByDni(dni) {
-    return await _businessModel.findOne({ "owner.dni": dni });
+    return _businessModel.findOne({ "owner.dni": dni });
   }
 }
 

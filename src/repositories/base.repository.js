@@ -2,21 +2,26 @@ class BaseRepository {
   constructor(model) {
     this.model = model;
   }
+
   async get(id) {
-    return await this.model.findById(id);
+    return this.model.findById(id);
   }
+
   async getAll() {
-    return await this.model.find();
+    return this.model.find();
   }
+
   async create(entity) {
-    return await this.model.create(entity);
+    return this.model.create(entity);
   }
+
   async update(id, entity) {
-    let a = await this.model.findByIdAndUpdate(id, entity, { new: true });
+    const a = await this.model.findByIdAndUpdate(id, entity, { new: true });
     return a;
   }
+
   async delete(id) {
-    return await this.model.findByIdAndDelete(id);
+    return this.model.findByIdAndDelete(id);
   }
 }
 module.exports = BaseRepository;

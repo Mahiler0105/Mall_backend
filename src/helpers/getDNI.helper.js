@@ -10,16 +10,14 @@ const dniHandler = {
     query: `query createToken($email: String!, $password: String!)
         {login(email: $email, password: $password) {authentication}}`,
   },
-  dniSave: (numdoc) => {
-    return {
-      operationName: "consultarDni",
-      variables: { dni: numdoc },
-      query: "query consultarDni($dni: String!) {dniPremium(dni: $dni) {data}}",
-    };
-  },
+  dniSave: (numdoc) => ({
+    operationName: "consultarDni",
+    variables: { dni: numdoc },
+    query: "query consultarDni($dni: String!) {dniPremium(dni: $dni) {data}}",
+  }),
   operation: async (params = {}, token = undefined) => {
     try {
-      let pending = await fetch(
+      const pending = await fetch(
         "https://apiapp.aplicativoscontables.pe:3006/api",
         {
           method: "POST",
@@ -33,11 +31,10 @@ const dniHandler = {
       );
       // return await pending.json();
       return await pending.json().then(async (e) => {
-        if (params.operationName == "createToken") {
+        if (params.operationName === "createToken") {
           return e.data.login.authentication;
-        } else {
-          return e.data.dniPremium.data.result;
         }
+        return e.data.dniPremium.data.result;
       });
     } catch (e) {
       console.log(e);
@@ -56,32 +53,24 @@ const dniHandler = {
     Provincia,
     Distrito,
     Direccion,
-  }) => {
-    return {
-      DNI: DNI,
-      DIGITO: DigitoVerificacion,
-      APELLIDO_PATERNO: Paterno,
-      APELLIDO_MATERNO: Materno,
-      NOMBRES: Nombre,
-      NOMBRES_COMPLETOS: Paterno + " " + Materno + " " + Nombre,
-      F_NACIMIENTO: FechaNacimiento,
-      SEXO: Sexo,
-      DIRECCION: Direccion,
-      DEPARTAMENTO: Departamento,
-      PROVINCIA: Provincia,
-      DISTRITO: Distrito,
-    };
-  },
+  }) => ({
+    DNI,
+    DIGITO: DigitoVerificacion,
+    APELLIDO_PATERNO: Paterno,
+    APELLIDO_MATERNO: Materno,
+    NOMBRES: Nombre,
+    NOMBRES_COMPLETOS: `${Paterno} ${Materno} ${Nombre}`,
+    F_NACIMIENTO: FechaNacimiento,
+    SEXO: Sexo,
+    DIRECCION: Direccion,
+    DEPARTAMENTO: Departamento,
+    PROVINCIA: Provincia,
+    DISTRITO: Distrito,
+  }),
 };
 
-module.exports = getDni = async (dni) => {
-  return await dniHandler
-    .operation(dniHandler.token)
-    .then(async (token) => {
-      return await dniHandler.operation(dniHandler.dniSave(dni), token);
-    })
-    .then(async (data) => {
-      return dniHandler.result(data);
-    })
-    .catch((error) => new Error(error));
-};
+module.exports = async (dni) => dniHandler
+  .operation(dniHandler.token)
+  .then(async (token) => dniHandler.operation(dniHandler.dniSave(dni), token))
+  .then(async (data) => dniHandler.result(data))
+  .catch((error) => new Error(error));

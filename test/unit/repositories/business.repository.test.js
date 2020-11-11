@@ -1,8 +1,8 @@
+const mockingoose = require("mockingoose").default;
 const { BusinessRepository } = require("../../../src/repositories");
 const { Business } = require("../../../src/models");
-const mockingoose = require("mockingoose").default;
-let {
-  BusinessModelMock: { businesses, business },
+const {
+  BusinessModelMock: { business },
 } = require("../../mocks");
 
 describe("Business Repository Test", () => {

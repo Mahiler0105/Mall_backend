@@ -1,18 +1,20 @@
-const { createContainer, asClass, asFunction, asValue } = require("awilix");
+const {
+  createContainer, asClass, asFunction, asValue,
+} = require('awilix');
 
 // CONFIG
-const config = require("../config");
-const app = require(".");
+const config = require('../config');
+const app = require('.');
 
 // ROTUTES
-const Routes = require("../routes");
+const Routes = require('../routes');
 const {
   AuthRoutes,
   BusinessRoutes,
   CalificationRoutes,
   CustomerRoutes,
   ProductRoutes,
-} = require("../routes/index.routes");
+} = require('../routes/index.routes');
 
 // CONTROLERS
 const {
@@ -21,7 +23,7 @@ const {
   CustomerController,
   BusinessController,
   ProductController,
-} = require("../controllers");
+} = require('../controllers');
 
 // SERVICES
 const {
@@ -30,7 +32,7 @@ const {
   CustomerService,
   AuthService,
   ProductService,
-} = require("../services");
+} = require('../services');
 
 // REPOSITORIES
 const {
@@ -41,7 +43,7 @@ const {
   ProductRepository,
   PurchaseRepository,
   ServiceRepository,
-} = require("../repositories");
+} = require('../repositories');
 
 // MODELS
 const {
@@ -52,7 +54,7 @@ const {
   Order,
   Service,
   Purchase,
-} = require("../models");
+} = require('../models');
 
 // INICIALIZAR APP
 const container = createContainer();
