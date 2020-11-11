@@ -29,21 +29,13 @@ class AuthService {
     } else {
       const businessCreated = await _businessRepository.create(business);
       const salt = genSaltSync(5);
-      const hashedPassowrd = hashSync(
-        `${JWT_SECRET}${businessCreated._id}`,
-        salt,
-      );
+      const hashedPassowrd = hashSync(`${JWT_SECRET}${businessCreated._id}`, salt);
       const keyReset = Buffer.from(hashedPassowrd).toString("base64");
-      await SendEmail(
-        businessCreated.email,
-        "Verificación de contraseña",
-        "confirm",
-        {
-          urlReset: `${keyReset}/${businessCreated._id}`,
-          name: businessCreated.name.toUpperCase(),
-          rol: 1,
-        },
-      );
+      await SendEmail(businessCreated.email, "Verificación de contraseña", "confirm", {
+        urlReset: `${keyReset}/${businessCreated._id}`,
+        name: businessCreated.name.toUpperCase(),
+        rol: 1,
+      });
       await _businessRepository.update(businessCreated._id, {
         urlReset: { url: keyReset, created: new Date() },
       });
@@ -66,21 +58,13 @@ class AuthService {
     } else {
       const customerCreated = await _customerRepository.create(customer);
       const salt = genSaltSync(5);
-      const hashedPassowrd = hashSync(
-        `${JWT_SECRET}${customerCreated._id}`,
-        salt,
-      );
+      const hashedPassowrd = hashSync(`${JWT_SECRET}${customerCreated._id}`, salt);
       const keyReset = Buffer.from(hashedPassowrd).toString("base64");
-      await SendEmail(
-        customerCreated.email,
-        "Verificación de contraseña",
-        "confirm",
-        {
-          urlReset: `${keyReset}/${customerCreated._id}`,
-          name: customerCreated.name.toUpperCase(),
-          rol: 0,
-        },
-      );
+      await SendEmail(customerCreated.email, "Verificación de contraseña", "confirm", {
+        urlReset: `${keyReset}/${customerCreated._id}`,
+        name: customerCreated.name.toUpperCase(),
+        rol: 0,
+      });
       await _customerRepository.update(customerCreated._id, {
         urlReset: { url: keyReset, created: new Date() },
       });
@@ -163,37 +147,20 @@ class AuthService {
       error.message = "User does not found";
       throw error;
     }
-    if (
-      (businessExists && businessExists.urlReset.url !== "")
-      || (customerExists && customerExists.urlReset.url !== "")
-    ) {
+    if ((businessExists && businessExists.urlReset.url !== "") || (customerExists && customerExists.urlReset.url !== "")) {
       const error = new Error();
       error.status = 400;
       error.message = "Operation not valid";
       throw error;
     }
     const salt = genSaltSync(5);
-    const hashedPassowrd = hashSync(
-      `${JWT_SECRET}${
-        businessExists ? businessExists._id : customerExists._id
-      }`,
-      salt,
-    );
+    const hashedPassowrd = hashSync(`${JWT_SECRET}${businessExists ? businessExists._id : customerExists._id}`, salt);
     const keyReset = Buffer.from(hashedPassowrd).toString("base64");
-    const responseEmail = await SendEmail(
-      email,
-      "Recuperación de contraseña",
-      "reset",
-      {
-        urlReset: `${keyReset}/${
-          businessExists ? businessExists._id : customerExists._id
-        }`,
-        name: businessExists
-          ? businessExists.name.toUpperCase()
-          : customerExists.name.toUpperCase(),
-        rol: businessExists ? 1 : 0,
-      },
-    );
+    const responseEmail = await SendEmail(email, "Recuperación de contraseña", "reset", {
+      urlReset: `${keyReset}/${businessExists ? businessExists._id : customerExists._id}`,
+      name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
+      rol: businessExists ? 1 : 0,
+    });
     if (businessExists) {
       await _businessRepository.update(businessExists._id, {
         urlReset: { url: keyReset, created: new Date() },
@@ -215,10 +182,7 @@ class AuthService {
       error.message = "User does not found";
       throw error;
     }
-    if (
-      (businessExists && businessExists.urlReset.url !== key)
-      || (customerExists && customerExists.urlReset.url !== key)
-    ) {
+    if ((businessExists && businessExists.urlReset.url !== key) || (customerExists && customerExists.urlReset.url !== key)) {
       return false;
     }
     return true;

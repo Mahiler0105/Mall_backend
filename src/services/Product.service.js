@@ -1,6 +1,6 @@
-const BaseService = require('./base.service');
-const { CloudStorage } = require('../helpers');
-const { BUCKET_NAME } = require('../config');
+const BaseService = require("./base.service");
+const { CloudStorage } = require("../helpers");
+const { BUCKET_NAME } = require("../config");
 
 let _productRepository = null;
 
@@ -15,7 +15,7 @@ class ProductService extends BaseService {
     if (!productExist) {
       const error = new Error();
       error.status = 400;
-      error.message = 'Product does not found';
+      error.message = "Product does not found";
       throw error;
     }
     const urlImages = `${productExist.businessId}/products/${productExist._id}/${filename}`;
