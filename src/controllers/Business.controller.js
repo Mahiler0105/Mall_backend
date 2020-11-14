@@ -51,6 +51,12 @@ class BusinessController {
     const imagesSave = await _businessService.saveImages(filename, businessId);
     return res.send(imagesSave);
   }
+
+  async getCategory(req, res) {
+    const { categoryName } = req.params;
+    const resCategory = await _businessService.getCategory(categoryName);
+    return res.send(resCategory);
+  }
 }
 
 module.exports = BusinessController;

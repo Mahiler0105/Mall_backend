@@ -92,15 +92,17 @@ class BusinessService extends BaseService {
   async saveLogo(filename, id) {
     const businessExists = await _businessRepository.get(id);
     if (!businessExists) {
+      CloudStorage.deleteLocalImage(filename);
       const error = new Error();
       error.status = 400;
       error.message = "Business does not found";
       throw error;
     }
     const urlLogo = `${id}/${filename}`;
+    await CloudStorage.deleteImage(businessExists.logo);
     await CloudStorage.saveImage(filename, urlLogo);
     await _businessRepository.update(id, {
-      logo: `https://storage.googleapis.com/${BUCKET_NAME}/${urlLogo}`,
+      logo: urlLogo,
     });
     return true;
   }

@@ -12,13 +12,7 @@ const { SWAGGER_PATH } = require("../config");
 
 const swaggerDocument = require(SWAGGER_PATH);
 
-module.exports = function ({
-  AuthRoutes,
-  BusinessRoutes,
-  CalificationRoutes,
-  CustomerRoutes,
-  ProductRoutes,
-}) {
+module.exports = function ({ AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductRoutes }) {
   const router = express.Router();
   const apiRoutes = express.Router();
 
