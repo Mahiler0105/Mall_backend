@@ -12,7 +12,7 @@ const { SWAGGER_PATH } = require("../config");
 
 const swaggerDocument = require(SWAGGER_PATH);
 
-module.exports = function ({ AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductRoutes }) {
+module.exports = function ({ AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductRoutes, HomeRoutes }) {
   const router = express.Router();
   const apiRoutes = express.Router();
 
@@ -30,6 +30,7 @@ module.exports = function ({ AuthRoutes, BusinessRoutes, CalificationRoutes, Cus
   apiRoutes.use("/calification", CalificationRoutes);
   apiRoutes.use("/customer", CustomerRoutes);
   apiRoutes.use("/product", ProductRoutes);
+  apiRoutes.use("/home", HomeRoutes);
 
   // URL BASE
   router.use("/v1/api", apiRoutes);

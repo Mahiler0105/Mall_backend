@@ -15,6 +15,14 @@ class BusinessRepository extends BaseRepository {
   async getBusinessByDni(dni) {
     return _businessModel.findOne({ "owner.dni": dni });
   }
+
+  async getBusinessByCounter() {
+    return _businessModel.find().sort({ counter: -1 }).limit(5);
+  }
+
+  async getCategoryBusiness() {
+    return _businessModel.aggregate([{ $group: { _id: "$category", total: { $sum: "$counter" } } }, { $sort: { total: -1 } }, { $limit: 5 }]);
+  }
 }
 
 module.exports = BusinessRepository;

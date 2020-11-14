@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
 const ServiceSchema = new Schema(
   {
     name: { type: String },
+    counter: { type: Number, default: 0 },
     price: { type: Number },
     images: [{ type: String }],
     description: { type: String },
@@ -27,10 +28,27 @@ const ServiceSchema = new Schema(
         { _id: false },
       ),
     },
-    category: { type: String },
+    category: {
+      type: String,
+      enum: [
+        "consumer_electronic",
+        "clothing_apparel",
+        "home_garden_kitchen",
+        "health_beauty",
+        "yewerly_watches",
+        "computer_technology",
+        "babies_moms",
+        "sport_outdoor",
+        "books_office",
+        "cars_motocycles",
+        "home_improments",
+        "services",
+      ],
+    },
+    subCategory: { type: String },
     businessId: {
       type: Schema.Types.ObjectId,
-      ref: 'business',
+      ref: "business",
       required: false,
       autopopulate: false,
     },
@@ -38,4 +56,4 @@ const ServiceSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: true } },
 );
 
-module.exports = mongoose.model('Service', ServiceSchema);
+module.exports = mongoose.model("Service", ServiceSchema);

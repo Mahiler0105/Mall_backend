@@ -12,6 +12,7 @@ const BusinessSchema = new Schema(
   {
     name: { type: String },
     description: { type: String },
+    counter: { type: Number, default: 0 },
     urlReset: {
       url: { type: String, default: "" },
       created: { type: Date, default: new Date() },
