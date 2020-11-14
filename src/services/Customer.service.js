@@ -1,6 +1,5 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
-const { BUCKET_NAME } = require("../config");
 
 let _customerRepository = null;
 
@@ -70,9 +69,10 @@ class CustomerService extends BaseService {
       throw error;
     }
     const urlAvatar = `avatar/${filename}`;
+    if (customerExists.avatar) await CloudStorage.deleteImage(customerExists.avatar);
     await CloudStorage.saveImage(filename, urlAvatar);
     await _customerRepository.update(id, {
-      avatar: `https://storage.googleapis.com/${BUCKET_NAME}/${urlAvatar}`,
+      avatar: urlAvatar,
     });
     return true;
   }
