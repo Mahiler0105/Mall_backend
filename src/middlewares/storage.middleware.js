@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
     console.log(file.mimetype.split("/").pop());
     console.log(file.mimetype);
     console.log(file);
-    cb(null, uuidv4() + file.mimetype.split("/").pop());
+    cb(null, `${uuidv4()}.${file.mimetype.split("/").pop()}`);
   },
 });
 
@@ -25,5 +25,19 @@ const upload = multer({
   //   cb('Error: Archivo debe ser una imagen valida');
   // },
 });
+
+// const uploadTwo = multer({
+//   storage,
+//   limits: {
+//     fileSize: 1000000,
+//   },
+//   // fileFilter: (req, file, cb) => {
+//   //   const fileTypes = /jpeg|jpg|png|gif/;
+//   //   const mimetype = fileTypes.test(file.mimetype);
+//   //   const extname = fileTypes.test(path.extname(file.originalname));
+//   //   if (mimetype && extname) return cb(null, true);
+//   //   cb('Error: Archivo debe ser una imagen valida');
+//   // },
+// });
 
 module.exports = upload.single("image");
