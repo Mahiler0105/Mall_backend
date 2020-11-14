@@ -1,6 +1,5 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
-const { BUCKET_NAME } = require("../config");
 
 let _businessRepository = null;
 
@@ -118,7 +117,7 @@ class BusinessService extends BaseService {
     const urlImages = `${id}/images/${filename}`;
     await CloudStorage.saveImage(filename, urlImages);
     const { images } = businessExists;
-    images.push(`https://storage.googleapis.com/${BUCKET_NAME}/${urlImages}`);
+    images.push(urlImages);
     await _businessRepository.update(id, { images });
     return true;
   }

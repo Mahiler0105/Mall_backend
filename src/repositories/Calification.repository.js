@@ -9,7 +9,6 @@ class CalificationRepository extends BaseRepository {
   }
 
   async getByProduct(idClient, idProduct) {
-    console.log(idClient, idProduct);
     return _calificationModel.findOne({ idClient, idProduct });
   }
 
@@ -19,6 +18,18 @@ class CalificationRepository extends BaseRepository {
 
   async getByBusiness(idClient, idBusiness) {
     return _calificationModel.findOne({ idClient, idBusiness });
+  }
+
+  async getBusinessCalification(idBusiness) {
+    return _calificationModel.find({ idBusiness });
+  }
+
+  async getProductCalification(idProduct) {
+    return _calificationModel.find({ idProduct });
+  }
+
+  async getServiceCalification(idService) {
+    return _calificationModel.find({ idService });
   }
 }
 
