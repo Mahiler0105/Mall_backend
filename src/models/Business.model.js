@@ -66,14 +66,17 @@ const BusinessSchema = new Schema(
     },
     delivery: { type: Boolean },
     bankAccount: { type: String },
-    billing: new Schema(
+    stripeId: { type: String },
+    cards: [
       {
-        cardNumber: { type: String },
-        cvv: { type: String, maxlength: 3, minlength: 3 },
-        expireDate: { type: Date },
+        _id: false,
+        last4: { type: String, maxlength: 4, minlength: 4 },
+        brand: { type: String },
+        paymentMethodId: { type: String },
+        default: { type: Boolean },
       },
-      { _id: false },
-    ),
+    ],
+    suscription: { type: String },
     advertisement: {
       title: { type: String },
       description: { type: String },
