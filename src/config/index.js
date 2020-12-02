@@ -12,5 +12,5 @@ module.exports = {
   BUCKET_NAME: process.env.BUCKET_NAME,
   USER_EMAIL: process.env.USER_EMAIL,
   PASS_EMAIL: process.env.PASS_EMAIL,
-  PUBLISHABLE_KEY: process.env.PUBLISHABLE_KEY,
+  KEY_STRIPE: process.env.PUBLISHABLE_KEY,
 };

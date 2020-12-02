@@ -5,4 +5,5 @@ module.exports = {
   CustomerController: require("./Customer.controller"),
   ProductController: require("./Product.controller"),
   HomeController: require("./Home.controller"),
+  PaymentController: require("./Payment.controller"),
 };

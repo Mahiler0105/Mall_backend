@@ -6,13 +6,13 @@ const app = require(".");
 
 // ROTUTES
 const Routes = require("../routes");
-const { AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductRoutes, HomeRoutes } = require("../routes/index.routes");
+const { AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductRoutes, HomeRoutes, PaymentRoutes } = require("../routes/index.routes");
 
 // CONTROLERS
-const { AuthController, CalificationController, CustomerController, BusinessController, ProductController, HomeController } = require("../controllers");
+const { AuthController, CalificationController, CustomerController, BusinessController, ProductController, HomeController, PaymentController } = require("../controllers");
 
 // SERVICES
-const { BusinessService, CalificationService, CustomerService, AuthService, ProductService, HomeService } = require("../services");
+const { BusinessService, CalificationService, CustomerService, AuthService, ProductService, HomeService, PaymentService } = require("../services");
 
 // REPOSITORIES
 const { BusinessRepository, CalificationRepository, CustomerRepository, OrderRepository, ProductRepository, PurchaseRepository, ServiceRepository } = require("../repositories");
@@ -37,6 +37,7 @@ container.register({
   CustomerRoutes: asFunction(CustomerRoutes).singleton(),
   ProductRoutes: asFunction(ProductRoutes).singleton(),
   HomeRoutes: asFunction(HomeRoutes).singleton(),
+  PaymentRoutes: asFunction(PaymentRoutes).singleton(),
   /*-----------------------*/
   // CONTROLLERS REGISTER  //
   AuthController: asClass(AuthController.bind(AuthController)).singleton(),
@@ -45,6 +46,7 @@ container.register({
   BusinessController: asClass(BusinessController.bind(BusinessController)).singleton(),
   CustomerController: asClass(CustomerController.bind(CustomerController)).singleton(),
   HomeController: asClass(HomeController.bind(HomeController)).singleton(),
+  PaymentController: asClass(PaymentController.bind(PaymentController)).singleton(),
   /*--------------------*/
   // SERVICES REGISTER  //
   AuthService: asClass(AuthService).singleton(),
@@ -53,6 +55,7 @@ container.register({
   CalificationService: asClass(CalificationService).singleton(),
   ProductService: asClass(ProductService).singleton(),
   HomeService: asClass(HomeService).singleton(),
+  PaymentService: asClass(PaymentService).singleton(),
   /*------------------*/
   // REPOSITORIES REGISTER  //
   BusinessRepository: asClass(BusinessRepository).singleton(),
