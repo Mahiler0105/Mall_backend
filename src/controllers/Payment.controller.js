@@ -72,6 +72,18 @@ class PaymentController {
     const suscriptionDeleted = await _paymentService.createSubscription(subscription);
     return res.status(200).send(suscriptionDeleted);
   }
+
+  async getInvoices(req, res) {
+    const { id, qty } = req.params;
+    const invoices = await _paymentService.getInvoices(id, qty);
+    return res.status(200).send(invoices);
+  }
+
+  async getNextInvoices(req, res) {
+    const { id } = req.params;
+    const nextInvoices = await _paymentService.getNextInvoices(id);
+    return res.status(200).send(nextInvoices);
+  }
 }
 
 module.exports = PaymentController;

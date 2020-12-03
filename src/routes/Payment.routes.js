@@ -8,11 +8,15 @@ module.exports = function ({ PaymentController }) {
   router.patch("/customer/:id", PaymentController.updateCustomer);
   router.delete("/customer/:id", PaymentController.deleteCustomer);
 
-  router.get("/setupintent/:id", PaymentController.getSetUpIntent);
-  router.get("/paymentmethod/:id", PaymentController.getPaymentMethod);
+  router.get("/setupintent/:id", PaymentController.getSetUpIntent); // 😁
+  router.get("/paymentmethod/:id", PaymentController.getPaymentMethod); // 😁
   router.get("/paymentmethods/:id", PaymentController.getPaymentMethods); // 😁
   router.post("/subscription", PaymentController.createSubscription);
   router.delete("/paymentmethod/:id", PaymentController.deletePaymentMethod);
   router.delete("/subscription", PaymentController.deleteSubscription);
+
+  router.get("/invoices/:id/:qty", PaymentController.getInvoices);
+  router.get("/next/invoices/:id", PaymentController.getNextInvoices);
+
   return router;
 };

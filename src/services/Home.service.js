@@ -31,7 +31,7 @@ class HomeService {
       return res.reduce((obj, item, key) => {
         return {
           ...obj,
-          [categories[key]._id]: item,
+          [`${key}_${categories[key]._id}`]: item,
         };
       }, {});
     });
