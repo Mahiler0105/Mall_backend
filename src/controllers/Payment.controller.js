@@ -87,3 +87,28 @@ class PaymentController {
 }
 
 module.exports = PaymentController;
+
+// NEGOCIO;
+
+// location
+// owner
+//    nombres y apellidos
+//    telefono
+// advertisement
+// openclose
+
+// secialnetwork
+// images
+// subcategories
+// iddescripcion
+// phone
+// tlehone
+// category
+// Active
+// Delivery
+// logo
+
+// PRODUCTO
+
+// idnegocio
+// nombre

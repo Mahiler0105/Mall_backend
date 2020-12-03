@@ -115,6 +115,26 @@ class PaymentService {
       throw error;
     }
   }
+
+  async getInvoices(id, qty) {
+    try {
+      return await stripe.invoices.list({ customerId: id, limit: qty });
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 500;
+      throw error;
+    }
+  }
+
+  async getNextInvoices(id) {
+    try {
+      return await stripe.invoices.retrieveUpcoming({ customer: id });
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 500;
+      throw error;
+    }
+  }
 }
 
 module.exports = PaymentService;
