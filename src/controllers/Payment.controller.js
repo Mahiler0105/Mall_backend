@@ -69,7 +69,7 @@ class PaymentController {
 
   async deleteSubscription(req, res) {
     const { id } = req.params;
-    const suscriptionDeleted = await _paymentService.createSubscription(id);
+    const suscriptionDeleted = await _paymentService.deleteSubscription(id);
     return res.status(200).send(suscriptionDeleted);
   }
 
