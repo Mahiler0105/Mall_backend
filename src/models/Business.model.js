@@ -76,7 +76,7 @@ const BusinessSchema = new Schema(
         default: { type: Boolean },
       },
     ],
-    suscription: { type: String },
+    subscription: { type: String },
     advertisement: {
       title: { type: String },
       description: { type: String },
