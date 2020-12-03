@@ -66,4 +66,13 @@ const ProductSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: true } },
 );
 
+ProductSchema.methods.getHome = function () {
+  const product = this.toObject();
+  delete product.counter;
+  delete product.updatedAt;
+  delete product.createdAt;
+  delete product.__v;
+  return product;
+};
+
 module.exports = mongoose.model("Product", ProductSchema);

@@ -137,6 +137,27 @@ BusinessSchema.methods.toJSON = function () {
   return business;
 };
 
+BusinessSchema.methods.getHome = function () {
+  const business = this.toObject();
+  delete business.password;
+  delete business.stripeId;
+  delete business.cards;
+  delete business.urlReset;
+  delete business.counter;
+  delete business.updatedAt;
+  delete business.createdAt;
+  delete business.email;
+  delete business.subscription;
+  delete business.language;
+  delete business.currency;
+  delete business.plan;
+  delete business.__v;
+  delete business.owner.birthdate;
+  delete business.owner.sex;
+  delete business.owner.dni;
+  return business;
+};
+
 BusinessSchema.methods.comparePasswords = function (pass) {
   return compareSync(pass, this.password);
 };

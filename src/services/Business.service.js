@@ -2,11 +2,15 @@ const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
 
 let _businessRepository = null;
+let _calificationService = null;
+let _productService = null;
 
 class BusinessService extends BaseService {
-  constructor({ BusinessRepository }) {
+  constructor({ BusinessRepository, CalificationService, ProductService }) {
     super(BusinessRepository);
     _businessRepository = BusinessRepository;
+    _calificationService = CalificationService;
+    _productService = ProductService;
   }
 
   /**
@@ -120,6 +124,33 @@ class BusinessService extends BaseService {
     images.push(urlImages);
     await _businessRepository.update(id, { images });
     return true;
+  }
+
+  /**
+   *
+   * @param {*} idBusiness
+   */
+  async get(idBusiness) {
+    let business = await _businessRepository.get(idBusiness);
+    business = business.getHome();
+    const califications = await _calificationService.getBusinessCalification(idBusiness);
+    const articles = await business.subCategories.reduce(async (obj, item) => {
+      let products = await _productService.getBySubCategory(item);
+      products = products.map((ele) => {
+        return {
+          _id: ele._id,
+          name: ele.name,
+          price: ele.price,
+          image: ele.images[0],
+          counter: ele.counter,
+        };
+      });
+      return {
+        ...(await obj),
+        [item]: products,
+      };
+    }, {});
+    return { business, califications, articles };
   }
 }
 
