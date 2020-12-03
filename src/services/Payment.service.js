@@ -57,7 +57,7 @@ class PaymentService {
 
   async getSetUpIntent(idCustomer) {
     try {
-      const setUpIntent = await stripe.getSetUpIntents.create({ customer: idCustomer });
+      const setUpIntent = await stripe.setupIntents.create({ customer: idCustomer });
       return { client_secret: setUpIntent.client_secret };
     } catch (err) {
       const error = new Error(err.message);
