@@ -106,9 +106,9 @@ class PaymentService {
     }
   }
 
-  async deleteSubscription(subscription) {
+  async deleteSubscription(idSubscription) {
     try {
-      return await stripe.subscriptions.del(subscription);
+      return await stripe.subscriptions.del(idSubscription);
     } catch (err) {
       const error = new Error(err.message);
       error.status = 500;

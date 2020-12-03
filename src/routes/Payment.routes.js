@@ -13,7 +13,7 @@ module.exports = function ({ PaymentController }) {
   router.get("/paymentmethods/:id", PaymentController.getPaymentMethods); // 😁
   router.post("/subscription", PaymentController.createSubscription);
   router.delete("/paymentmethod/:id", PaymentController.deletePaymentMethod);
-  router.delete("/subscription", PaymentController.deleteSubscription);
+  router.delete("/subscription/:id", PaymentController.deleteSubscription);
 
   router.get("/invoices/:id/:qty", PaymentController.getInvoices);
   router.get("/next/invoices/:id", PaymentController.getNextInvoices);
