@@ -150,7 +150,7 @@ class AuthService {
     if ((businessExists && businessExists.urlReset.url !== "") || (customerExists && customerExists.urlReset.url !== "")) {
       const error = new Error();
       error.status = 400;
-      error.message = "Operation not valid";
+      error.message = "Already exists key email";
       throw error;
     }
     const salt = genSaltSync(5);
