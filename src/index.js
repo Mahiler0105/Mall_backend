@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const container = require("./src/startup/container");
+const container = require("./startup/container");
 
 const server = container.resolve("app");
 const { MONGO_URI } = container.resolve("config");

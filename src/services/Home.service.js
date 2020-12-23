@@ -24,6 +24,10 @@ class HomeService {
             image: element.images.shift(),
             counter: element.counter,
             type: e._id === "services" ? "S" : "P",
+            specification: {
+              color: element?.specification?.color[0] || null,
+              size: element?.specification?.size[0] || null,
+            },
           };
         });
       }),
