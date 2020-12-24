@@ -57,6 +57,25 @@ class ProductService extends BaseService {
   async getBySubCategory(subCategory) {
     return _productRepository.getBySubCategory(subCategory);
   }
+
+  async getProductsById(entity) {
+    const { ids } = entity;
+    if (!ids) {
+      const error = new Error();
+      error.status = 400;
+      error.message = "ID products does not found";
+      throw error;
+    }
+    const response = await ids.reduce(async (obj, item) => {
+      const product = await _productRepository.get(item);
+
+      return {
+        ...(await obj),
+        [item]: product,
+      };
+    }, {});
+    return response;
+  }
 }
 
 module.exports = ProductService;
