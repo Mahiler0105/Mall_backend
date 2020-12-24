@@ -35,6 +35,12 @@ class ProductController {
     return res.status(201).send(createProduct);
   }
 
+  async getProductsById(req, res) {
+    const { body } = req;
+    const products = await _productService.getProductsById(body);
+    return res.status(201).send(products);
+  }
+
   async saveImage(req, res) {
     const {
       params: { productId },
