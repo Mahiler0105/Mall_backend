@@ -12,8 +12,8 @@ class ProductRepository extends BaseRepository {
     return _productModel.find({ category }).sort({ counter: -1 }).limit(5);
   }
 
-  async getBySubCategory(subCategory) {
-    return _productModel.find({ subCategory }).sort({ counter: -1 });
+  async getBySubCategory(subCategory, businessId) {
+    return _productModel.find({ subCategory, businessId }).sort({ counter: -1 });
   }
 }
 

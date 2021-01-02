@@ -4,13 +4,15 @@ const { CloudStorage } = require("../helpers");
 let _businessRepository = null;
 let _calificationService = null;
 let _productService = null;
+let _servService = null;
 
 class BusinessService extends BaseService {
-  constructor({ BusinessRepository, CalificationService, ProductService }) {
+  constructor({ BusinessRepository, CalificationService, ProductService, ServService }) {
     super(BusinessRepository);
     _businessRepository = BusinessRepository;
     _calificationService = CalificationService;
     _productService = ProductService;
+    _servService = ServService;
   }
 
   /**
@@ -135,30 +137,26 @@ class BusinessService extends BaseService {
     business = business.getHome();
     const califications = await _calificationService.getBusinessCalification(idBusiness);
     const articles = await business.subCategories.reduce(async (obj, item) => {
-      let products = await _productService.getBySubCategory(item);
-      products = products.map((ele) => {
+      let objResponse = { products: null, type: "" };
+      if (business.category === "services") objResponse = { ...objResponse, products: await _servService.getBySubCategory(item, business._id), type: "S" };
+      else objResponse = { ...objResponse, products: await _productService.getBySubCategory(item, business._id), type: "P" };
+      objResponse.products = objResponse.products.map((ele) => {
         return {
           _id: ele._id,
           name: ele.name,
           price: ele.price,
           image: ele.images[0],
           counter: ele.counter,
-          type: "P",
+          type: objResponse.type,
           specification: ele.specification,
         };
       });
       return {
         ...(await obj),
-        [item]: products,
+        [item]: objResponse.products,
       };
     }, {});
     return { business, califications, articles };
-  }
-
-  async getCategory(category) {
-    console.log(category);
-    const products = _productService.getByCategory(category);
-    return products;
   }
 }
 

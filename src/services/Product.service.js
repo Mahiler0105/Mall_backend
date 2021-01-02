@@ -54,8 +54,8 @@ class ProductService extends BaseService {
     return { product: { ...product, businessName: business.name }, califications: calification };
   }
 
-  async getBySubCategory(subCategory) {
-    return _productRepository.getBySubCategory(subCategory);
+  async getBySubCategory(subCategory, idBusiness) {
+    return _productRepository.getBySubCategory(subCategory, idBusiness);
   }
 
   async getByCategory(category) {
@@ -71,9 +71,7 @@ class ProductService extends BaseService {
       throw error;
     }
     const response = await ids.reduce(async (obj, item) => {
-      console.log(item);
       const product = await _productRepository.get(item);
-      console.log(product);
       return {
         ...(await obj),
         [item]: product,

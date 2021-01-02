@@ -30,20 +30,8 @@ const ServiceSchema = new Schema(
     },
     category: {
       type: String,
-      enum: [
-        "consumer_electronic",
-        "clothing_apparel",
-        "home_garden_kitchen",
-        "health_beauty",
-        "yewerly_watches",
-        "computer_technology",
-        "babies_moms",
-        "sport_outdoor",
-        "books_office",
-        "cars_motocycles",
-        "home_improments",
-        "services",
-      ],
+      enum: ["services"],
+      default: "services",
     },
     subCategory: { type: String },
     businessId: {

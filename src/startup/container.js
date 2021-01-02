@@ -12,7 +12,7 @@ const { AuthRoutes, BusinessRoutes, CalificationRoutes, CustomerRoutes, ProductR
 const { AuthController, CalificationController, CustomerController, BusinessController, ProductController, HomeController, PaymentController } = require("../controllers");
 
 // SERVICES
-const { BusinessService, CalificationService, CustomerService, AuthService, ProductService, HomeService, PaymentService } = require("../services");
+const { BusinessService, CalificationService, CustomerService, AuthService, ProductService, ServService, HomeService, PaymentService } = require("../services");
 
 // REPOSITORIES
 const { BusinessRepository, CalificationRepository, CustomerRepository, OrderRepository, ProductRepository, PurchaseRepository, ServiceRepository } = require("../repositories");
@@ -54,6 +54,7 @@ container.register({
   CustomerService: asClass(CustomerService).singleton(),
   CalificationService: asClass(CalificationService).singleton(),
   ProductService: asClass(ProductService).singleton(),
+  ServService: asClass(ServService).singleton(),
   HomeService: asClass(HomeService).singleton(),
   PaymentService: asClass(PaymentService).singleton(),
   /*------------------*/
