@@ -4,6 +4,7 @@ module.exports = {
   CalificationService: require("./Calification.service"),
   CustomerService: require("./Customer.service"),
   ProductService: require("./Product.service"),
+  ServService: require("./Service.service"),
   HomeService: require("./Home.service"),
   PaymentService: require("./Payment.service"),
 };

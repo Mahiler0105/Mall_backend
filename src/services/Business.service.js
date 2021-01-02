@@ -143,6 +143,8 @@ class BusinessService extends BaseService {
           price: ele.price,
           image: ele.images[0],
           counter: ele.counter,
+          type: "P",
+          specification: ele.specification,
         };
       });
       return {
@@ -151,6 +153,12 @@ class BusinessService extends BaseService {
       };
     }, {});
     return { business, califications, articles };
+  }
+
+  async getCategory(category) {
+    console.log(category);
+    const products = _productService.getByCategory(category);
+    return products;
   }
 }
 

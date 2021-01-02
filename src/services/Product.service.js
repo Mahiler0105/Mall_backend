@@ -42,13 +42,13 @@ class ProductService extends BaseService {
 
   async get(idProduct) {
     let product = await _productRepository.get(idProduct);
-    product = product.getHome();
     if (!product) {
       const error = new Error();
       error.status = 400;
       error.message = "Product does not found";
       throw error;
     }
+    product = product.getHome();
     const business = await _businessRepository.get(product.businessId);
     const calification = await _calificationService.getProductCalification(idProduct);
     return { product: { ...product, businessName: business.name }, califications: calification };
@@ -56,6 +56,10 @@ class ProductService extends BaseService {
 
   async getBySubCategory(subCategory) {
     return _productRepository.getBySubCategory(subCategory);
+  }
+
+  async getByCategory(category) {
+    return _productRepository.getProductCategory(category);
   }
 
   async getProductsById(entity) {
@@ -67,8 +71,9 @@ class ProductService extends BaseService {
       throw error;
     }
     const response = await ids.reduce(async (obj, item) => {
+      console.log(item);
       const product = await _productRepository.get(item);
-
+      console.log(product);
       return {
         ...(await obj),
         [item]: product,
