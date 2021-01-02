@@ -61,6 +61,16 @@ class BaseService {
     }
     return true;
   }
+
+  async deleteField(_id, field) {
+    if (!field) {
+      const error = new Error("Field must be sent");
+      error.status = 400;
+      throw error;
+    }
+    await this.repository.update({ _id }, { $unset: { [field]: "" } });
+    return true;
+  }
 }
 
 module.exports = BaseService;
