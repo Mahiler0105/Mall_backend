@@ -54,24 +54,28 @@ class ServService extends BaseService {
     return { service: { ...service, businessName: business.name }, califications: calification };
   }
 
-  async getServicesById(entity) {
-    const { ids } = entity;
-    if (!ids) {
-      const error = new Error();
-      error.status = 400;
-      error.message = "ID products does not found";
-      throw error;
-    }
-    const response = await ids.reduce(async (obj, item) => {
-      const service = await _serviceRepository.get(item);
-
-      return {
-        ...(await obj),
-        [item]: service,
-      };
-    }, {});
-    return response;
+  async getBySubCategory(subCategory, idBusiness) {
+    return _serviceRepository.getBySubCategory(subCategory, idBusiness);
   }
+
+  // async getServicesById(entity) {
+  //   const { ids } = entity;
+  //   if (!ids) {
+  //     const error = new Error();
+  //     error.status = 400;
+  //     error.message = "ID products does not found";
+  //     throw error;
+  //   }
+  //   const response = await ids.reduce(async (obj, item) => {
+  //     const service = await _serviceRepository.get(item);
+
+  //     return {
+  //       ...(await obj),
+  //       [item]: service,
+  //     };
+  //   }, {});
+  //   return response;
+  // }
 }
 
 module.exports = ServService;

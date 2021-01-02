@@ -173,4 +173,10 @@ BusinessSchema.pre("findOneAndUpdate", async function (next) {
   next();
 });
 
+BusinessSchema.pre("save", async function (next) {
+  const business = this;
+  business.advertisement = undefined;
+  next();
+});
+
 module.exports = mongoose.model("Business", BusinessSchema);

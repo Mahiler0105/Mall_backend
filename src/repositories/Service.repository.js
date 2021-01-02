@@ -11,6 +11,10 @@ class ServiceRepository extends BaseRepository {
   getTopService() {
     return _serviceModel.find().sort({ counter: -1 }).limit(5);
   }
+
+  async getBySubCategory(subCategory, businessId) {
+    return _serviceModel.find({ subCategory, businessId }).sort({ counter: -1 });
+  }
 }
 
 module.exports = ServiceRepository;
