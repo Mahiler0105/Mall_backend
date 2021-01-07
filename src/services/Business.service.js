@@ -157,6 +157,10 @@ class BusinessService extends BaseService {
     }, {});
     return { business, califications, articles };
   }
+
+  async getCategory(category) {
+    return _productService.getByCategory(category);
+  }
 }
 
 module.exports = BusinessService;
