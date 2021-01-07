@@ -23,5 +23,10 @@ class BaseRepository {
   async delete(id) {
     return this.model.findByIdAndDelete(id);
   }
+
+  async deleteField(_id, field) {
+    console.log("entre");
+    await this.model.updateOne({ _id }, { $unset: { [field]: "" } });
+  }
 }
 module.exports = BaseRepository;

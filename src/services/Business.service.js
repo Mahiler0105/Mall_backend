@@ -53,7 +53,10 @@ class BusinessService extends BaseService {
     }
     const newEntity = entity;
     if (newEntity.password) newEntity.urlReset = { url: "", created: new Date() };
-    else if (newEntity.advertisement === null) _businessRepository.deleteField(businessExists._id, "advertisement");
+    else if (newEntity.advertisement === null) {
+      _businessRepository.deleteField(businessExists._id, "advertisement");
+      delete newEntity.advertisement;
+    }
     return _businessRepository.update(id, newEntity);
   }
 
