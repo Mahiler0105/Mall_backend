@@ -135,6 +135,26 @@ class PaymentService {
       throw error;
     }
   }
+
+  async postPaymentIntent(entity) {
+    try {
+      return await stripe.paymentIntents.create({ off_session: true, confirm: true, ...entity });
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 500;
+      throw error;
+    }
+  }
+
+  async getPaymentIntent(idPayment) {
+    try {
+      return await stripe.paymentIntents.list({ customer: idPayment });
+    } catch (err) {
+      const error = new Error(err.message);
+      error.status = 500;
+      throw error;
+    }
+  }
 }
 
 module.exports = PaymentService;

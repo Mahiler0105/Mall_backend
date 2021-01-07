@@ -84,6 +84,18 @@ class PaymentController {
     const nextInvoices = await _paymentService.getNextInvoices(id);
     return res.status(200).send(nextInvoices);
   }
+
+  async postPaymentIntent(req, res) {
+    const { body } = req;
+    const postPayment = await _paymentService.postPaymentIntent(body);
+    return res.status(200).send(postPayment);
+  }
+
+  async getPaymentIntent(req, res) {
+    const { id } = req.params;
+    const getPayment = await _paymentService.getPaymentIntent(id);
+    return res.status(200).send(getPayment);
+  }
 }
 
 module.exports = PaymentController;

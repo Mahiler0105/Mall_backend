@@ -18,5 +18,8 @@ module.exports = function ({ PaymentController }) {
   router.get("/invoices/:id/:qty", PaymentController.getInvoices);
   router.get("/next/invoices/:id", PaymentController.getNextInvoices);
 
+  router.post("/paymentintent", PaymentController.postPaymentIntent);
+  router.get("/paymentintent/:id", PaymentController.getPaymentIntent);
+
   return router;
 };
