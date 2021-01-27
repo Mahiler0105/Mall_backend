@@ -1,10 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/lerietmall/lerietmall_apirest:$SHORT_SHA', '.']
+  args: ['build', '-t', 'gcr.io/lerietmall-302923/lerietmall_apirest:$SHORT_SHA', '.']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/lerietmall/lerietmall_apirest:$SHORT_SHA']
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'lerietmallapirest', '--region=us-east1', '--platform=managed', '--image=gcr.io/lerietmall/lerietmall_apirest:$SHORT_SHA']
-
-
-
+  args: ['push', 'gcr.io/lerietmall-302923/lerietmall_apirest:$SHORT_SHA']
