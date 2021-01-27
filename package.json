@@ -1,11 +1,11 @@
 {
   "name": "apirest-lerietmall",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lerietmall backend with Express and Mongoose",
   "main": "index.js",
   "scripts": {
     "start": "node build/index.js",
-    "build": "babel src --out-dir build --copy-files",
+    "build": "npm run test && babel src --out-dir build --copy-files",
     "dev": "nodemon --exec babel-node src/index.js",
     "test": "jest",
     "lint": "eslint . --fix"
