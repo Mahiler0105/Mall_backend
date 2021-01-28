@@ -107,7 +107,10 @@ class BusinessService extends BaseService {
             throw error;
         }
         const urlLogo = `${id}/${filename}`;
-        if (businessExists.logo) await CloudStorage.deleteImage(businessExists.logo);
+        if (businessExists.logo) {
+            console.log(businessExists.logo, 'entre');
+            await CloudStorage.deleteImage(businessExists.logo);
+        }
         await CloudStorage.saveImage(filename, urlLogo);
         await _businessRepository.update(id, {
             logo: urlLogo,
