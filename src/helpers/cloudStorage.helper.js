@@ -1,13 +1,10 @@
 const { Storage } = require('@google-cloud/storage');
-const path = require('path');
+// const path = require('path');
 const fs = require('fs');
 
 const { BUCKET_NAME } = require('../config');
 
-const gc = new Storage({
-    keyFilename: path.join(__dirname, '../../lerietmall-302923-436bd293b801.json'),
-    projectId: 'lerietmall-302923',
-});
+const gc = new Storage();
 
 module.exports = {
     saveImage: async (filename, urlPublic) => {

@@ -22,6 +22,7 @@
   "homepage": "https://github.com/LRTBL/LerietMall_backend.git#readme",
   "dependencies": {
     "@babel/cli": "^7.12.10",
+    "@google-cloud/secret-manager": "^3.4.0",
     "@google-cloud/storage": "^5.4.0",
     "awilix": "^4.2.6",
     "axios": "^0.21.0",
