@@ -31,7 +31,7 @@ class ProductService extends BaseService {
 
     async create(productEntity) {
         const business = await _businessRepository.get(productEntity.businessId);
-        if (!business) {
+        if (!business || business.disabled) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -52,6 +52,52 @@ class ProductService extends BaseService {
         const business = await _businessRepository.get(product.businessId);
         const calification = await _calificationService.getProductCalification(idProduct);
         return { product: { ...product, businessName: business.name }, califications: calification };
+    }
+
+    async update(id, entity) {
+        if (!id) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'ID must be sent';
+            throw error;
+        }
+        const productExists = await _productRepository.get(id);
+        if (!productExists) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'Product does not found';
+            throw error;
+        }
+        if (entity.images) {
+            const imagesDelete = productExists.images.filter((image) => !entity.images.includes(image));
+            imagesDelete.forEach(async (urlImage) => {
+                await CloudStorage.deleteImage(urlImage);
+            });
+        }
+        return _businessRepository.update(id, entity);
+    }
+
+    async delete(idProduct) {
+        if (!idProduct) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'ID must be sent';
+            throw error;
+        }
+        const productExists = await _productRepository.get(idProduct);
+        if (!productExists) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'Product does not found';
+            throw error;
+        }
+        if (productExists.images.length !== 0) {
+            productExists.images.forEach(async (imageUrl) => {
+                await CloudStorage.deleteImage(imageUrl);
+            });
+        }
+        await _productRepository.delete(idProduct);
+        return true;
     }
 
     async getBySubCategory(subCategory, idBusiness) {
@@ -80,10 +126,21 @@ class ProductService extends BaseService {
         return response;
     }
 
-    async deleteByBusinessId(id) {
-        const products = await _productRepository.getProductsByBusinessId(id);
-        console.log(products);
+    async deleteByBusinessId(businessId) {
+        const products = await _productRepository.getProductsByBusinessId(businessId);
+        products.forEach((product) => {
+            if (product.images.length !== 0) {
+                product.images.forEach(async (image) => {
+                    await CloudStorage.deleteImage(image);
+                });
+            }
+        });
+        await _productRepository.deleteProductsByBusinessId(businessId);
         return true;
+    }
+
+    async getAll() {
+        return _productRepository.getAll();
     }
 }
 

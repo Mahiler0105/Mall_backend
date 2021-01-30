@@ -15,14 +15,6 @@ module.exports = {
                     cacheContro: 'no-cache',
                 },
             });
-        } catch (err) {
-            const error = new Error();
-            error.status = 500;
-            error.message = 'Internal server error';
-            throw error;
-        }
-
-        try {
             fs.unlinkSync(filename);
         } catch (err) {
             const error = new Error();

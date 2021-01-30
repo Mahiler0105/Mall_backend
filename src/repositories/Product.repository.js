@@ -8,8 +8,12 @@ class ProductRepository extends BaseRepository {
         _productModel = Product;
     }
 
+    async getAll() {
+        return _productModel.find({ available: true });
+    }
+
     async getProductCategory(category) {
-        return _productModel.find({ category }).sort({ counter: -1 }).limit(5);
+        return _productModel.find({ category, available: true }).sort({ counter: -1 }).limit(5);
     }
 
     async getBySubCategory(subCategory, businessId) {
@@ -18,6 +22,10 @@ class ProductRepository extends BaseRepository {
 
     async getProductsByBusinessId(businessId) {
         return _productModel.find({ businessId }).sort({ counter: -1 });
+    }
+
+    async deleteProductsByBusinessId(businessId) {
+        return _productModel.updateMany({ businessId }, { available: false, images: [] });
     }
 }
 

@@ -17,11 +17,11 @@ class BusinessRepository extends BaseRepository {
     }
 
     async getBusinessByCounter() {
-        return _businessModel.find().sort({ counter: -1 }).limit(5);
+        return _businessModel.find({ active: true, disabled: false }).sort({ counter: -1 }).limit(5);
     }
 
     async getCategoryBusiness() {
-        return _businessModel.aggregate([{ $group: { _id: '$category', total: { $sum: '$counter' } } }, { $sort: { total: -1 } }, { $limit: 5 }]);
+        return _businessModel.aggregate([{ $match: { active: true, disabled: false } }, { $group: { _id: '$category', total: { $sum: '$counter' } } }, { $sort: { total: -1 } }, { $limit: 5 }]);
     }
 }
 

@@ -119,7 +119,7 @@ const BusinessSchema = new Schema(
             },
         },
         plan: { type: Boolean },
-        active: { type: Boolean },
+        active: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         socialNetwork: {
             facebook: { type: String },
@@ -156,7 +156,7 @@ BusinessSchema.methods.getHome = function () {
     delete business.owner.birthdate;
     delete business.owner.sex;
     delete business.owner.dni;
-    // delete business.disabled;
+    delete business.disabled;
     return business;
 };
 
