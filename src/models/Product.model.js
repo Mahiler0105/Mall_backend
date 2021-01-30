@@ -11,7 +11,6 @@ const ProductSchema = new Schema(
         description: { type: String },
         stock: { type: Number },
         available: { type: Boolean },
-        disabled: { type: Boolean, default: false },
         promotion: {
             type: new Schema(
                 {

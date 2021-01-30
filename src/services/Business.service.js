@@ -20,7 +20,14 @@ class BusinessService extends BaseService {
      * @param {*} email
      */
     async getBusinessByEmail(email) {
-        return _businessRepository.getBusinessByEmail(email);
+        const business = await _businessRepository.getBusinessByEmail(email);
+        if (business.disabled) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'Business does not found';
+            throw error;
+        }
+        return business;
     }
 
     /**
@@ -28,7 +35,14 @@ class BusinessService extends BaseService {
      * @param {*} dni
      */
     async getBusinessByDni(dni) {
-        return _businessRepository.getBusinessByDni(dni);
+        const business = await _businessRepository.getBusinessByDni(dni);
+        if (business.disabled) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'Business does not found';
+            throw error;
+        }
+        return business;
     }
 
     /**
@@ -46,7 +60,7 @@ class BusinessService extends BaseService {
         }
 
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists) {
+        if (!businessExists || businessExists.disabled) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -54,9 +68,15 @@ class BusinessService extends BaseService {
         }
         const newEntity = entity;
         if (newEntity.password) newEntity.urlReset = { url: '', created: new Date() };
-        else if (newEntity.advertisement === null) {
+        if (newEntity.advertisement === null) {
             _businessRepository.deleteField(businessExists._id, 'advertisement');
             delete newEntity.advertisement;
+        }
+        if (newEntity.images) {
+            const imagesDelete = businessExists.images.filter((image) => !newEntity.images.includes(image));
+            imagesDelete.forEach(async (urlImage) => {
+                await CloudStorage.deleteImage(urlImage);
+            });
         }
         return _businessRepository.update(id, newEntity);
     }
@@ -74,7 +94,7 @@ class BusinessService extends BaseService {
             throw error;
         }
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists) {
+        if (!businessExists || businessExists.disabled) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -88,7 +108,18 @@ class BusinessService extends BaseService {
                 throw error;
             }
         }
-        await _businessRepository.update(id, { disabled: true });
+        try {
+            await _productService.deleteByBusinessId(businessExists._id);
+            if (businessExists.logo) await CloudStorage.deleteImage(businessExists.logo);
+            if (businessExists.images.length !== 0) {
+                businessExists.images.forEach(async (image) => {
+                    await CloudStorage.deleteImage(image);
+                    await _businessRepository.update(id, { disabled: true, active: false, logo: '', images: [] });
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
         return true;
     }
 
@@ -99,7 +130,7 @@ class BusinessService extends BaseService {
      */
     async saveLogo(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists) {
+        if (!businessExists || businessExists.disabled) {
             CloudStorage.deleteLocalImage(filename);
             const error = new Error();
             error.status = 400;
@@ -107,10 +138,7 @@ class BusinessService extends BaseService {
             throw error;
         }
         const urlLogo = `${id}/${filename}`;
-        if (businessExists.logo) {
-            console.log(businessExists.logo, 'entre');
-            await CloudStorage.deleteImage(businessExists.logo);
-        }
+        if (businessExists.logo) await CloudStorage.deleteImage(businessExists.logo);
         await CloudStorage.saveImage(filename, urlLogo);
         await _businessRepository.update(id, {
             logo: urlLogo,
@@ -120,7 +148,7 @@ class BusinessService extends BaseService {
 
     async saveImages(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists) {
+        if (!businessExists || businessExists.disabled) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -140,6 +168,12 @@ class BusinessService extends BaseService {
      */
     async get(idBusiness) {
         let business = await _businessRepository.get(idBusiness);
+        if (business.disabled) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'Business does not found';
+            throw error;
+        }
         business = business.getHome();
         const califications = await _calificationService.getBusinessCalification(idBusiness);
         const articles = await business.subCategories.reduce(async (obj, item) => {
