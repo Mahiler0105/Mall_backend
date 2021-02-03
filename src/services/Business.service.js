@@ -110,13 +110,15 @@ class BusinessService extends BaseService {
         }
         try {
             await _productService.deleteByBusinessId(businessExists._id);
-            if (businessExists.logo) await CloudStorage.deleteImage(businessExists.logo);
+            if (businessExists.logo && !businessExists.logo.includes('default')) {
+                await CloudStorage.deleteImage(businessExists.logo);
+            }
             if (businessExists.images.length !== 0) {
                 businessExists.images.forEach(async (image) => {
                     await CloudStorage.deleteImage(image);
-                    await _businessRepository.update(id, { disabled: true, active: false, logo: '', images: [] });
                 });
             }
+            await _businessRepository.update(id, { disabled: true, active: false, logo: '', images: [] });
         } catch (err) {
             console.log(err);
         }
@@ -138,7 +140,9 @@ class BusinessService extends BaseService {
             throw error;
         }
         const urlLogo = `${id}/${filename}`;
-        if (businessExists.logo) await CloudStorage.deleteImage(businessExists.logo);
+        if (businessExists.logo && !businessExists.logo.includes('default')) {
+            await CloudStorage.deleteImage(businessExists.logo);
+        }
         await CloudStorage.saveImage(filename, urlLogo);
         await _businessRepository.update(id, {
             logo: urlLogo,
