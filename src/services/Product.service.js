@@ -74,7 +74,7 @@ class ProductService extends BaseService {
                 await CloudStorage.deleteImage(urlImage);
             });
         }
-        return _businessRepository.update(id, entity);
+        return _productRepository.update(id, entity);
     }
 
     async delete(idProduct) {

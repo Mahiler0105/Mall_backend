@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node build/index.js",
-    "build": "npm run test && babel src --out-dir build --copy-files",
+    "babel": "babel src --out-dir build --copy-files",
+    "build": "npm run test && npm run babel",
     "dev": "nodemon --exec babel-node src/index.js",
     "test": "jest",
     "lint": "eslint . --fix"
