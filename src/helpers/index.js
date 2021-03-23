@@ -4,4 +4,5 @@ module.exports = {
   SendEmail: require('./email.helper'),
   CloudStorage: require('./cloudStorage.helper'),
   GetDNI: require('./getDNI.helper'),
+  GetRUC: require('./getRUC.helper'),
 };

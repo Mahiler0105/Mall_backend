@@ -35,6 +35,12 @@ class AuthController {
     return res.send(userDni);
   }
 
+  async getRuc(req, res) {
+    const { ruc } = req.params;
+    const userRuc = await _authService.getRuc(ruc);
+    return res.send(userRuc);
+  }
+
   async forgotPassword(req, res) {
     const { email } = req.params;
     const response = await _authService.forgotPassword(email);

@@ -1,7 +1,7 @@
 const { genSaltSync, hashSync } = require("bcryptjs");
 const moment = require("moment");
 const { generateToken } = require("../helpers/jwt.helper");
-const { GetDNI, SendEmail } = require("../helpers");
+const { GetDNI, GetRUC, SendEmail } = require("../helpers");
 
 const { JWT_SECRET } = require("../config");
 
@@ -136,6 +136,10 @@ class AuthService {
 
   async getDni(dni) {
     return GetDNI(dni);
+  }
+
+  async getRuc(ruc) {
+    return GetRUC(ruc);
   }
 
   async forgotPassword(email) {
