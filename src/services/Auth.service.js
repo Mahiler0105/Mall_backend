@@ -1,6 +1,6 @@
 const { genSaltSync, hashSync } = require('bcryptjs');
 const moment = require('moment');
-const { generateToken } = require('../helpers/jwt.helper');
+const { generateToken, decodeToken } = require('../helpers/jwt.helper');
 const { GetDNI, GetRUC, SendEmail } = require('../helpers');
 
 const { JWT_SECRET } = require('../config');
@@ -90,66 +90,40 @@ class AuthService {
         }
     }
 
-    /**
-     *
-     * @param {*} business
-     */
-    async signInBusiness(business) {
-        const { email, dni, password } = business;
-        let businessExist;
-        if (email) businessExist = await _businessRepository.getBusinessByEmail(email);
-        else businessExist = await _businessRepository.getBusinessByDni(dni);
-
-        if (!businessExist) {
-            const error = new Error();
+    async signInOauth(entity) {
+        const { email, password, token: jwt } = entity;
+        let emailEntity = email;
+        let entityRol = 'business';
+        if (!email && !password) {
+            const payload = decodeToken(jwt);
+            if (payload.iss.includes('google')) emailEntity = payload.email;
+            else emailEntity = payload.preferred_username;
+        }
+        let entityLogin = await _businessRepository.getBusinessByEmail(emailEntity);
+        if (!entityLogin) {
+            entityLogin = await _customerRepository.getCustomerByEmail(emailEntity);
+            entityRol = 'customer';
+        }
+        if (!entityLogin) {
+            const error = new Error('Entity does not exist');
             error.status = 404;
-            error.message = 'Business does not exist';
             throw error;
         }
-        const validPassword = businessExist.comparePasswords(password);
-        if (!validPassword) {
-            const error = new Error();
-            error.status = 400;
-            error.message = 'Invalid Password';
-            throw error;
+        if (password) {
+            const validPassword = entityLogin.comparePasswords(password);
+            if (!validPassword) {
+                const error = new Error('Invalid Password');
+                error.status = 400;
+                throw error;
+            }
         }
-        const businessToEncode = {
-            id: businessExist._id,
-            email: businessExist.email,
-            rol: 'business',
+        const entityToEncode = {
+            id: entityLogin._id,
+            email: entityLogin.email,
+            rol: entityRol,
         };
-        const token = generateToken(businessToEncode);
-        return { token, business: businessExist };
-    }
-
-    /**
-     *
-     * @param {*} customer
-     */
-    async signInCustomer(customer) {
-        const { email, password } = customer;
-        const customerExist = await _customerRepository.getCustomerByEmail(email);
-        if (!customerExist) {
-            const error = new Error();
-            error.status = 404;
-            error.message = 'Customer does not exist';
-            throw error;
-        }
-        const validPassword = customerExist.comparePasswords(password);
-        if (!validPassword) {
-            const error = new Error();
-            error.status = 400;
-            error.message = 'Invalid Password';
-            throw error;
-        }
-        const customerToEncode = {
-            id: customerExist._id,
-            email: customerExist.email,
-            dni: customerExist.dni,
-            rol: 'customer',
-        };
-        const token = generateToken(customerToEncode);
-        return { token, customer: customerExist };
+        const token = generateToken(entityToEncode);
+        return { token, [entityRol]: entityLogin };
     }
 
     async getDni(dni) {
