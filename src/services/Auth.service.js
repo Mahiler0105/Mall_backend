@@ -171,7 +171,7 @@ class AuthService {
      async validateKey(id, key, rol) {
           const error = new Error();
           let businessExists; let customerExists;
-          if (rol === 0) {
+          if (rol === "0") {
                customerExists = await _customerRepository.get(id);
                if (!customerExists) {
                     error.status = 404;
@@ -180,7 +180,7 @@ class AuthService {
                }
                if (customerExists.urlReset.url !== key) return false;
                return true;
-          } if (rol === 1) {
+          } if (rol === "1") {
                businessExists = await _businessRepository.get(id);
                if (!businessExists) {
                     error.status = 404;
