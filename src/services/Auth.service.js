@@ -65,7 +65,7 @@ class AuthService {
             error.message = 'Customer already exists';
             throw error;
         } else {
-            const customerEntity = business;
+            const customerEntity = customer;
             delete customerEntity.source;
             const customerCreated = await _customerRepository.create(customerEntity);
             const salt = genSaltSync(5);

@@ -134,7 +134,9 @@ const BusinessSchema = new Schema(
                bankDeposit: { type: Boolean, default: false },
                wireTransfer: { type: Boolean, default: false },
           },
-          business_type: { type: Number, enum: [1, 2], required: true },// RUC10, RUC20
+          businessType: { type: Number, enum: [1, 2], required: true }, // RUC10, RUC20
+          ruc: { type: Number, maxlength: 11, minlength: 11 },// LENGTH 11
+
           password: { type: String },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
