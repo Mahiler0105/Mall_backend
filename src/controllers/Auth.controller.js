@@ -48,8 +48,8 @@ class AuthController {
     }
 
     async validateKey(req, res) {
-        const { userId, key } = req.params;
-        const response = await _authService.validateKey(userId, key);
+        const { userId, key, rol } = req.params;
+        const response = await _authService.validateKey(userId, key, rol);
         return res.send(response);
     }
 

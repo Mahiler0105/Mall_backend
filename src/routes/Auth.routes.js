@@ -9,7 +9,7 @@ module.exports = function ({ AuthController }) {
     router.get('/dni/:dni', AuthController.getDni); // 😁
     router.get('/ruc/:ruc', AuthController.getRuc); // 😁
     router.post('/forgotpassword/:email', AuthController.forgotPassword); // 😁
-    router.get('/validatekey/:userId/:key', AuthController.validateKey); // 😁
+    router.get('/validatekey/:userId/:key/:rol', AuthController.validateKey); // 😁
     router.delete('/deletekeys', AuthController.deleteKeys); // 😁
     return router;
 };
