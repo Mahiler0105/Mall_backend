@@ -104,7 +104,7 @@ class AuthService {
             entityLogin = await _customerRepository.getCustomerByEmail(emailEntity);
             entityRol = 'customer';
         }
-        if (!entityLogin) {
+        if (!entityLogin || entityLogin.disabled) {
             const error = new Error('Entity does not exist');
             error.status = 404;
             throw error;
