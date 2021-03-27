@@ -14,7 +14,7 @@ module.exports = {
         second_lname: 'Mamani',
         birthdate: '',
         sex: true,
-        dni: '72797033',
+        // dni: '72797033',
         phone: '945373476',
         email: 'fernan@gmail.com',
         cart: [],

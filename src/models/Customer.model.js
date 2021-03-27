@@ -22,12 +22,12 @@ const CustomerSchema = new Schema(
         second_lname: { type: String },
         birthdate: { type: String },
         sex: { type: Boolean },
-        dni: {
-            type: String,
-            required: true,
-            maxlength: 8,
-            minlength: 8,
-        },
+        // dni: {
+        //     type: String,
+        //     required: true,
+        //     maxlength: 8,
+        //     minlength: 8,
+        // },
         phone: { type: String, maxlength: 9, minlength: 9 },
         email: {
             type: String,
