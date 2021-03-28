@@ -19,7 +19,7 @@ class AuthService {
       * @param {*} business
       */
      async signUpBusiness(business) {
-          const { email, source, token:jwt } = business;
+          const { email, source, token: jwt } = business;
           const businessExist = await _businessRepository.getBusinessByEmail(email);
           const error = new Error();
           if (businessExist) {
@@ -155,14 +155,21 @@ class AuthService {
                entityLogin = await _customerRepository.getCustomerByEmail(emailEntity);
                entityRol = "customer";
           }
+
+          const error = new Error();
           if (!entityLogin || entityLogin.disabled) {
-               const error = new Error("Entity does not exist");
+               error.message = "Entity does not exist";
                error.status = 404;
+               throw error;
+          }
+          if (entityLogin.urlReset.url) {
+               error.message = "Account not confirmed yet";
+               error.status = 400;
                throw error;
           }
           const validPassword = entityLogin.comparePasswords(password || accessEntity);
           if (!validPassword) {
-               const error = new Error(password ? "Invalid Password" : "Account does not exist");
+               error.message = password ? "Invalid Password" : "Account does not exist";
                error.status = 400;
                throw error;
           }
