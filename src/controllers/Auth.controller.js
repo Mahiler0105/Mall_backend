@@ -45,6 +45,13 @@ class AuthController {
         const { emailUser } = req.params;
         const validate = await _authService.validateUser(emailUser);
         return res.send(validate);
+    
+    }
+
+    async confirmOauth(req, res) {
+        const {body} = req;
+        const validate = await _authService.confirmOauth(body);
+        return res.send(validate);
     }
 
     async validateKey(req, res) {

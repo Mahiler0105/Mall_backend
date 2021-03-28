@@ -261,6 +261,27 @@ class AuthService {
           return false;
      }
 
+     async confirmOauth(params) {
+          const { rsp, nst, knc, nfr, mth, vng, lgn, nbl, dsr } = params;
+          let _token;
+          if (rsp && nst && knc && nfr && mth && vng && lgn && nbl && dsr) {
+               _token = String(rsp).concat(nst, knc, nfr, mth, vng, lgn, nbl, dsr);
+               if (_token.split(".").length === 3) {
+                    try {
+                         const payload = decodeToken(_token);
+                         if (payload.sub) return true;
+                    } catch (error) {
+                         return false;
+                    }
+               } else {
+                    const { id } = GetFacebookId(_token);
+                    if (id) return true;
+                    return false;
+               }
+          }
+          return false;
+     }
+
      async deleteKeys() {
           const businesses = await _businessRepository.getAll();
           const customers = await _customerRepository.getAll();
