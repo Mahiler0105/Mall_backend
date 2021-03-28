@@ -262,20 +262,37 @@ class AuthService {
      }
 
      async confirmOauth(params) {
-          const { rsp, nst, knc, nfr, mth, vng, lgn, nbl, dsr } = params;
+          const { rsp, nst, knc, nfr, mth, vng, lgn, nbl, dsr, id } = params;
+          const businessExists = await _businessRepository.get(id);
+          const customerExists = await _customerRepository.get(id);
+          if (!customerExists && !businessExists) return false;
+
+          const _data = { urlReset: { url: "", created: new Date() } };
           let _token;
           if (rsp && nst && knc && nfr && mth && vng && lgn && nbl && dsr) {
                _token = String(rsp).concat(nst, knc, nfr, mth, vng, lgn, nbl, dsr);
                if (_token.split(".").length === 3) {
                     try {
                          const payload = decodeToken(_token);
-                         if (payload.sub) return true;
+                         if (payload.sub) {
+                              let _result;
+                              if (customerExists) _result = _customerRepository.update(id, _data);
+                              else _result = _businessRepository.update(id, _data);
+                              if (!_result) return false;
+                              return true;
+                         }
                     } catch (error) {
                          return false;
                     }
                } else {
-                    const { id } = GetFacebookId(_token);
-                    if (id) return true;
+                    const { id: idw } = GetFacebookId(_token);
+                    if (idw) {
+                         let _result;
+                         if (customerExists) _result = _customerRepository.update(id, _data);
+                         else _result = _businessRepository.update(id, _data);
+                         if (!_result) return false;
+                         return true;
+                    }
                     return false;
                }
           }
