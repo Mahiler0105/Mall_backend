@@ -5,4 +5,5 @@ module.exports = {
   CloudStorage: require('./cloudStorage.helper'),
   GetDNI: require('./getDNI.helper'),
   GetRUC: require('./getRUC.helper'),
+  GetFacebookId: require('./facebook.helper')
 };

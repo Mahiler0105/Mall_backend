@@ -1,7 +1,7 @@
 const { genSaltSync, hashSync } = require("bcryptjs");
 const moment = require("moment");
 const { generateToken, decodeToken } = require("../helpers/jwt.helper");
-const { GetDNI, GetRUC, SendEmail } = require("../helpers");
+const { GetDNI, GetRUC, SendEmail, GetFacebookId } = require("../helpers");
 
 const { JWT_SECRET } = require("../config");
 
@@ -19,16 +19,39 @@ class AuthService {
       * @param {*} business
       */
      async signUpBusiness(business) {
-          const { email, source } = business;
+          const { email, source, token:jwt } = business;
           const businessExist = await _businessRepository.getBusinessByEmail(email);
+          const error = new Error();
           if (businessExist) {
-               const error = new Error();
                error.status = 400;
                error.message = "Business already exists";
                throw error;
           } else {
                const businessEntity = business;
                delete businessEntity.source;
+
+               if (source !== "email") {
+                    const saltSource = genSaltSync(10);
+                    if (source === "facebook") {
+                         const { id } = await GetFacebookId(jwt);
+
+                         if (id) businessEntity.password = hashSync(id, saltSource);
+                         else {
+                              error.status = 400;
+                              error.message = "Invalid token";
+                              throw error;
+                         }
+                    } else {
+                         const payload = decodeToken(jwt);
+                         if (payload.sub) businessEntity.password = hashSync(payload.sub, saltSource);
+                         else {
+                              error.status = 400;
+                              error.message = "Invalid token";
+                              throw error;
+                         }
+                    }
+               }
+
                const businessCreated = await _businessRepository.create(businessEntity);
                const salt = genSaltSync(5);
                const hashedPassowrd = hashSync(`${JWT_SECRET}${businessCreated._id}`, salt);
@@ -57,16 +80,38 @@ class AuthService {
       * @param {*} customer
       */
      async signUpCustomer(customer) {
-          const { email, source } = customer;
+          const { email, source, token: jwt } = customer;
           const customerExist = await _customerRepository.getCustomerByEmail(email);
+          const error = new Error();
           if (customerExist) {
-               const error = new Error();
                error.status = 400;
                error.message = "Customer already exists";
                throw error;
           } else {
                const customerEntity = customer;
                delete customerEntity.source;
+
+               if (source !== "email") {
+                    const saltSource = genSaltSync(10);
+                    if (source === "facebook") {
+                         const { id } = await GetFacebookId(jwt);
+
+                         if (id) customerEntity.password = hashSync(id, saltSource);
+                         else {
+                              error.status = 400;
+                              error.message = "Invalid token";
+                              throw error;
+                         }
+                    } else {
+                         const payload = decodeToken(jwt);
+                         if (payload.sub) customerEntity.password = hashSync(payload.sub, saltSource);
+                         else {
+                              error.status = 400;
+                              error.message = "Invalid token";
+                              throw error;
+                         }
+                    }
+               }
                const customerCreated = await _customerRepository.create(customerEntity);
                const salt = genSaltSync(5);
                const hashedPassowrd = hashSync(`${JWT_SECRET}${customerCreated._id}`, salt);
@@ -92,12 +137,18 @@ class AuthService {
 
      async signInOauth(entity) {
           const { email, password, token: jwt } = entity;
+          let accessEntity;
           let emailEntity = email;
           let entityRol = "business";
           if (!email && !password) {
                const payload = decodeToken(jwt);
                if (payload.iss.includes("google")) emailEntity = payload.email;
                else emailEntity = payload.preferred_username;
+               accessEntity = payload.sub;
+          }
+          if (email && !password) {
+               const { id } = await GetFacebookId(jwt);
+               accessEntity = id;
           }
           let entityLogin = await _businessRepository.getBusinessByEmail(emailEntity);
           if (!entityLogin) {
@@ -109,14 +160,13 @@ class AuthService {
                error.status = 404;
                throw error;
           }
-          if (password) {
-               const validPassword = entityLogin.comparePasswords(password);
-               if (!validPassword) {
-                    const error = new Error("Invalid Password");
-                    error.status = 400;
-                    throw error;
-               }
+          const validPassword = entityLogin.comparePasswords(password || accessEntity);
+          if (!validPassword) {
+               const error = new Error(password ? "Invalid Password" : "Account does not exist");
+               error.status = 400;
+               throw error;
           }
+
           const entityToEncode = {
                id: entityLogin._id,
                email: entityLogin.email,
@@ -170,7 +220,8 @@ class AuthService {
 
      async validateKey(id, key, rol) {
           const error = new Error();
-          let businessExists; let customerExists;
+          let businessExists;
+          let customerExists;
           if (rol === "0") {
                customerExists = await _customerRepository.get(id);
                if (!customerExists) {
@@ -180,7 +231,8 @@ class AuthService {
                }
                if (customerExists.urlReset.url !== key) return false;
                return true;
-          } if (rol === "1") {
+          }
+          if (rol === "1") {
                businessExists = await _businessRepository.get(id);
                if (!businessExists) {
                     error.status = 404;
