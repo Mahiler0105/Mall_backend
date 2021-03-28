@@ -285,7 +285,7 @@ class AuthService {
                          return false;
                     }
                } else {
-                    const { id: idw } = GetFacebookId(_token);
+                    const { id: idw } = await GetFacebookId(_token);
                     if (idw) {
                          let _result;
                          if (customerExists) _result = _customerRepository.update(id, _data);
