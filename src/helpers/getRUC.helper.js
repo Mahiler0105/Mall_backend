@@ -26,7 +26,7 @@ const rucHandler = {
                     body: JSON.stringify(params),
                     headers: {
                          "Content-Type": "application/json",
-                         Authorization: token,
+                         authentication: token,
                     },
                     agent: httpAgent,
                });
