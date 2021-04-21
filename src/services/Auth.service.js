@@ -308,7 +308,7 @@ class AuthService {
                     urlReset: { url: '', created: new Date() },
                 });
             }
-            if (moment().diff(key.codeVerification.created, 'minutes') >= 10) {
+            if (moment().diff(key.codeVerification.created, 'minutes') >= 5) {
                 await _businessRepository.update(key._id, {
                     codeVerification: { code: '', created: new Date() },
                 });
@@ -320,7 +320,7 @@ class AuthService {
                     urlReset: { url: '', created: new Date() },
                 });
             }
-            if (moment().diff(key.codeVerification.created, 'minutes') >= 10) {
+            if (moment().diff(key.codeVerification.created, 'minutes') >= 5) {
                 await _customerRepository.update(key._id, {
                     codeVerification: { code: '', created: new Date() },
                 });
