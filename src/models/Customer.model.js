@@ -15,6 +15,10 @@ const CustomerSchema = new Schema(
             url: { type: String, default: '' },
             created: { type: Date, default: new Date() },
         },
+        codeVerification: {
+            code: { type: String, default: '' },
+            created: { type: Date, default: new Date() },
+        },
         language: { type: String },
         currency: { type: String, enum: ['PEN', 'USD'] },
         avatar: { type: String },
@@ -22,12 +26,6 @@ const CustomerSchema = new Schema(
         second_lname: { type: String },
         birthdate: { type: String },
         sex: { type: Boolean },
-        // dni: {
-        //     type: String,
-        //     required: true,
-        //     maxlength: 8,
-        //     minlength: 8,
-        // },
         phone: { type: String, maxlength: 9, minlength: 9 },
         email: {
             type: String,

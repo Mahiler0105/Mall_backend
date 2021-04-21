@@ -45,11 +45,10 @@ class AuthController {
         const { emailUser } = req.params;
         const validate = await _authService.validateUser(emailUser);
         return res.send(validate);
-    
     }
 
     async confirmOauth(req, res) {
-        const {body} = req;
+        const { body } = req;
         const validate = await _authService.confirmOauth(body);
         return res.send(validate);
     }
@@ -63,6 +62,27 @@ class AuthController {
     async deleteKeys(req, res) {
         const response = await _authService.deleteKeys();
         return res.send(response);
+    }
+
+    async verifyPassword(req, res) {
+        const {
+            body,
+            params: { id },
+        } = req;
+        const responseVP = await _authService.verifyPassword(id, body);
+        return res.send(responseVP);
+    }
+
+    async changeEmail(req, res) {
+        const { body } = req;
+        const responseCP = await _authService.changeEmail(body);
+        return res.send(responseCP);
+    }
+
+    async verifyCodeEmail(req, res) {
+        const { body } = req;
+        const responseVCE = await _authService.verifyCodeEmail(body);
+        return res.send(responseVCE);
     }
 }
 

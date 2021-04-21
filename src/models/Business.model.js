@@ -17,6 +17,10 @@ const BusinessSchema = new Schema(
             url: { type: String, default: '' },
             created: { type: Date, default: new Date() },
         },
+        codeVerification: {
+            code: { type: String, default: '' },
+            created: { type: Date, default: new Date() },
+        },
         language: { type: String },
         currency: { type: String, enum: ['PEN', 'USD'] },
         location: {
@@ -168,6 +172,7 @@ BusinessSchema.methods.getHome = function () {
     delete business.owner.sex;
     delete business.owner.dni;
     delete business.disabled;
+    delete business.codeVerification;
     return business;
 };
 
