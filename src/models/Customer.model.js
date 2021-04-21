@@ -38,6 +38,7 @@ const CustomerSchema = new Schema(
             department: { type: String, default: '' },
             province: { type: String, default: '' },
             district: { type: String, default: '' },
+            exact_address: { type: String, default: '' },
         },
         stripeId: { type: String },
         cards: [

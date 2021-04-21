@@ -4,6 +4,7 @@ module.exports = {
             latitude: '-50.000',
             longitude: '-50.000',
             department: 'Arequipa',
+            exact_address: 'Urbanizacion',
             province: 'Arequipa',
             district: 'Distrito',
         },
