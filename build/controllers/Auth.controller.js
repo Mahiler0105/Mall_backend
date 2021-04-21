@@ -88,6 +88,33 @@ class AuthController {
     return res.send(response);
   }
 
+  async verifyPassword(req, res) {
+    const {
+      body,
+      params: {
+        id
+      }
+    } = req;
+    const responseVP = await _authService.verifyPassword(id, body);
+    return res.send(responseVP);
+  }
+
+  async changeEmail(req, res) {
+    const {
+      body
+    } = req;
+    const responseCP = await _authService.changeEmail(body);
+    return res.send(responseCP);
+  }
+
+  async verifyCodeEmail(req, res) {
+    const {
+      body
+    } = req;
+    const responseVCE = await _authService.verifyCodeEmail(body);
+    return res.send(responseVCE);
+  }
+
 }
 
 module.exports = AuthController;

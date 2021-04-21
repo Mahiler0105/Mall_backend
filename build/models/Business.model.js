@@ -38,6 +38,16 @@ const BusinessSchema = new Schema({
       default: new Date()
     }
   },
+  codeVerification: {
+    code: {
+      type: String,
+      default: ''
+    },
+    created: {
+      type: Date,
+      default: new Date()
+    }
+  },
   language: {
     type: String
   },
@@ -323,6 +333,7 @@ BusinessSchema.methods.getHome = function () {
   delete business.owner.sex;
   delete business.owner.dni;
   delete business.disabled;
+  delete business.codeVerification;
   return business;
 };
 

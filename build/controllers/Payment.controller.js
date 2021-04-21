@@ -9,7 +9,7 @@ class PaymentController {
     _paymentService = PaymentService;
   }
 
-  async getCustomers(req, res) {
+  async getCustomers(_, res) {
     const customers = await _paymentService.getCustomers();
     return res.status(200).send(customers);
   }
@@ -129,6 +129,19 @@ class PaymentController {
     } = req.params;
     const getPayment = await _paymentService.getPaymentIntent(id);
     return res.status(200).send(getPayment);
+  }
+
+  async mercadoPago(req, res) {
+    const {
+      body
+    } = req;
+    const getPaymentMercadoPago = await _paymentService.mercadoPago(body);
+    return res.status(200).send(getPaymentMercadoPago);
+  }
+
+  async createUserMP(req, res) {
+    const userMp = await _paymentService.createUserMP();
+    return res.status(200).send(userMp);
   }
 
 }

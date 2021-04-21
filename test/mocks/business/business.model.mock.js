@@ -65,6 +65,10 @@ module.exports = {
                wireTransfer: false,
                yape: false,
           },
+          codeVerification: {
+               code: "",
+               created: "2021-04-21T20:48:24.769Z",
+          },
           images: ["https://www.siama.app", "https://www.siama.app", "https://www.siama.app"],
           subCategories: ["PriCat", "SecCat", "TerCat"],
           _id: "5f9b4d844c990017f381a76a",

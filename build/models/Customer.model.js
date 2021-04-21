@@ -31,6 +31,16 @@ const CustomerSchema = new Schema({
       default: new Date()
     }
   },
+  codeVerification: {
+    code: {
+      type: String,
+      default: ''
+    },
+    created: {
+      type: Date,
+      default: new Date()
+    }
+  },
   language: {
     type: String
   },
@@ -53,12 +63,6 @@ const CustomerSchema = new Schema({
   sex: {
     type: Boolean
   },
-  // dni: {
-  //     type: String,
-  //     required: true,
-  //     maxlength: 8,
-  //     minlength: 8,
-  // },
   phone: {
     type: String,
     maxlength: 9,
