@@ -17,6 +17,7 @@ const BusinessSchema = new Schema(
             url: { type: String, default: '' },
             created: { type: Date, default: new Date() },
         },
+        source: { type: String, enum: ["google", "facebook", "microsoft", "email"] },
         codeVerification: {
             code: { type: String, default: '' },
             created: { type: Date, default: new Date() },
@@ -150,6 +151,7 @@ BusinessSchema.methods.toJSON = function () {
     const business = this.toObject();
     delete business.password;
     delete business.billing;
+    delete business.source;
     return business;
 };
 
@@ -173,6 +175,7 @@ BusinessSchema.methods.getHome = function () {
     delete business.owner.dni;
     delete business.disabled;
     delete business.codeVerification;
+    delete business.source;
     return business;
 };
 

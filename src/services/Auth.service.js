@@ -28,7 +28,7 @@ class AuthService {
             throw error;
         } else {
             const businessEntity = business;
-            delete businessEntity.source;
+            // delete businessEntity.source;
 
             if (source !== 'email') {
                 const saltSource = genSaltSync(10);
@@ -89,7 +89,7 @@ class AuthService {
             throw error;
         } else {
             const customerEntity = customer;
-            delete customerEntity.source;
+            // delete customerEntity.source;
 
             if (source !== 'email') {
                 const saltSource = genSaltSync(10);
@@ -204,6 +204,12 @@ class AuthService {
             const error = new Error();
             error.status = 400;
             error.message = 'Already exists key email';
+            throw error;
+        }
+        if ((businessExists && businessExists.source !== 'email') || (customerExists && customerExists.source !== 'email')) {
+            const error = new Error();
+            error.status = 400;
+            error.message = 'You do not have permissions';
             throw error;
         }
         const salt = genSaltSync(5);
