@@ -123,7 +123,7 @@ class AuthService {
                 });
             } else {
                 const cryptSource = Buffer.from(source).toString('base64');
-                await SendEmail(customerCreated.email, 'Confirmación cuenta', 'confirm', {
+                await SendEmail(customerCreated.email, 'Confirmación de cuenta', 'confirm', {
                     endpoint: `oauth/confirm/${keyReset}/${customerCreated._id}/0/${cryptSource}`,
                     name: customerCreated.name.toUpperCase(),
                 });
@@ -209,7 +209,7 @@ class AuthService {
         const salt = genSaltSync(5);
         const hashedPassowrd = hashSync(`${JWT_SECRET}${businessExists ? businessExists._id : customerExists._id}`, salt);
         const keyReset = Buffer.from(hashedPassowrd).toString('base64');
-        const responseEmail = await SendEmail(email, 'Recuperación de contraseña', 'reset', {
+        const responseEmail = await SendEmail(email, 'LERIETMALL: Recuperación de contraseña', 'reset', {
             endpoint: `changepassword/${keyReset}/${businessExists ? businessExists._id : customerExists._id}/${businessExists ? 1 : 0}`,
             name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
         });
@@ -346,7 +346,7 @@ class AuthService {
         if (businessExists?.comparePasswords(oldPassword) || customerExists?.comparePasswords(oldPassword)) {
             if (businessExists) await _businessRepository.update(id, { password: newPassword });
             else await _customerRepository.update(id, { password: newPassword });
-            return SendEmail(businessExists ? businessExists.email : customerExists.email, 'Aviso Cambio de Contraseña', 'change_pass', {
+            return SendEmail(businessExists ? businessExists.email : customerExists.email, 'LERIETMALL: Tu contraseña ha sido cambiada', 'change_pass', {
                 name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
             });
         }
@@ -375,7 +375,7 @@ class AuthService {
         const codeVerification = Math.random().toString(36).substr(2, 6).toUpperCase();
         if (businessExists) await _businessRepository.update(businessExists._id, { codeVerification: { code: codeVerification, created: new Date() } });
         else await _customerRepository.update(customerExists.id, { codeVerification: { code: codeVerification, created: new Date() } });
-        return SendEmail(businessExists ? businessExists.email : customerExists.email, 'Codigo de confirmación cambio de Email', 'change_email', {
+        return SendEmail(businessExists ? businessExists.email : customerExists.email, 'LERIETMALL: CODIGO de confirmación', 'change_email', {
             name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
             code_verification: codeVerification,
         });
