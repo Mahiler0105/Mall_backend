@@ -208,7 +208,7 @@ class AuthService {
         }
         if ((businessExists && businessExists.source !== 'email') || (customerExists && customerExists.source !== 'email')) {
             const error = new Error();
-            error.status = 400;
+            error.status = 405;
             error.message = 'You do not have permissions';
             throw error;
         }

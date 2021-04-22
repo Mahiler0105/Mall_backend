@@ -39,6 +39,13 @@ class CustomerService extends BaseService {
 
     const newEntity = entity;
 
+    if (newEntity.source) {
+      const error = new Error();
+      error.status = 400;
+      error.message = 'You do not have permission';
+      throw error;
+    }
+
     if (newEntity.password) {
       newEntity.urlReset = {
         url: '',

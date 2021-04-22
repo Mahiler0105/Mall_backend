@@ -19,7 +19,7 @@ module.exports = function ({
 
   router.post("/avatar/:customerId", [StorageMiddleware], CustomerController.saveAvatar); // 😁
 
-  router.patch("/:customerId", CustomerController.update); // 😁
+  router.patch("/:customerId", [AuthMiddleware], CustomerController.update); // 😁
 
   router.delete("/:customerId", [AuthMiddleware], CustomerController.delete); // 😁
 

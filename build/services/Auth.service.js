@@ -54,8 +54,7 @@ class AuthService {
       error.message = 'Business already exists';
       throw error;
     } else {
-      const businessEntity = business;
-      delete businessEntity.source;
+      const businessEntity = business; // delete businessEntity.source;
 
       if (source !== 'email') {
         const saltSource = genSaltSync(10);
@@ -126,8 +125,7 @@ class AuthService {
       error.message = 'Customer already exists';
       throw error;
     } else {
-      const customerEntity = customer;
-      delete customerEntity.source;
+      const customerEntity = customer; // delete customerEntity.source;
 
       if (source !== 'email') {
         const saltSource = genSaltSync(10);
@@ -163,7 +161,7 @@ class AuthService {
         });
       } else {
         const cryptSource = Buffer.from(source).toString('base64');
-        await SendEmail(customerCreated.email, 'Confirmación cuenta', 'confirm', {
+        await SendEmail(customerCreated.email, 'Confirmación de cuenta', 'confirm', {
           endpoint: `oauth/confirm/${keyReset}/${customerCreated._id}/0/${cryptSource}`,
           name: customerCreated.name.toUpperCase()
         });
@@ -269,10 +267,17 @@ class AuthService {
       throw error;
     }
 
+    if (businessExists && businessExists.source !== 'email' || customerExists && customerExists.source !== 'email') {
+      const error = new Error();
+      error.status = 400;
+      error.message = 'You do not have permissions';
+      throw error;
+    }
+
     const salt = genSaltSync(5);
     const hashedPassowrd = hashSync(`${JWT_SECRET}${businessExists ? businessExists._id : customerExists._id}`, salt);
     const keyReset = Buffer.from(hashedPassowrd).toString('base64');
-    const responseEmail = await SendEmail(email, 'Recuperación de contraseña', 'reset', {
+    const responseEmail = await SendEmail(email, 'LERIETMALL: Recuperación de contraseña', 'reset', {
       endpoint: `changepassword/${keyReset}/${businessExists ? businessExists._id : customerExists._id}/${businessExists ? 1 : 0}`,
       name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase()
     });
@@ -414,7 +419,7 @@ class AuthService {
         });
       }
 
-      if (moment().diff(key.codeVerification.created, 'minutes') >= 10) {
+      if (moment().diff(key.codeVerification.created, 'minutes') >= 5) {
         await _businessRepository.update(key._id, {
           codeVerification: {
             code: '',
@@ -433,7 +438,7 @@ class AuthService {
         });
       }
 
-      if (moment().diff(key.codeVerification.created, 'minutes') >= 10) {
+      if (moment().diff(key.codeVerification.created, 'minutes') >= 5) {
         await _customerRepository.update(key._id, {
           codeVerification: {
             code: '',
@@ -472,7 +477,7 @@ class AuthService {
       });else await _customerRepository.update(id, {
         password: newPassword
       });
-      return SendEmail(businessExists ? businessExists.email : customerExists.email, 'Aviso Cambio de Contraseña', 'change_pass', {
+      return SendEmail(businessExists ? businessExists.email : customerExists.email, 'LERIETMALL: Tu contraseña ha sido cambiada', 'change_pass', {
         name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase()
       });
     }
@@ -520,7 +525,7 @@ class AuthService {
         created: new Date()
       }
     });
-    return SendEmail(businessExists ? businessExists.email : customerExists.email, 'Codigo de confirmación cambio de Email', 'change_email', {
+    return SendEmail(businessExists ? businessExists.email : customerExists.email, 'LERIETMALL: CODIGO de confirmación', 'change_email', {
       name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
       code_verification: codeVerification
     });

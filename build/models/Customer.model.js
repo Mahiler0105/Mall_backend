@@ -1,12 +1,12 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const {
   compareSync,
   genSaltSync,
   hashSync
-} = require('bcryptjs');
+} = require("bcryptjs");
 
 const {
   Schema
@@ -24,17 +24,21 @@ const CustomerSchema = new Schema({
   urlReset: {
     url: {
       type: String,
-      default: ''
+      default: ""
     },
     created: {
       type: Date,
       default: new Date()
     }
   },
+  source: {
+    type: String,
+    enum: ["google", "facebook", "microsoft", "email"]
+  },
   codeVerification: {
     code: {
       type: String,
-      default: ''
+      default: ""
     },
     created: {
       type: Date,
@@ -46,7 +50,7 @@ const CustomerSchema = new Schema({
   },
   currency: {
     type: String,
-    enum: ['PEN', 'USD']
+    enum: ["PEN", "USD"]
   },
   avatar: {
     type: String
@@ -71,32 +75,32 @@ const CustomerSchema = new Schema({
   email: {
     type: String,
     required: true,
-    validate: [validateEmail, 'Please fill a valid email address']
+    validate: [validateEmail, "Please fill a valid email address"]
   },
   address: {
     latitude: {
       type: String,
-      default: ''
+      default: ""
     },
     longitude: {
       type: String,
-      default: ''
+      default: ""
     },
     department: {
       type: String,
-      default: ''
+      default: ""
     },
     province: {
       type: String,
-      default: ''
+      default: ""
     },
     district: {
       type: String,
-      default: ''
+      default: ""
     },
     exact_address: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   stripeId: {
@@ -123,7 +127,7 @@ const CustomerSchema = new Schema({
     type: new Schema({
       productId: {
         type: Schema.Types.ObjectId,
-        ref: 'product',
+        ref: "product",
         required: false,
         autopopulate: false
       },
@@ -164,6 +168,7 @@ CustomerSchema.methods.toJSON = function () {
   delete customer.password;
   delete customer.disabled;
   delete customer.billing;
+  delete customer.source;
   return customer;
 };
 
@@ -171,7 +176,7 @@ CustomerSchema.methods.comparePasswords = function (pass) {
   return compareSync(pass, this.password);
 };
 
-CustomerSchema.pre('findOneAndUpdate', async function (next) {
+CustomerSchema.pre("findOneAndUpdate", async function (next) {
   const customer = this;
 
   if (customer._update && customer._update.password) {
@@ -183,4 +188,4 @@ CustomerSchema.pre('findOneAndUpdate', async function (next) {
 
   next();
 });
-module.exports = mongoose.model('Customer', CustomerSchema);
+module.exports = mongoose.model("Customer", CustomerSchema);
