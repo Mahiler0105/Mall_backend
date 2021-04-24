@@ -7,12 +7,14 @@ module.exports = {
                exact_address: "Urbanizacion",
                province: "Arequipa",
                district: "Distrito",
+               zip_code: "04017"
           },
-          document: {
-               doc_number: "72797033",
-               doc_type: "DNI",
-          },
-        
+          documents: [
+               {
+                    doc_number: "72797033",
+                    doc_type: "DNI",
+               },
+          ],
           preferences: ["aea", "anuma"],
           _id: "5f9b40f72689d77ae41c5abe",
           name: "Fernando",
@@ -37,30 +39,30 @@ module.exports = {
 };
 
 //   {
-        //     "id": "DNI",
-        //     "name": "DNI",
-        //     "type": "number",
-        //     "min_length": 8,
-        //     "max_length": 8
-        // },
-        // {
-        //     "id": "C.E",
-        //     "name": "C.E",
-        //     "type": "number",
-        //     "min_length": 8,
-        //     "max_length": 12
-        // },
-        // {
-        //     "id": "RUC",
-        //     "name": "RUC",
-        //     "type": "string",
-        //     "min_length": 11,
-        //     "max_length": 12
-        // },
-        // {
-        //     "id": "Otro",
-        //     "name": "Otro",
-        //     "type": "number",
-        //     "min_length": 5,
-        //     "max_length": 20
-        // }
+//     "id": "DNI",
+//     "name": "DNI",
+//     "type": "number",
+//     "min_length": 8,
+//     "max_length": 8
+// },
+// {
+//     "id": "C.E",
+//     "name": "C.E",
+//     "type": "number",
+//     "min_length": 8,
+//     "max_length": 12
+// },
+// {
+//     "id": "RUC",
+//     "name": "RUC",
+//     "type": "string",
+//     "min_length": 11,
+//     "max_length": 12
+// },
+// {
+//     "id": "Otro",
+//     "name": "Otro",
+//     "type": "number",
+//     "min_length": 5,
+//     "max_length": 20
+// }

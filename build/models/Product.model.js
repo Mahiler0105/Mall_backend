@@ -1,6 +1,6 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const {
   Schema
@@ -54,7 +54,7 @@ const ProductSchema = new Schema({
   },
   category: {
     type: String,
-    enum: ['consumer_electronic', 'clothing_apparel', 'home_garden_kitchen', 'health_beauty', 'yewerly_watches', 'computer_technology', 'babies_moms', 'sport_outdoor', 'books_office', 'cars_motocycles', 'home_improments', 'services']
+    enum: ["consumer_electronic", "clothing_apparel", "home_garden_kitchen", "health_beauty", "yewerly_watches", "computer_technology", "babies_moms", "sport_outdoor", "books_office", "cars_motocycles", "home_improments", "services"]
   },
   subCategory: {
     type: String
@@ -71,9 +71,35 @@ const ProductSchema = new Schema({
       _id: false
     })
   },
+  delivery: {
+    enabled: {
+      type: Boolean
+    },
+    options: [{
+      type: new Schema({
+        name: {
+          type: String
+        },
+        type: {
+          type: String,
+          enum: ["own", "third_party"]
+        },
+        places: [{
+          type: String,
+          maxlength: 4,
+          minlength: 4
+        }],
+        price: {
+          type: Number
+        }
+      }, {
+        _id: false
+      })
+    }]
+  },
   businessId: {
     type: Schema.Types.ObjectId,
-    ref: 'business',
+    ref: "business",
     required: false,
     autopopulate: false
   }
@@ -93,4 +119,4 @@ ProductSchema.methods.getHome = function () {
   return product;
 };
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model("Product", ProductSchema);

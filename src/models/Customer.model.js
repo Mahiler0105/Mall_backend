@@ -27,10 +27,17 @@ const CustomerSchema = new Schema(
           second_lname: { type: String },
           birthdate: { type: String },
           sex: { type: Boolean },
-          document:{
-               doc_number: { type: String },
-               doc_type: { type: String, enum: ["DNI", "RUC", "C.E", "Otro"] },
-          },
+          documents: [
+               {
+                    type: new Schema(
+                         {
+                              doc_number: { type: String },
+                              doc_type: { type: String, enum: ["DNI", "RUC", "C.E", "Otro"] },
+                         },
+                         { _id: false }
+                    ),
+               },
+          ],
           phone: { type: String, maxlength: 9, minlength: 9 },
           email: {
                type: String,
@@ -44,7 +51,7 @@ const CustomerSchema = new Schema(
                province: { type: String, default: "" },
                district: { type: String, default: "" },
                exact_address: { type: String, default: "" },
-               zip_code: { type: String, default: ""}
+               zip_code: { type: String, default: "" },
           },
           stripeId: { type: String },
           cards: [

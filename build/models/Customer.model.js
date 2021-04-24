@@ -67,6 +67,19 @@ const CustomerSchema = new Schema({
   sex: {
     type: Boolean
   },
+  documents: [{
+    type: new Schema({
+      doc_number: {
+        type: String
+      },
+      doc_type: {
+        type: String,
+        enum: ["DNI", "RUC", "C.E", "Otro"]
+      }
+    }, {
+      _id: false
+    })
+  }],
   phone: {
     type: String,
     maxlength: 9,
@@ -99,6 +112,10 @@ const CustomerSchema = new Schema({
       default: ""
     },
     exact_address: {
+      type: String,
+      default: ""
+    },
+    zip_code: {
       type: String,
       default: ""
     }
