@@ -6,7 +6,8 @@ module.exports = function ({ CustomerController }) {
      router.get("", CustomerController.getAll); // 😁
      router.get("/:customerId", [AuthMiddleware], CustomerController.get); // 😁
      router.post("/avatar/:customerId", [StorageMiddleware], CustomerController.saveAvatar); // 😁
-     router.patch("/:customerId", [AuthMiddleware], CustomerController.update); // 😁
+     router.patch("/:customerId", CustomerController.update); // 😁
+     // router.patch("/:customerId", [AuthMiddleware], CustomerController.update); // 😁
      router.delete("/:customerId", [AuthMiddleware], CustomerController.delete); // 😁
      return router;
 };

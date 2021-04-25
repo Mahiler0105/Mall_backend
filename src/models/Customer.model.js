@@ -8,6 +8,31 @@ const validateEmail = function (email) {
      return re.test(email);
 };
 
+const validateDocs = function ({ list, active: { doc_number, doc_type } }) {
+     const M = {
+          DNI: { max: 8, min: 8 },
+          "C.E": { max: 12, min: 8 },
+          RUC: { max: 11, min: 11 },
+          Otro: { max: 20, min: 5 },
+     };
+     if (list.length > 2) return false;
+     var _pre = {},
+          pass = true;
+     list.forEach(function ({ doc_number, doc_type }) {
+          if (_pre[doc_number]) pass = false;
+          const { max, min } = M[doc_type];
+          const _l = doc_number.length;
+          if (_l < min || _l > max) pass = false;
+          _pre[doc_number] = true;
+     });
+     const _l = doc_number.length;
+     const { max, min } = M[doc_type];
+     if (_l < min || _l > max) pass = false;
+     return pass;
+};
+const docs = ["DNI", "RUC", "C.E", "Otro"];
+const sources = ["google", "facebook", "microsoft", "email"];
+
 const CustomerSchema = new Schema(
      {
           name: { type: String },
@@ -15,7 +40,7 @@ const CustomerSchema = new Schema(
                url: { type: String, default: "" },
                created: { type: Date, default: new Date() },
           },
-          source: { type: String, enum: ["google", "facebook", "microsoft", "email"] },
+          source: { type: String, enum: sources },
           codeVerification: {
                code: { type: String, default: "" },
                created: { type: Date, default: new Date() },
@@ -27,17 +52,36 @@ const CustomerSchema = new Schema(
           second_lname: { type: String },
           birthdate: { type: String },
           sex: { type: Boolean },
-          documents: [
-               {
-                    type: new Schema(
-                         {
-                              doc_number: { type: String },
-                              doc_type: { type: String, enum: ["DNI", "RUC", "C.E", "Otro"] },
+          documents: {
+               type: new Schema(
+                    {
+                         list: [
+                              {
+                                   type: new Schema(
+                                        {
+                                             doc_number: { type: String, required: true },
+                                             doc_type: { type: String, required: true, enum: docs },
+                                        },
+                                        { _id: false }
+                                   ),
+                                   required: true,
+                              },
+                         ],
+                         active: {
+                              type: new Schema(
+                                   {
+                                        doc_number: { type: String, required: true },
+                                        doc_type: { type: String, required: true, enum: docs },
+                                   },
+                                   { _id: false }
+                              ),
+                              required: true,
                          },
-                         { _id: false }
-                    ),
-               },
-          ],
+                    },
+                    { _id: false }
+               ),
+               validate: [validateDocs, "Invalid documents schema"],
+          },
           phone: { type: String, maxlength: 9, minlength: 9 },
           email: {
                type: String,

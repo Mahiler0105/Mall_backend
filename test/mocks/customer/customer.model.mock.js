@@ -7,14 +7,20 @@ module.exports = {
                exact_address: "Urbanizacion",
                province: "Arequipa",
                district: "Distrito",
-               zip_code: "04017"
+               zip_code: "04017",
           },
-          documents: [
-               {
+          documents: {
+               list: [
+                    {
+                         doc_number: "72797033",
+                         doc_type: "DNI",
+                    },
+               ],
+               active: {
                     doc_number: "72797033",
                     doc_type: "DNI",
                },
-          ],
+          },
           preferences: ["aea", "anuma"],
           _id: "5f9b40f72689d77ae41c5abe",
           name: "Fernando",
