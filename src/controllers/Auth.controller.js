@@ -59,7 +59,7 @@ class AuthController {
         return res.send(response);
     }
 
-    async deleteKeys(req, res) {
+    async deleteKeys(_req, res) {
         const response = await _authService.deleteKeys();
         return res.send(response);
     }
@@ -83,6 +83,26 @@ class AuthController {
         const { body } = req;
         const responseVCE = await _authService.verifyCodeEmail(body);
         return res.send(responseVCE);
+    }
+
+    async reactivate(req, res) {
+        const {
+            body,
+            params: { idUser },
+            user,
+        } = req;
+        const reactivateResponse = await _authService.reactivate(body, idUser, user);
+        return res.send(reactivateResponse);
+    }
+
+    async deactivate(req, res) {
+        const {
+            body,
+            params: { idUser },
+            user,
+        } = req;
+        const deactivateResponse = await _authService.deactivate(body, idUser, user);
+        return res.send(deactivateResponse);
     }
 }
 

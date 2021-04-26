@@ -17,7 +17,7 @@ const BusinessSchema = new Schema(
             url: { type: String, default: '' },
             created: { type: Date, default: new Date() },
         },
-        source: { type: String, enum: ["google", "facebook", "microsoft", "email"] },
+        source: { type: String, enum: ['google', 'facebook', 'microsoft', 'email'] },
         codeVerification: {
             code: { type: String, default: '' },
             created: { type: Date, default: new Date() },
@@ -125,7 +125,11 @@ const BusinessSchema = new Schema(
         },
         plan: { type: Boolean },
         active: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
+        // disabled: { type: Boolean, default: false },
+        inactive: {
+            created: { type: Date },
+            reason: { type: Number },
+        },
         socialNetwork: {
             facebook: { type: String },
             instagram: { type: String },
@@ -173,7 +177,7 @@ BusinessSchema.methods.getHome = function () {
     delete business.owner.birthdate;
     delete business.owner.sex;
     delete business.owner.dni;
-    delete business.disabled;
+    // delete business.disabled;
     delete business.codeVerification;
     delete business.source;
     return business;

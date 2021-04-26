@@ -31,7 +31,7 @@ class ProductService extends BaseService {
 
     async create(productEntity) {
         const business = await _businessRepository.get(productEntity.businessId);
-        if (!business || business.disabled) {
+        if (!business || business?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
