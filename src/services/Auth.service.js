@@ -80,7 +80,7 @@ class AuthService {
      * @param {*} customer
      */
     async signUpCustomer(customer) {
-        const { email, source, token: jwt, password } = customer;
+        const { email, source, token: jwt } = customer;
         const customerExist = await _customerRepository.getCustomerByEmail(email);
         const error = new Error();
         if (customerExist) {
@@ -90,7 +90,6 @@ class AuthService {
         } else {
             const customerEntity = customer;
             // delete customerEntity.source;
-
             if (!!source && source !== 'email') {
                 const saltSource = genSaltSync(10);
                 if (source === 'facebook') {
