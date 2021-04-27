@@ -30,7 +30,7 @@ class AuthService {
                const businessEntity = business;
                // delete businessEntity.source;
 
-               if (source !== "email") {
+               if (!!source && source !== "email") {
                     const saltSource = genSaltSync(10);
                     if (source === "facebook") {
                          const { id } = await GetFacebookId(jwt);

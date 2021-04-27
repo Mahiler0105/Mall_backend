@@ -47,6 +47,7 @@ const CustomerSchema = new Schema(
           },
           language: { type: String },
           currency: { type: String, enum: ["PEN", "USD"] },
+          // chat_status: { type: String, enum: ["online", "gone", "bussy", "offline"], default: "offline" },
           avatar: { type: String },
           first_lname: { type: String },
           second_lname: { type: String },
@@ -137,6 +138,8 @@ CustomerSchema.methods.toJSON = function () {
      delete customer.disabled;
      delete customer.billing;
      delete customer.source;
+     delete customer.urlReset;
+     delete customer.codeVerification;
      return customer;
 };
 

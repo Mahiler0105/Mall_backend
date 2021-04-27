@@ -70,6 +70,22 @@ const BusinessSchema = new Schema(
             phone: { type: String, maxlength: 9, minlength: 9 },
         },
         delivery: { type: Boolean },
+        shipments: {
+            enabled: { type: Boolean },
+            options: [
+                 {
+                      type: new Schema(
+                           {
+                                name: { type: String },
+                                type: { type: String, enum: ["own", "third_party"] },
+                                places: [{ type: String, maxlength: 4, minlength: 4 }],
+                                price: { type: Number },
+                           },
+                           { _id: false }
+                      ),
+                 },
+            ],
+       },
         bankAccount: { type: String },
         stripeId: { type: String },
         cards: [

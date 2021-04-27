@@ -5,8 +5,8 @@ import moment from "moment";
 // const { KEY_STRIPE } = require("../config");
 
 mercadopago.configure({
-     // access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
-     access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
+     access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
+     // access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
 });
 
 // const stripe = new Stripe(KEY_STRIPE);
@@ -663,8 +663,13 @@ class PaymentService {
           }
           const ids = cart.reduce((obj, item) => obj.concat(item.productId), []);
           const _products = await _productService.getProductsById({ ids });
-          const _items = Object.values(_products).reduce((obj, item, index) => {
-               const { _id: id, name: title, price: unit_price, images, description, category: category_id } = item;
+          const _items = Object.keys(_products).reduce((obj, item, index) => {
+               const { _id: id, name: title, price: unit_price, images, description, category: category_id, available, stock } = _products[item];
+               if (!available || stock === 0) {
+                    error.status = 500;
+                    error.message = "Invalid cart by insufficient stock";
+                    throw error;
+               }
                const quantity = cart[index].quantity;
                const itm = {
                     id,
@@ -680,6 +685,28 @@ class PaymentService {
           }, []);
 
           return Payment.createPreference({ items: _items, user: customerExists });
+     }
+     async runOrder(entity) {
+          const error = new Error();
+          const { id } = entity;
+          if (!id) {
+               error.status = 400;
+               error.message = "ID must be sent";
+               throw error;
+          }
+          delete entity.id;
+          if (Object.keys(entity).length > 0) {
+               error.status = 400;
+               error.message = "Too many parameters";
+               throw error;
+          }
+          const businessExists = await _businessRepository.get(id);
+          const customerExists = await _customerRepository.get(id);
+          if (!businessExists && !customerExists) {
+               error.status = 403;
+               error.message = "User does not found";
+               throw error;
+          }
      }
 
      // async mercadoPago() {

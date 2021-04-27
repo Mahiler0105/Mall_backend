@@ -40,7 +40,7 @@ module.exports = function ({ PaymentController }) {
     router.get('/payment/:id', PaymentController.updatePayment); //😁
 
     router.post('/run/pay', PaymentController.runPay);
-    // router.post('/run/orders', PaymentController.runOrder);
+    router.post('/run/orders', PaymentController.runOrder);
     // router.post('/run/payments', PaymentController.runPayments);
 
     router.get('/test', PaymentController.test);

@@ -189,6 +189,11 @@ class PaymentController {
           const result = await _paymentService.runPay(body);
           return res.status(200).send(result);
      }
+     async runOrder(req, res) {
+          const { body } = req;
+          const result = await _paymentService.runOrder(body);
+          return res.status(200).send(result);
+     }
 
      async ipnSend(req, res) {
           const { body } = req;
