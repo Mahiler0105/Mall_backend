@@ -83,7 +83,6 @@ module.exports = {
           counter: 0,
           delivery: true,
           active: true,
-          disabled: false,
           plan: false,
           urlReset: {
                created: "2020-11-06T16:10:30.272Z",

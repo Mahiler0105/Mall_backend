@@ -31,7 +31,7 @@ class ProductService extends BaseService {
 
     async create(productEntity) {
         const business = await _businessRepository.get(productEntity.businessId);
-        if (!business || business.disabled) {
+        if (!business || business?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -48,8 +48,9 @@ class ProductService extends BaseService {
             error.message = 'Product does not found';
             throw error;
         }
-        product = product.getHome();
+        product = product.getHome();        
         const business = await _businessRepository.get(product.businessId);
+       
         const calification = await _calificationService.getProductCalification(idProduct);
         return { product: { ...product, businessName: business.name }, califications: calification };
     }

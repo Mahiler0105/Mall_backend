@@ -35,12 +35,13 @@ module.exports = function ({ PaymentController }) {
     // router.get('/order-c/:id', PaymentController.createOrder); //😁
     router.patch('/order/:id', PaymentController.updateOrder); //😁
     
-    router.get('/payments', PaymentController.getAllPayments); //😁
-    router.get('/payment/:id', PaymentController.getPayment); //😁
-    router.get('/payment/:id', PaymentController.updatePayment); //😁
+    router.get('', PaymentController.getAllPayments); //😁
+    router.get('/checkout/:id', PaymentController.getPayment); //😁
+    router.patch('/checkout/:id', PaymentController.updatePayment); //😁
 
     router.post('/run/pay', PaymentController.runPay);
     router.post('/run/orders', PaymentController.runOrder);
+    // router.get('/run/confirm', PaymentController.runConfirm);
     // router.post('/run/payments', PaymentController.runPayments);
 
     router.get('/test', PaymentController.test);

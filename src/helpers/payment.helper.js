@@ -1,14 +1,16 @@
 const moment = require("moment");
-const departments = require("../lib/ubigeos/departamentos.json")
-const provinces = require("../lib/ubigeos/provincias.json")
-module.exports.createPreference = function ({items, user}) {
+const departments = require("../lib/ubigeos/departamentos.json");
+const provinces = require("../lib/ubigeos/provincias.json");
+module.exports.createPreference = function ({ items, user }) {
      const {
           first_lname: fname,
           second_lname: sname,
           name,
           phone,
           email,
-          document: { doc_number, doc_type },
+          documents: {
+               active: { doc_number, doc_type },
+          },
           address: { department, province, exact_address, zip_code },
      } = user;
      return {
@@ -50,7 +52,7 @@ module.exports.createPreference = function ({items, user}) {
                },
           },
           back_urls: {
-               success: "http://localhost:9080/",
+               success: "http://localhost:9080/v1/api/payment/run/confirm",
                pending: "http://localhost:9080/",
                failure: "http://localhost:9080/",
           },

@@ -32,14 +32,14 @@ module.exports = {
           email: "fernan@gmail.com",
           cart: [],
           cards: [],
-          urlReset: {
-               created: "2020-11-06T16:12:44.732Z",
-               url: "",
-          },
-          codeVerification: {
-               code: "",
-               created: "2021-04-21T20:48:24.769Z",
-          },
+          // urlReset: {
+          //      created: "2020-11-06T16:12:44.732Z",
+          //      url: "",
+          // },
+          // codeVerification: {
+          //      code: "",
+          //      created: "2021-04-21T20:48:24.769Z",
+          // },
      },
      customers: [],
 };

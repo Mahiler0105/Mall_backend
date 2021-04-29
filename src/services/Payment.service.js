@@ -5,8 +5,8 @@ import moment from "moment";
 // const { KEY_STRIPE } = require("../config");
 
 mercadopago.configure({
-     access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
-     // access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
+     // access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
+     access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
 });
 
 // const stripe = new Stripe(KEY_STRIPE);
@@ -66,12 +66,16 @@ const items = entity.cart.items.reduce((obj, item) => {
 
 let _businessRepository = null;
 let _customerRepository = null;
+let _purchaseRepository = null;
+let _orderRepository = null;
 let _productService = null;
 class PaymentService {
-     constructor({ BusinessRepository, CustomerRepository, ProductService }) {
+     constructor({ BusinessRepository, CustomerRepository, ProductService, OrderRepository, PurchaseRepository }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
           _productService = ProductService;
+          _purchaseRepository = PurchaseRepository;
+          _orderRepository = OrderRepository;
      }
 
      // async getCustomers() {
@@ -655,36 +659,77 @@ class PaymentService {
                //businesslogic
                return businessExists;
           }
-          const { cart, currency: currency_id } = customerExists;
+          const { cart, currency: currency_id, _id: idClient } = customerExists;
           if (!cart) {
                error.status = 402;
                error.message = "Invalid cart";
                throw error;
           }
-          const ids = cart.reduce((obj, item) => obj.concat(item.productId), []);
+          // const ids = cart.reduce((obj, item) => obj.concat(item.productId), []);
+          const { products: ids, details: _d } = cart.reduce(
+               (obj, { productId: _pId, quantity, specifications }) => {
+                    obj.products.push(_pId);
+                    obj.details[_pId] = { quantity, specifications };
+                    return obj;
+               },
+               { products: [], details: {} }
+          );
           const _products = await _productService.getProductsById({ ids });
-          const _items = Object.keys(_products).reduce((obj, item, index) => {
-               const { _id: id, name: title, price: unit_price, images, description, category: category_id, available, stock } = _products[item];
-               if (!available || stock === 0) {
-                    error.status = 500;
-                    error.message = "Invalid cart by insufficient stock";
-                    throw error;
-               }
-               const quantity = cart[index].quantity;
-               const itm = {
-                    id,
-                    quantity,
-                    description,
-                    picture_url: `https://storage.googleapis.com/lerietmall-302923/${images[0]}`,
-                    title,
-                    unit_price,
-                    category_id,
-                    currency_id,
-               };
-               return obj.concat(itm);
-          }, []);
+          const { business: orders, items: _items } = Object.keys(_products).reduce(
+               (obj, item) => {
+                    const {
+                         _id: id,
+                         name: title,
+                         price: unit_price,
+                         images,
+                         description,
+                         category: category_id,
+                         available,
+                         stock,
+                         businessId: business,
+                    } = _products[item];
+                    if (!available || stock === 0) {
+                         error.status = 500;
+                         error.message = "Invalid cart by insufficient stock";
+                         throw error;
+                    }
+                    const quantity = _d[id].quantity;
+                    const itm = {
+                         id,
+                         quantity,
+                         description,
+                         picture_url: `https://storage.googleapis.com/lerietmall-302923/${images[0]}`,
+                         title,
+                         unit_price,
+                         category_id,
+                         currency_id,
+                    };
+                    const specs = _d[id].specifications;
+                    var _bus = obj.business[business];
+                    if (_bus) _bus.items.push({ ...itm, specification: specs });
+                    else
+                         _bus = {
+                              idClient,
+                              idBusiness: business,
+                              status: "opened",
+                              items: [{ ...itm, specification: specs }],
+                         };
 
-          return Payment.createPreference({ items: _items, user: customerExists });
+                    obj.items.push(itm);
+                    obj.business[business] = _bus;
+                    return obj;
+               },
+               { business: {}, items: [] }
+          );
+          const _preference = await this.createPreference(Payment.createPreference({ items: _items, user: customerExists }));
+          const _borders = await Object.keys(orders).reduce(async (obj, item) => {
+               const _order = await _orderRepository.create({ ...orders[item], preference_id: _preference.body.id });
+               return {
+                    ...(await obj),
+                    [item]: _order,
+               };
+          }, {});
+          return _preference;
      }
      async runOrder(entity) {
           const error = new Error();
@@ -707,6 +752,32 @@ class PaymentService {
                error.message = "User does not found";
                throw error;
           }
+          if (businessExists) {
+               return _orderRepository.getOrdersByBusinessId(id);
+          }
+          return _orderRepository.getOrdersByCustomerId(id);
+     }
+     async ipnSend({ topic, id }) {
+          const error = new Error();
+          if (!topic || !id) {
+               error.status = 400;
+               error.message = "Invalid arguments";
+               throw error;
+          }
+          var _mp_payment, _mp_merchant;
+          if (topic === "payment") _mp_payment = await this.getPayment(id);
+          else if (topic === "merchant_order") _mp_merchant = await this.getOrder(id);
+          console.log(_mp_payment);
+          console.log(_mp_merchant);
+
+          return true;
+          // const _orders = await _orderRepository.getOrdersByPreferenceId(pref);
+
+          // return {
+          //      payment: _mp_payment.body,
+          //      merchant: _mp_merchant.body,
+          //      orders: _orders,
+          // };
      }
 
      // async mercadoPago() {

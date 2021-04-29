@@ -17,7 +17,7 @@ const BusinessSchema = new Schema(
             url: { type: String, default: '' },
             created: { type: Date, default: new Date() },
         },
-        source: { type: String, enum: ["google", "facebook", "microsoft", "email"] },
+        source: { type: String, enum: ['google', 'facebook', 'microsoft', 'email'] },
         codeVerification: {
             code: { type: String, default: '' },
             created: { type: Date, default: new Date() },
@@ -70,22 +70,22 @@ const BusinessSchema = new Schema(
             phone: { type: String, maxlength: 9, minlength: 9 },
         },
         delivery: { type: Boolean },
-        shipments: {
-            enabled: { type: Boolean },
-            options: [
-                 {
-                      type: new Schema(
-                           {
-                                name: { type: String },
-                                type: { type: String, enum: ["own", "third_party"] },
-                                places: [{ type: String, maxlength: 4, minlength: 4 }],
-                                price: { type: Number },
-                           },
-                           { _id: false }
-                      ),
-                 },
-            ],
-       },
+    //     shipments: {
+    //         enabled: { type: Boolean },
+    //         options: [
+    //              {
+    //                   type: new Schema(
+    //                        {
+    //                             name: { type: String },
+    //                             type: { type: String, enum: ["own", "third_party"] },
+    //                             places: [{ type: String, maxlength: 4, minlength: 4 }],
+    //                             price: { type: Number },
+    //                        },
+    //                        { _id: false }
+    //                   ),
+    //              },
+    //         ],
+    //    },
         bankAccount: { type: String },
         stripeId: { type: String },
         cards: [
@@ -141,7 +141,11 @@ const BusinessSchema = new Schema(
         },
         plan: { type: Boolean },
         active: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
+        // disabled: { type: Boolean, default: false },
+        inactive: {
+            created: { type: Date },
+            reason: { type: Number },
+        },
         socialNetwork: {
             facebook: { type: String },
             instagram: { type: String },
@@ -189,7 +193,7 @@ BusinessSchema.methods.getHome = function () {
     delete business.owner.birthdate;
     delete business.owner.sex;
     delete business.owner.dni;
-    delete business.disabled;
+    // delete business.disabled;
     delete business.codeVerification;
     delete business.source;
     return business;

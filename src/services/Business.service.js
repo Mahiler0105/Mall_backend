@@ -21,7 +21,7 @@ class BusinessService extends BaseService {
      */
     async getBusinessByEmail(email) {
         const business = await _businessRepository.getBusinessByEmail(email);
-        if (business.disabled) {
+        if (business?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -36,7 +36,7 @@ class BusinessService extends BaseService {
      */
     async getBusinessByDni(dni) {
         const business = await _businessRepository.getBusinessByDni(dni);
-        if (business.disabled) {
+        if (business?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -60,7 +60,7 @@ class BusinessService extends BaseService {
         }
 
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists.disabled) {
+        if (!businessExists || businessExists?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -100,7 +100,7 @@ class BusinessService extends BaseService {
             throw error;
         }
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists.disabled) {
+        if (!businessExists || businessExists?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -138,7 +138,7 @@ class BusinessService extends BaseService {
      */
     async saveLogo(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists.disabled) {
+        if (!businessExists || businessExists?.inactive) {
             CloudStorage.deleteLocalImage(filename);
             const error = new Error();
             error.status = 400;
@@ -158,7 +158,7 @@ class BusinessService extends BaseService {
 
     async saveImages(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists.disabled) {
+        if (!businessExists || businessExists?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -178,7 +178,7 @@ class BusinessService extends BaseService {
      */
     async get(idBusiness) {
         let business = await _businessRepository.get(idBusiness);
-        if (business.disabled) {
+        if (business?.inactive) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';

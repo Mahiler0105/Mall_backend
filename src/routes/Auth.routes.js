@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { AuthMiddleware } = require('../middlewares');
 
 module.exports = function ({ AuthController }) {
     const router = Router();
@@ -15,5 +16,7 @@ module.exports = function ({ AuthController }) {
     router.post('/verifycodeemail', AuthController.verifyCodeEmail); // 😁
     router.get('/validatekey/:userId/:key/:rol', AuthController.validateKey); // 😁
     router.delete('/deletekeys', AuthController.deleteKeys); // 😁
+    router.post('/deactivate/:idUser', [AuthMiddleware], AuthController.deactivate); // 😁
+    router.post('/reactivate/:idUser', [AuthMiddleware], AuthController.reactivate); // 😁
     return router;
 };
