@@ -6,4 +6,5 @@ module.exports = {
   Order: require('./Order.model'),
   Service: require('./Service.model'),
   Purchase: require('./Purchase.model'),
+  History: require('./History.model'),
 };

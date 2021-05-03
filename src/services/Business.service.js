@@ -5,14 +5,16 @@ let _businessRepository = null;
 let _calificationService = null;
 let _productService = null;
 let _servService = null;
+let _historyRepository = null;
 
 class BusinessService extends BaseService {
-    constructor({ BusinessRepository, CalificationService, ProductService, ServService }) {
+    constructor({ BusinessRepository, CalificationService, ProductService, ServService, HistoryRepository }) {
         super(BusinessRepository);
         _businessRepository = BusinessRepository;
         _calificationService = CalificationService;
         _productService = ProductService;
         _servService = ServService;
+        _historyRepository = HistoryRepository;
     }
 
     /**
@@ -21,7 +23,7 @@ class BusinessService extends BaseService {
      */
     async getBusinessByEmail(email) {
         const business = await _businessRepository.getBusinessByEmail(email);
-        if (business?.inactive) {
+        if (business?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -36,7 +38,7 @@ class BusinessService extends BaseService {
      */
     async getBusinessByDni(dni) {
         const business = await _businessRepository.getBusinessByDni(dni);
-        if (business?.inactive) {
+        if (business?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -60,7 +62,8 @@ class BusinessService extends BaseService {
         }
 
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists?.inactive) {
+        
+        if (!businessExists || businessExists?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -100,7 +103,7 @@ class BusinessService extends BaseService {
             throw error;
         }
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists?.inactive) {
+        if (!businessExists || businessExists?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -124,7 +127,9 @@ class BusinessService extends BaseService {
                     await CloudStorage.deleteImage(image);
                 });
             }
-            await _businessRepository.update(id, { disabled: true, active: false, logo: '', images: [] });
+            await _historyRepository.create({ ...businessExists.toJSON(), type: "business" });
+            await _businessRepository.delete(id);
+            // await _businessRepository.update(id, { disabled: true, active: false, logo: '', images: [] });
         } catch (err) {
             console.log(err);
         }
@@ -138,7 +143,7 @@ class BusinessService extends BaseService {
      */
     async saveLogo(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists?.inactive) {
+        if (!businessExists || businessExists?.inactive?.reason) {
             CloudStorage.deleteLocalImage(filename);
             const error = new Error();
             error.status = 400;
@@ -158,7 +163,7 @@ class BusinessService extends BaseService {
 
     async saveImages(filename, id) {
         const businessExists = await _businessRepository.get(id);
-        if (!businessExists || businessExists?.inactive) {
+        if (!businessExists || businessExists?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -178,7 +183,7 @@ class BusinessService extends BaseService {
      */
     async get(idBusiness) {
         let business = await _businessRepository.get(idBusiness);
-        if (business?.inactive) {
+        if (business?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';

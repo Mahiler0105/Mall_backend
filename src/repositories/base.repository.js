@@ -25,7 +25,6 @@ class BaseRepository {
      }
 
      async deleteField(_id, field) {
-          console.log("entre");
           await this.model.updateOne({ _id }, { $unset: { [field]: "" } });
      }
 }

@@ -5,8 +5,8 @@ import moment from "moment";
 // const { KEY_STRIPE } = require("../config");
 
 mercadopago.configure({
-     // access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
-     access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
+     access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
+     // access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
 });
 
 // const stripe = new Stripe(KEY_STRIPE);
@@ -770,7 +770,10 @@ class PaymentService {
           console.log(_mp_payment);
           console.log(_mp_merchant);
 
-          return true;
+          if (_mp_merchant) {
+               return true;
+          }
+          return false;
           // const _orders = await _orderRepository.getOrdersByPreferenceId(pref);
 
           // return {

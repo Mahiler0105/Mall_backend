@@ -143,9 +143,15 @@ const BusinessSchema = new Schema(
         active: { type: Boolean, default: false },
         // disabled: { type: Boolean, default: false },
         inactive: {
-            created: { type: Date },
-            reason: { type: Number },
-        },
+            type: new Schema(
+                 {
+                      created: { type: Date },
+                      reason: { type: String },
+                      seven_days: { type: Boolean, default: false },
+                 },
+                 { _id: false }
+            ),
+       },
         socialNetwork: {
             facebook: { type: String },
             instagram: { type: String },
@@ -171,7 +177,9 @@ BusinessSchema.methods.toJSON = function () {
     const business = this.toObject();
     delete business.password;
     delete business.billing;
-    delete business.source;
+    delete business.urlReset;
+    delete business.codeVerification;
+    // delete business.source;
     return business;
 };
 

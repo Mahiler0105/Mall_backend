@@ -88,10 +88,10 @@ class AuthController {
     async reactivate(req, res) {
         const {
             body,
-            params: { idUser },
+            params: { email },
             user,
         } = req;
-        const reactivateResponse = await _authService.reactivate(body, idUser, user);
+        const reactivateResponse = await _authService.reactivate(body, email, user);
         return res.send(reactivateResponse);
     }
 

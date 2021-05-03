@@ -17,6 +17,6 @@ module.exports = function ({ AuthController }) {
     router.get('/validatekey/:userId/:key/:rol', AuthController.validateKey); // 😁
     router.delete('/deletekeys', AuthController.deleteKeys); // 😁
     router.post('/deactivate/:idUser', [AuthMiddleware], AuthController.deactivate); // 😁
-    router.post('/reactivate/:idUser', [AuthMiddleware], AuthController.reactivate); // 😁
+    router.post('/reactivate/:email', AuthController.reactivate); // 😁
     return router;
 };

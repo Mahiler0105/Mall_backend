@@ -31,7 +31,7 @@ class ProductService extends BaseService {
 
     async create(productEntity) {
         const business = await _businessRepository.get(productEntity.businessId);
-        if (!business || business?.inactive) {
+        if (!business || business?.inactive?.reason) {
             const error = new Error();
             error.status = 400;
             error.message = 'Business does not found';
@@ -133,6 +133,8 @@ class ProductService extends BaseService {
             if (product.images.length !== 0) {
                 product.images.forEach(async (image) => {
                     await CloudStorage.deleteImage(image);
+                    await _historyRepository.create({ ...product, type: "product" });
+                    
                 });
             }
         });
