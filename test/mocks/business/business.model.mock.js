@@ -65,10 +65,10 @@ module.exports = {
                wireTransfer: false,
                yape: false,
           },
-          codeVerification: {
-               code: "",
-               created: "2021-04-21T20:48:24.769Z",
-          },
+          // codeVerification: {
+          //      code: "",
+          //      created: "2021-04-21T20:48:24.769Z",
+          // },
           images: ["https://www.siama.app", "https://www.siama.app", "https://www.siama.app"],
           subCategories: ["PriCat", "SecCat", "TerCat"],
           _id: "5f9b4d844c990017f381a76a",
@@ -84,10 +84,10 @@ module.exports = {
           delivery: true,
           active: true,
           plan: false,
-          urlReset: {
-               created: "2020-11-06T16:10:30.272Z",
-               url: "",
-          },
+          // urlReset: {
+          //      created: "2020-11-06T16:10:30.272Z",
+          //      url: "",
+          // },
      },
      businesses: [{}],
 };
