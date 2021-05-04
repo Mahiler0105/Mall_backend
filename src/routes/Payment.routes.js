@@ -46,7 +46,7 @@ module.exports = function ({ PaymentController }) {
 
     // router.get('/test', PaymentController.test);
     router.post('/ipn', PaymentController.ipnSend);
-    router.post('/deleteKeys', PaymentController.deleteKeys);
+    router.delete('/deleteKeys', PaymentController.deleteKeys);
 
     return router;
 };
