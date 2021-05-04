@@ -62,7 +62,7 @@ module.exports.createPreference = function ({ items, user }) {
           date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           expiration_date_from: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           expiration_date_to: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-          marketplace_fee: 2.0,
+          // marketplace_fee: 2.0,
      };
 };
 
@@ -77,7 +77,13 @@ module.exports.createPayment = function (body) {
           payment_method_id,
           description,
           statement_descriptor,
-          card: { cardholder:{ name, identification }, expiration_month, expiration_year, first_six_digits, last_four_digits },
+          card: {
+               cardholder: { name, identification },
+               expiration_month,
+               expiration_year,
+               first_six_digits,
+               last_four_digits,
+          },
           date_approved,
           date_created,
           date_last_updated,
@@ -91,9 +97,9 @@ module.exports.createPayment = function (body) {
           transaction_details: { installment_amount, net_received_amount, overpaid_amount, total_paid_amount },
           status: mp_status,
           additional_info: { ip_address },
-          payer,
+          payer: { id: payer_id, type: payer_type },
      } = body;
-   
+
      if (!merchant_order_id) {
           const error = new Error();
           error.status = 400;
@@ -141,7 +147,10 @@ module.exports.createPayment = function (body) {
                },
                additional_info: {
                     ip_address,
-                    payer,
+                    payer: {
+                         id: payer_id,
+                         type: !!payer_type ? payer_type : "guest",
+                    },
                },
           },
      };

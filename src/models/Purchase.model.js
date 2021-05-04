@@ -217,7 +217,7 @@ const PurchaseSchema = new Schema(
                               type: new Schema(
                                    {
                                         id: { type: String, default: null },
-                                        type: { type: String, default: null, enum: payer_types },
+                                        type: { type: String, default: "guest", enum: payer_types },
                                    },
                                    { _id: false }
                               ),

@@ -32,7 +32,6 @@ module.exports = function ({ PaymentController }) {
     router.patch('/preference/:id', PaymentController.updatePreference); //😁
     
     router.get('/order/:id', PaymentController.getOrder); //😁
-    // router.get('/order-c/:id', PaymentController.createOrder); //😁
     router.patch('/order/:id', PaymentController.updateOrder); //😁
     
     router.get('', PaymentController.getAllPayments); //😁
@@ -41,11 +40,9 @@ module.exports = function ({ PaymentController }) {
 
     router.post('/run/pay', PaymentController.runPay);
     router.post('/run/orders', PaymentController.runOrder);
-    // router.get('/run/confirm', Pay   mentController.runConfirm);
-    // router.post('/run/payments', PaymentController.runPayments);
-
-    // router.get('/test', PaymentController.test);
-    router.post('/ipn', PaymentController.ipnSend);
+    router.post('/run/payments', PaymentController.runPayment);
+    
+    router.post('/instant-lerit', PaymentController.ipnSend);
     router.delete('/deletekeys', PaymentController.deleteKeys);
 
     return router;

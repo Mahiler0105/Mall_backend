@@ -757,6 +757,9 @@ class PaymentService {
           }
           return _orderRepository.getOrdersByCustomerId(id);
      }
+     async runPayment() {
+          return true;
+     }
 
      async ipnSend({ topic, id }) {
           const error = new Error();
@@ -805,7 +808,7 @@ class PaymentService {
                          obj.payment.idClient = idClient;
                          obj.payment.business.push(idBusiness);
                          obj.payment.orders.push(_id);
-                         obj.payment.items.concat(items);
+                         obj.payment.items = obj.payment.items.concat(items);
 
                          return obj;
                     },
@@ -814,11 +817,12 @@ class PaymentService {
                var _fpayment = { ...payment, ..._p };
                console.log(_fpayment);
 
-               Object.keys(_o).forEach((or) => {
-                    console.log(_o[or]);
-                    // await _orderRepository.update(or, _o[or]);
+               Object.keys(_o).forEach(async (or) => {
+                    // console.log(_o[or]);
+                    await _orderRepository.update(or, _o[or]);
                });
-               return true;
+               return await _purchaseRepository.create(_fpayment);
+               // return true;
           }
           return false;
           // const _orders = await _orderRepository.getOrdersByPreferenceId(pref);
@@ -831,10 +835,10 @@ class PaymentService {
      }
      async deleteKeys() {
           const orders = await _orderRepository.getAll();
-          orders.map(async (key) => {
+          await orders.map(async (key) => {
                if (key.status === "opened" || key.order_status === "payment_required") {
                     if (moment().diff(key.createdAt, "hours") >= 1) {
-                         await _orderRepository.delete(key._id);
+                         return await _orderRepository.delete(key._id);
                     }
                }
           });

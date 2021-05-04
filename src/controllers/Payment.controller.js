@@ -194,6 +194,12 @@ class PaymentController {
           const result = await _paymentService.runOrder(body);
           return res.status(200).send(result);
      }
+     async runPayment(req, res) {
+          const { body } = req;
+          const result = await _paymentService.runPayment(body);
+          return res.status(200).send(result);
+     }
+
      // async runConfirm(req, res) {
      //      const { payment_id: pay, merchant_order_id: merchant, preference_id: pref } = req.query;
      //      const result = await _paymentService.runConfirm({ pay, merchant, pref });
