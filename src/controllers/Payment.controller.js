@@ -205,11 +205,17 @@ class PaymentController {
           const result = await _paymentService.ipnSend({ topic, id });
           return res.status(200).send(result);
      }
-     async test(req, res) {
-          const { body } = req;
-          const getResult = await _paymentService.test(body);
-          return res.status(200).send(getResult);
+
+     async deleteKeys(req, res) {
+          const result = await _paymentService.deleteKeys();
+          return res.status(200).send(result);
      }
+     
+     // async test(req, res) {
+     //      const { body } = req;
+     //      const getResult = await _paymentService.test(body);
+     //      return res.status(200).send(getResult);
+     // }
 
      // async createUserMP(req, res) {
      //     const userMp = await _paymentService.createUserMP();

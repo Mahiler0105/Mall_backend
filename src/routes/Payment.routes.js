@@ -44,8 +44,9 @@ module.exports = function ({ PaymentController }) {
     // router.get('/run/confirm', Pay   mentController.runConfirm);
     // router.post('/run/payments', PaymentController.runPayments);
 
-    router.get('/test', PaymentController.test);
+    // router.get('/test', PaymentController.test);
     router.post('/ipn', PaymentController.ipnSend);
+    router.post('/deleteKeys', PaymentController.deleteKeys);
 
     return router;
 };

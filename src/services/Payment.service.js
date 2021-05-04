@@ -1,4 +1,4 @@
-import Stripe from "stripe";
+// import Stripe from "stripe";
 import mercadopago from "mercadopago";
 import { Payment } from "../helpers";
 import moment from "moment";
@@ -757,6 +757,7 @@ class PaymentService {
           }
           return _orderRepository.getOrdersByCustomerId(id);
      }
+
      async ipnSend({ topic, id }) {
           const error = new Error();
           if (!topic || !id) {
@@ -766,11 +767,57 @@ class PaymentService {
           }
           var _mp_payment, _mp_merchant;
           if (topic === "payment") _mp_payment = await this.getPayment(id);
-          else if (topic === "merchant_order") _mp_merchant = await this.getOrder(id);
-          console.log(_mp_payment);
-          console.log(_mp_merchant);
+          else return false;
 
-          if (_mp_merchant) {
+          if (_mp_payment) {
+               const { merchant_order_id, payment } = Payment.createPayment(_mp_payment.body);
+               _mp_merchant = await this.getOrder(merchant_order_id);
+
+               const {
+                    preference_id,
+                    status,
+                    order_status,
+                    cancelled,
+                    shipping_cost,
+                    total_amount,
+                    paid_amount,
+                    refunded_amount,
+               } = _mp_merchant.body;
+               const userOrders = await _orderRepository.getOrdersByPreferenceId(preference_id);
+
+               console.log(JSON.stringify(userOrders, null, 2));
+
+               const { orders: _o, payment: _p } = Array.from(userOrders).reduce(
+                    (obj, item) => {
+                         const { _id, idClient, idBusiness, items } = item;
+                         obj.orders[_id] = {
+                              merchant_order_id,
+                              status,
+                              order_status,
+                              cancelled,
+                              amounts: {
+                                   shipping_cost,
+                                   total_amount,
+                                   paid_amount,
+                                   refunded_amount,
+                              },
+                         };
+                         obj.payment.idClient = idClient;
+                         obj.payment.business.push(idBusiness);
+                         obj.payment.orders.push(_id);
+                         obj.payment.items.concat(items);
+
+                         return obj;
+                    },
+                    { orders: {}, payment: { business: [], orders: [], items: [] } }
+               );
+               var _fpayment = { ...payment, ..._p };
+               console.log(_fpayment);
+
+               Object.keys(_o).forEach((or) => {
+                    console.log(_o[or]);
+                    // await _orderRepository.update(or, _o[or]);
+               });
                return true;
           }
           return false;
@@ -782,7 +829,17 @@ class PaymentService {
           //      orders: _orders,
           // };
      }
-
+     async deleteKeys() {
+          const orders = await _orderRepository.getAll();
+          orders.map(async (key) => {
+               if (key.status === "opened" || key.order_status === "payment_required") {
+                    if (moment().diff(key.createdAt, "hours") >= 1) {
+                         await _orderRepository.delete(key._id);
+                    }
+               }
+          });
+          return true;
+     }
      // async mercadoPago() {
      //     // {"access_token":"TEST-1063804438479518-040401-e9d75cb6094774e9d932fc874d137a22-738204784","token_type":"bearer","expires_in":15552000,"scope":"offline_access read write","user_id":738204784,"refresh_token":"TG-60691bf952841f00070fbeec-738204784","public_key":"TEST-384be34a-8435-4429-b164-df44ec3e62b8","live_mode":false}%
      //     // MARKETPLACE

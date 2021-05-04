@@ -52,14 +52,14 @@ const OrderSchema = new Schema(
                     { _id: false }
                ),
           },
-          payments: [
-               {
-                    type: Schema.Types.ObjectId,
-                    ref: "purchase",
-                    required: true,
-                    autopopulate: false,
-               },
-          ],
+          // payments: [
+          //      {
+          //           type: Schema.Types.ObjectId,
+          //           ref: "purchase",
+          //           required: true,
+          //           autopopulate: false,
+          //      },
+          // ],
           // shipments: [],
           items: [
                {

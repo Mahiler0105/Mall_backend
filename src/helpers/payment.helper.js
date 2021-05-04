@@ -41,7 +41,7 @@ module.exports.createPreference = function ({ items, user }) {
           },
           shipments: {
                mode: "not_specified",
-               cost: 15.0,
+               cost: 1.0,
                free_shipping: false,
                receiver_address: {
                     city_name: provinces[department][province].nombre_ubigeo, //province
@@ -63,5 +63,86 @@ module.exports.createPreference = function ({ items, user }) {
           expiration_date_from: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           expiration_date_to: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           marketplace_fee: 2.0,
+     };
+};
+
+module.exports.createPayment = function (body) {
+     const {
+          order: { id: merchant_order_id },
+          id: payment_id,
+          issuer_id,
+          currency_id,
+          operation_type,
+          payment_type_id,
+          payment_method_id,
+          description,
+          statement_descriptor,
+          card: { cardholder:{ name, identification }, expiration_month, expiration_year, first_six_digits, last_four_digits },
+          date_approved,
+          date_created,
+          date_last_updated,
+          refunds,
+          installments,
+          coupon_amount,
+          shipping_amount,
+          taxes_amount,
+          transaction_amount,
+          transaction_amount_refunded,
+          transaction_details: { installment_amount, net_received_amount, overpaid_amount, total_paid_amount },
+          status: mp_status,
+          additional_info: { ip_address },
+          payer,
+     } = body;
+   
+     if (!merchant_order_id) {
+          const error = new Error();
+          error.status = 400;
+          error.message = "Payment without order emmited";
+          throw error;
+     }
+     return {
+          merchant_order_id,
+          payment: {
+               payment_id,
+               merchant_order_id,
+               issuer_id,
+               currency_id,
+               operation_type,
+               payment_type_id,
+               payment_method_id,
+               description,
+               statement_descriptor,
+               card: {
+                    identification,
+                    name,
+                    expiration_month,
+                    expiration_year,
+                    first_six_digits,
+                    last_four_digits,
+               },
+               date: { date_approved, date_created, date_last_updated },
+               refunds,
+               amounts: {
+                    installments,
+                    coupon_amount,
+                    shipping_amount,
+                    taxes_amount,
+                    transaction_amount,
+                    transaction_amount_refunded,
+                    // fee_amount,
+                    installment_amount,
+                    net_received_amount,
+                    overpaid_amount,
+                    total_paid_amount,
+               },
+               status: {
+                    lerit_status: "offered",
+                    mp_status,
+               },
+               additional_info: {
+                    ip_address,
+                    payer,
+               },
+          },
      };
 };

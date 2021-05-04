@@ -315,37 +315,40 @@ class AuthService {
 
      async deleteKeys() {
           const businesses = await _businessRepository.getAll();
-          const customers = await _customerRepository.getAll();
+          const customers = await _customerRepository.getAll();         
+
           businesses.map(async (key) => {
                if (moment().diff(key.urlReset.created, "hours") >= 4) {
                     await _businessRepository.update(key._id, {
                          urlReset: { url: "", created: new Date() },
                     });
                }
-               if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {
-                    await SendEmail(key.email, "LERIETMALL: Aviso desactivación de cuenta", "default", {
-                         title_1: "Desactivación",
-                         title_2: "de cuenta",
-                         name: key.name.toUpperCase(),
-                         message: "le recordamos que aun estas a tiempo de activar tu cuenta, te quedan 7 dias. Atte. equipo de Lerietmall",
-                    });
-                    var inactive = key.inactive;
-                    inactive.seven_days = true;
-                    await _businessRepository.update(key._id, { inactive });
-               }
                if (moment().diff(key.codeVerification.created, "minutes") >= 5) {
                     await _businessRepository.update(key._id, {
                          codeVerification: { code: "", created: new Date() },
                     });
                }
-               if (moment().diff(key.inactive.created, "days") === 15) {
-                    await _businessRepository.delete(key._id);
-                    await SendEmail(key.email, "LERIETMALL: Aviso", "default", {
-                         title_1: "Tu cuenta ha sido",
-                         title_2: "eliminada",
-                         name: key.name.toUpperCase(),
-                         message: "lamentamos que te hayas ido. Atte. equipo de Lerietmall",
-                    });
+               if (!!key.inactive?.created) {
+                    if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {
+                         await SendEmail(key.email, "LERIETMALL: Aviso desactivación de cuenta", "default", {
+                              title_1: "Desactivación",
+                              title_2: "de cuenta",
+                              name: key.name.toUpperCase(),
+                              message: "le recordamos que aun estas a tiempo de activar tu cuenta, te quedan 7 dias. Atte. equipo de Lerietmall",
+                         });
+                         var inactive = key.inactive;
+                         inactive.seven_days = true;
+                         await _businessRepository.update(key._id, { inactive });
+                    }
+                    if (moment().diff(key.inactive.created, "days") === 15) {
+                         await _businessRepository.delete(key._id);
+                         await SendEmail(key.email, "LERIETMALL: Aviso", "default", {
+                              title_1: "Tu cuenta ha sido",
+                              title_2: "eliminada",
+                              name: key.name.toUpperCase(),
+                              message: "lamentamos que te hayas ido. Atte. equipo de Lerietmall",
+                         });
+                    }
                }
           });
           customers.map(async (key) => {
@@ -359,25 +362,27 @@ class AuthService {
                          codeVerification: { code: "", created: new Date() },
                     });
                }
-               if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {
-                    await SendEmail(key.email, "LERIETMALL: Aviso desactivación de cuenta", "default", {
-                         title_1: "Desactivación",
-                         title_2: "de cuenta",
-                         name: key.name.toUpperCase(),
-                         message: "le recordamos que aun estas a tiempo de activar tu cuenta, te quedan 7 dias. Atte. equipo de Lerietmall",
-                    });
-                    var inactive = key.inactive;
-                    inactive.seven_days = true;
-                    await _customerRepository.update(key._id, { inactive });
-               }
-               if (moment().diff(key.inactive.created, "days") === 15) {
-                    await _customerRepository.delete(key._id);
-                    await SendEmail(key.email, "LERIETMALL: Aviso", "default", {
-                         title_1: "Tu cuenta ha sido",
-                         title_2: "eliminada",
-                         name: key.name.toUpperCase(),
-                         message: "lamentamos que te hayas ido, gracias por tu tiempo en la plataforma. Atte. equipo de Lerietmall",
-                    });
+               if (!!key.inactive?.created) {
+                    if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {
+                         await SendEmail(key.email, "LERIETMALL: Aviso desactivación de cuenta", "default", {
+                              title_1: "Desactivación",
+                              title_2: "de cuenta",
+                              name: key.name.toUpperCase(),
+                              message: "le recordamos que aun estas a tiempo de activar tu cuenta, te quedan 7 dias. Atte. equipo de Lerietmall",
+                         });
+                         var inactive = key.inactive;
+                         inactive.seven_days = true;
+                         await _customerRepository.update(key._id, { inactive });
+                    }
+                    if (moment().diff(key.inactive.created, "days") === 15) {
+                         await _customerRepository.delete(key._id);
+                         await SendEmail(key.email, "LERIETMALL: Aviso", "default", {
+                              title_1: "Tu cuenta ha sido",
+                              title_2: "eliminada",
+                              name: key.name.toUpperCase(),
+                              message: "lamentamos que te hayas ido, gracias por tu tiempo en la plataforma. Atte. equipo de Lerietmall",
+                         });
+                    }
                }
           });
           return true;
