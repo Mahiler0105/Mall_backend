@@ -47,7 +47,7 @@ const rucHandler = {
           if (data.RUC) {
                if (String(data.RUC).startsWith(1)) {
                     person = {
-                         dni: String(data.RUC).substr(2, 9),
+                         dni: String(data.RUC).substr(2, 8),
                          name: data.RazonSocial,
                          address: data.Direccion,
                          department: data.Departamento,

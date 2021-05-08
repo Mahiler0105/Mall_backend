@@ -26,7 +26,7 @@ const DocumentSchema = new Schema(
           person: {
                type: new Schema(
                     {
-                         dni: { type: String },
+                         dni: { type: String, maxlength: 8, minlength: 8 },
                          name: { type: String },
                          address: { type: String },
                          department: { type: String },
@@ -35,7 +35,7 @@ const DocumentSchema = new Schema(
                          date_from: { type: Date },
 
                          document: { type: String },
-                         doc_number: { type: String },
+                         doc_number: { type: String, maxlength: 11, minlength: 8 },
                          charge: { type: String },
                     },
                     { _id: false }
