@@ -727,17 +727,28 @@ class PaymentService {
                throw error;
           }
           if (businessExists) {
+               if (businessExists.admin != "denied") {
+                    error.status = 403;
+                    error.message = "Not authorized to this action";
+                    throw error;
+               }
                //basic10       basic_premium_ruc_10
                //basic20       basic_premium_ruc_20
                //platinum10    platinum_premium_ruc_10
                //platinum20    platinum_premium_ruc_20
                //"https://www.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
                //"https://sandbox.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
-               const items = Payment.createPlan(businessExists);
-               const {
-                    body: { id: preference_id, init_point, sandbox_init_point },
-               } = await this.createPreference(Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false));
-               return { id: preference_id, success: true };
+
+               // const items = Payment.createPlan(businessExists);
+               // const {
+               //      body: { id: preference_id },
+               // } = await this.createPreference(Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false));
+               await _businessRepository.update(businessExists._id, { admin: "authorized" });
+               return {
+                    // id: preference_id,
+                    success: true,
+                    action: 1,
+               };
           }
           const { cart, currency: currency_id, _id: idClient } = customerExists;
           if (!cart) {
@@ -777,7 +788,7 @@ class PaymentService {
                     const itm = {
                          id,
                          quantity,
-                         description,
+                         description: "".concat(description).substr(0, 256),
                          picture_url: `https://storage.googleapis.com/lerietmall-302923/${images[0]}`,
                          title,
                          unit_price,
@@ -801,9 +812,7 @@ class PaymentService {
                },
                { business: {}, items: [] }
           );
-          const {
-               body: { id: preference_id },
-          } = await this.createPreference(Payment.createPreference({ items: _items, user: customerExists }));
+          const _preference = await this.createPreference(Payment.createPreference({ items: _items, user: customerExists }, false));
           await Object.keys(orders).reduce(async (obj, item) => {
                const _order = await _orderRepository.create({ ...orders[item], preference_id: _preference.body.id });
                return {
@@ -811,7 +820,7 @@ class PaymentService {
                     [item]: _order,
                };
           }, {});
-          return preference_id;
+          return { id: _preference.body.id, success: true };
      }
      async runOrder(entity) {
           const error = new Error();

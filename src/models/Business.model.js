@@ -46,16 +46,25 @@ const BusinessSchema = new Schema(
                enum: [
                     "consumer_electronic",
                     "clothing_apparel",
-                    "home_garden_kitchen",
+                    "home_kitchen",
                     "health_beauty",
                     "yewerly_watches",
                     "computer_technology",
                     "babies_moms",
                     "sport_outdoor",
                     "books_office",
-                    "cars_motocycles",
+                    "vehicles",
                     "home_improments",
                     "services",
+                    "farming",
+                    "toy_store",
+                    "pets",
+                    "optical",
+                    "sexshop",
+                    "garden",
+                    "musical_instruments",
+                    "handicrafts",
+                    "gift_details",
                ],
           },
           subCategories: [{ type: String }],
@@ -169,12 +178,12 @@ const BusinessSchema = new Schema(
           //      bankDeposit: { type: Boolean, default: false },
           //      wireTransfer: { type: Boolean, default: false },
           // },
-          
+
           businessType: { type: Number, enum: [1, 2], required: true }, // RUC10, RUC20
           ruc: { type: Number, maxlength: 11, minlength: 11 }, // LENGTH 11
-          
+
           password: { type: String },
-          admin: { type: Boolean, default: false },
+          admin: { type: String, default: "denied", enum: ["authorized", "denied"] },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );

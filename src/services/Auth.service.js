@@ -222,8 +222,10 @@ class AuthService {
                rol: entityRol,
           };
           var payout = {};
-          if (entityRol === "business" && !!!entityLogin.admin) payout.admin = false;
-          if (entityRol === "business")entityLogin = entityLogin.toJSON();
+          if (entityRol === "business") {
+               payout.admin = entityLogin.admin === "authorized";
+               entityLogin = entityLogin.toJSON();
+          }
           const token = generateToken(entityToEncode);
           return { token, [entityRol]: entityLogin, payout };
      }
