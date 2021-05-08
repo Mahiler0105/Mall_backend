@@ -16,7 +16,7 @@ const ctypes = [
      "services",
      "none",
 ];
-const modeltypes = ["customer", "business", "product"];
+const modeltypes = ["customer", "business", "product", "customer-not-confirmed", "business-not-confirmed"];
 const docs = ["DNI", "RUC", "C.E", "Otro"];
 
 const HistorySchema = new Schema(

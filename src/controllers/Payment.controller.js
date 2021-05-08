@@ -217,11 +217,22 @@ class PaymentController {
           return res.status(200).send(result);
      }
      
-     // async test(req, res) {
-     //      const { body } = req;
-     //      const getResult = await _paymentService.test(body);
-     //      return res.status(200).send(getResult);
-     // }
+     async getCoupons(req, res) {
+          // const { body } = req;
+          const getResult = await _paymentService.test();
+          return res.status(200).send(getResult);
+     }
+
+     async createSubscription(req, res) {
+          const { body } = req;
+          const getResult = await _paymentService.createSubscription(body);
+          return res.status(200).send(getResult);
+     }
+     async getSubscription(req, res) {
+          const { id } = req.params;
+          const getResult = await _paymentService.getSubscription(id);
+          return res.status(200).send(getResult);
+     }
 
      // async createUserMP(req, res) {
      //     const userMp = await _paymentService.createUserMP();

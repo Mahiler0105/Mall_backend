@@ -49,10 +49,11 @@ const {
      PurchaseRepository,
      ServiceRepository,
      HistoryRepository,
+     DocumentRepository,
 } = require("../repositories");
 
 // MODELS
-const { Customer, Business, Product, Calification, Order, Service, Purchase, History } = require("../models");
+const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document } = require("../models");
 
 // INICIALIZAR APP
 const container = createContainer();
@@ -101,6 +102,7 @@ container.register({
      PurchaseRepository: asClass(PurchaseRepository).singleton(),
      ServiceRepository: asClass(ServiceRepository).singleton(),
      HistoryRepository: asClass(HistoryRepository).singleton(),
+     DocumentRepository: asClass(DocumentRepository).singleton(),
      /*------------------*/
      // MODELS REGISTER  //
      Customer: asValue(Customer),
@@ -111,6 +113,7 @@ container.register({
      Service: asValue(Service),
      Purchase: asValue(Purchase),
      History: asValue(History),
+     Document: asValue(Document),
 });
 
 module.exports = container;

@@ -37,6 +37,7 @@ class CustomerService extends BaseService {
                throw error;
           }
           if (newEntity.password) {
+               if (customerExists.urlConfirm?.url) await _customerRepository.deleteField(customerExists._id, "urlConfirm");
                newEntity.urlReset = { url: "", created: new Date() };
           }
           return _customerRepository.update(id, newEntity);

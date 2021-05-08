@@ -352,9 +352,25 @@ class PaymentService {
      //      return this.createOrder(id);
      // }
      async test() {
-          return this.getOrder();
+          // return this.createMoneyRequest();
           // return this.createPreference()
+
+          return {
+               date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               expiration_date_from: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          };
      }
+     async getCoupons() {
+          try {
+               return await mercadopago.preapproval.create();
+          } catch (err) {
+               console.log(err);
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
+
      async handleError(err, retries, next) {
           if (err.status === 429 && retries < 10) return next();
           const error = new Error(err.message);
@@ -633,6 +649,56 @@ class PaymentService {
           }
      }
 
+     //PREAPROVAL
+     async createSubscription() {
+          let entity = {
+               payer_email: "benjy0127@gmail.com",
+               back_url: "http://localhost:9080/",
+               collector_id: 744446817,
+               reason: "PREMIUM.PLANS.PREMIUN10",
+               external_reference: "",
+               auto_recurring: {
+                    frequency: 5,
+                    frequency_type: "days",
+                    transaction_amount: 1,
+                    currency_id: "USD",
+                    start_date: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+                    end_date: moment().add(5, "hours").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               },
+          };
+          try {
+               return await mercadopago.preapproval.create(entity);
+          } catch (err) {
+               console.log(err);
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
+     async getSubscription(id) {
+          try {
+               return await mercadopago.preapproval.findById(id);
+          } catch (err) {
+               console.log(err);
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
+
+     //MONEYREQUEST
+     async createMoneyRequest() {
+          let entity = {};
+          try {
+               return await mercadopago.money_requests.create();
+          } catch (err) {
+               console.log(err);
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
+
      //GENERAL PAY, ORDER, PAYMENT
      async runPay(entity) {
           const error = new Error();
@@ -656,8 +722,17 @@ class PaymentService {
                throw error;
           }
           if (businessExists) {
-               //businesslogic
-               return businessExists;
+               //basic10       basic_premium_ruc_10
+               //basic20       basic_premium_ruc_20
+               //platinum10    platinum_premium_ruc_10
+               //platinum20    platinum_premium_ruc_20
+               //"https://www.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
+               //"https://sandbox.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
+               const items = Payment.createPlan(businessExists);
+               const {
+                    body: { id: preference_id, init_point, sandbox_init_point },
+               } = await this.createPreference(Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false));
+               return { id: preference_id, success: true };
           }
           const { cart, currency: currency_id, _id: idClient } = customerExists;
           if (!cart) {
@@ -721,15 +796,17 @@ class PaymentService {
                },
                { business: {}, items: [] }
           );
-          const _preference = await this.createPreference(Payment.createPreference({ items: _items, user: customerExists }));
-          const _borders = await Object.keys(orders).reduce(async (obj, item) => {
+          const {
+               body: { id: preference_id },
+          } = await this.createPreference(Payment.createPreference({ items: _items, user: customerExists }));
+          await Object.keys(orders).reduce(async (obj, item) => {
                const _order = await _orderRepository.create({ ...orders[item], preference_id: _preference.body.id });
                return {
                     ...(await obj),
                     [item]: _order,
                };
           }, {});
-          return _preference;
+          return preference_id;
      }
      async runOrder(entity) {
           const error = new Error();
@@ -752,13 +829,42 @@ class PaymentService {
                error.message = "User does not found";
                throw error;
           }
-          if (businessExists) {
-               return _orderRepository.getOrdersByBusinessId(id);
-          }
-          return _orderRepository.getOrdersByCustomerId(id);
+          var orders;
+          if (businessExists) orders = await _orderRepository.getOrdersByBusinessId(id);
+          else orders = await _orderRepository.getOrdersByCustomerId(id);
+          const _c = Array.from(orders).reduce(
+               (obj, item) => {
+                    if (item.lerit_status === "payment_sent") obj.last.push(item);
+                    else obj.old.push(item);
+                    return obj;
+               },
+               { last: [], old: [] }
+          );
+          return _c;
      }
      async runPayment() {
-          return true;
+          const error = new Error();
+          const { id } = entity;
+          if (!id) {
+               error.status = 400;
+               error.message = "ID must be sent";
+               throw error;
+          }
+          delete entity.id;
+          if (Object.keys(entity).length > 0) {
+               error.status = 400;
+               error.message = "Too many parameters";
+               throw error;
+          }
+          const businessExists = await _businessRepository.get(id);
+          const customerExists = await _customerRepository.get(id);
+          if (!businessExists && !customerExists) {
+               error.status = 403;
+               error.message = "User does not found";
+               throw error;
+          }
+          var payments = await _purchaseRepository.getPaymentsByCustomerId(id);
+          return payments;
      }
 
      async ipnSend({ topic, id }) {

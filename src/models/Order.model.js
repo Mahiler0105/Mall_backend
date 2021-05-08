@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const statuses = ["opened", "closed", "expired"];
 const order_statuses = ["payment_required", "reverted", "paid", "partially_reverted", "partially_paid", "payment_in_process", "undefined", "expired"];
+const lerit_statuses = ["payment_sent", "payment_confirmed", "delivered", "finished", "expired"];
 // status
 // Localización: Body
 // Muestra el estado actual de la orden
@@ -39,6 +40,8 @@ const OrderSchema = new Schema(
 
           status: { type: String, default: null, enum: statuses },
           order_status: { type: String, default: "payment_required", enum: order_statuses },
+          lerit_status: { type: String, default: "payment_sent", enum: lerit_statuses },
+
           preference_id: { type: String, default: null },
           cancelled: { type: Boolean, default: false },
           amounts: {

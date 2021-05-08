@@ -25,6 +25,7 @@
     "@babel/cli": "^7.12.10",
     "@google-cloud/secret-manager": "^3.4.0",
     "@google-cloud/storage": "^5.4.0",
+    "@types/mercadopago": "^1.5.3",
     "awilix": "^4.2.6",
     "axios": "^0.21.0",
     "bcryptjs": "^2.4.3",

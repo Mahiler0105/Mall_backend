@@ -40,6 +40,10 @@ const CustomerSchema = new Schema(
                url: { type: String, default: "" },
                created: { type: Date, default: new Date() },
           },
+          urlConfirm: {
+               url: { type: String, default: "" },
+               created: { type: Date, default: new Date() },
+          },
           source: { type: String, enum: sources },
           codeVerification: {
                code: { type: String, default: "" },
@@ -148,6 +152,7 @@ CustomerSchema.methods.toJSON = function () {
      delete customer.billing;
     //  delete customer.source;
      delete customer.urlReset;
+     delete customer.urlConfirm;
      delete customer.codeVerification;
      return customer;
 };

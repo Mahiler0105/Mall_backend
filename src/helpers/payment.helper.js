@@ -1,7 +1,7 @@
 const moment = require("moment");
 const departments = require("../lib/ubigeos/departamentos.json");
 const provinces = require("../lib/ubigeos/provincias.json");
-module.exports.createPreference = function ({ items, user }) {
+module.exports.createPreference = function ({ items, user }, shipment) {
      const {
           first_lname: fname,
           second_lname: sname,
@@ -13,6 +13,23 @@ module.exports.createPreference = function ({ items, user }) {
           },
           address: { department, province, exact_address, zip_code },
      } = user;
+     var _ship = {};
+     if (shipment)
+          _ship = {
+               shipments: {
+                    mode: "not_specified",
+                    cost: 1.0,
+                    free_shipping: false,
+                    receiver_address: {
+                         city_name: provinces[department][province].nombre_ubigeo, //province
+                         state_name: departments[department].nombre_ubigeo, //department
+                         zip_code: zip_code,
+                         street_name: exact_address, //exact address
+                         // street_number: 33, //
+                    },
+               },
+          };
+
      return {
           items,
           payer: {
@@ -39,18 +56,7 @@ module.exports.createPreference = function ({ items, user }) {
                installments: 1, //cuotas
                default_installments: 1, //defecto cuotas
           },
-          shipments: {
-               mode: "not_specified",
-               cost: 1.0,
-               free_shipping: false,
-               receiver_address: {
-                    city_name: provinces[department][province].nombre_ubigeo, //province
-                    state_name: departments[department].nombre_ubigeo, //department
-                    zip_code: zip_code,
-                    street_name: exact_address, //exact address
-                    // street_number: 33, //
-               },
-          },
+          ..._ship,
           back_urls: {
                success: "http://localhost:9080/v1/api/payment/run/confirm",
                pending: "http://localhost:9080/",
@@ -154,4 +160,66 @@ module.exports.createPayment = function (body) {
                },
           },
      };
+};
+
+module.exports.businessToCustomer = function (business) {
+     const { name, phone, email, ruc: doc_number, businessType } = business;
+     return {
+          first_lname: `RUC_${businessType}0`,
+          second_lname: "",
+          name,
+          phone,
+          email,
+          documents: {
+               active: { doc_number: String(doc_number), doc_type: "RUC" },
+          },
+          address: { department: null, province: null, exact_address: "", zip_code: "" },
+     };
+};
+
+module.exports.createPlan = function (business) {
+     const { plan } = business;
+     const plans = {
+          basic10: {
+               description: "BUSINESS RUC 10 BASIC PREMIUM",
+               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+               title: "BASIC10",
+               unit_price: 9.99,
+          },
+          basic20: {
+               description: "BUSINESS RUC 20 BASIC PREMIUM",
+               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+               title: "BASIC20",
+               unit_price: 14.99,
+          },
+          platinum10: {
+               description: "BUSINESS RUC 10 PLATINUM PREMIUM",
+               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+               title: "PLATINUM10",
+               unit_price: 14.99,
+          },
+          platinum20: {
+               description: "BUSINESS RUC 20 PLATINUM PREMIUM",
+               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+               title: "PLATINUM20",
+               unit_price: 19.99,
+          },
+          // basic10: 9.99,
+          // basic20: 14.99,
+          // platinum10: 14.99,
+          // platinum20: 19.99,
+     };
+     const { description, picture_url, title, unit_price } = plans[plan];
+     return [
+          {
+               id: plan,
+               quantity: 1,
+               description,
+               picture_url: `https://storage.googleapis.com/lerietmall-302923/${picture_url}`,
+               title,
+               unit_price,
+               category_id: `PREMIUM.PLANS.${"".concat(plan).toUpperCase()}`,
+               currency_id: "USD",
+          },
+     ];
 };

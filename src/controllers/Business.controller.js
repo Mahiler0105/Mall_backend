@@ -10,6 +10,12 @@ class BusinessController {
         const business = await _businessService.get(businessId);
         return res.send(business);
     }
+    
+    async validate(req, res) {
+        const { businessId } = req.params;
+        const result = await _businessService.validate(businessId);
+        return res.send(result);
+    }
 
     async getAll(_req, res) {
         const businesses = await _businessService.getAll();

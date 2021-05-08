@@ -7,4 +7,5 @@ module.exports = {
   PurchaseRepository: require('./Purchase.repository'),
   ServiceRepository: require('./Service.repository'),
   HistoryRepository: require('./History.repository'),
+  DocumentRepository: require('./Document.repository'),
 };

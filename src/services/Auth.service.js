@@ -7,11 +7,15 @@ const { JWT_SECRET } = require("../config");
 
 let _businessRepository = null;
 let _customerRepository = null;
+let _historyRepository = null;
+let _documentHistory = null;
 
 class AuthService {
-     constructor({ BusinessRepository, CustomerRepository }) {
+     constructor({ BusinessRepository, CustomerRepository, HistoryRepository, DocumentRepository }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
+          _historyRepository = HistoryRepository;
+          _documentHistory = DocumentRepository;
      }
 
      /**
@@ -19,62 +23,93 @@ class AuthService {
       * @param {*} business
       */
      async signUpBusiness(business) {
-          const { email, source, token: jwt } = business;
-          const businessExist = await _businessRepository.getBusinessByEmail(email);
+          const { email, source, token: jwt, ruc } = business;
           const error = new Error();
+
+          if (!ruc) {
+               error.status = 400;
+               error.message = "RUC must be send";
+               throw error;
+          }
+          const rucexist = await _documentHistory.getByRUC(ruc);
+          if (!rucexist) {
+               error.status = 400;
+               error.message = "Imposible to proceed";
+               throw error;
+          }
+
+          const businessExist = await _businessRepository.getBusinessByEmail(email);
           if (businessExist) {
                error.status = 400;
                error.message = "Business already exists";
                throw error;
-          } else {
-               const businessEntity = business;
-               // delete businessEntity.source;
+          }
 
-               if (!!source && source !== "email") {
-                    const saltSource = genSaltSync(10);
-                    if (source === "facebook") {
-                         const { id } = await GetFacebookId(jwt);
+          const businessEntity = business;
+          // delete businessEntity.source;
 
-                         if (id) businessEntity.password = hashSync(id, saltSource);
-                         else {
-                              error.status = 400;
-                              error.message = "Invalid token";
-                              throw error;
-                         }
-                    } else {
-                         const payload = decodeToken(jwt);
-                         if (payload.sub) businessEntity.password = hashSync(payload.sub, saltSource);
-                         else {
-                              error.status = 400;
-                              error.message = "Invalid token";
-                              throw error;
-                         }
+          if (!!source && source !== "email") {
+               const saltSource = genSaltSync(10);
+               if (source === "facebook") {
+                    const { id } = await GetFacebookId(jwt);
+
+                    if (id) businessEntity.password = hashSync(id, saltSource);
+                    else {
+                         error.status = 400;
+                         error.message = "Invalid token";
+                         throw error;
+                    }
+               } else {
+                    const payload = decodeToken(jwt);
+                    if (payload.sub) businessEntity.password = hashSync(payload.sub, saltSource);
+                    else {
+                         error.status = 400;
+                         error.message = "Invalid token";
+                         throw error;
                     }
                }
-
-               const businessCreated = await _businessRepository.create(businessEntity);
-               const salt = genSaltSync(5);
-               const hashedPassowrd = hashSync(`${JWT_SECRET}${businessCreated._id}`, salt);
-               const keyReset = Buffer.from(hashedPassowrd).toString("base64");
-               if (source === "email") {
-                    await SendEmail(businessCreated.email, "Verificación de contraseña", "confirm", {
-                         endpoint: `setpassword/${keyReset}/${businessCreated._id}/1`,
-                         name: businessCreated.name.toUpperCase(),
-                    });
-               } else {
-                    const cryptSource = Buffer.from(source).toString("base64");
-                    await SendEmail(businessCreated.email, "Confirmación cuenta", "confirm", {
-                         endpoint: `oauth/confirm/${keyReset}/${businessCreated._id}/1/${cryptSource}`,
-                         name: businessCreated.name.toUpperCase(),
-                    });
-               }
-               await _businessRepository.update(businessCreated._id, {
-                    urlReset: { url: keyReset, created: new Date() },
-               });
-               return businessCreated;
           }
-     }
+          const {
+               denomination,
+               person: { dni, doc_number, name: person_name },
+          } = rucexist;
 
+          if (businessEntity.businessType === 2) businessEntity.name = denomination;
+          businessEntity.owner.name = person_name;
+
+          if (dni) businessEntity.owner.dni = dni;
+          else if (doc_number) businessEntity.owner.dni = doc_number;
+
+          const businessCreated = await _businessRepository.create(businessEntity);
+          const salt = genSaltSync(5);
+          const hashedPassowrd = hashSync(`${JWT_SECRET}${businessCreated._id}`, salt);
+          // const keyReset = Buffer.from(hashedPassowrd).toString("base64");
+
+          const entityToEncode = {
+               id: businessCreated._id,
+               email,
+               rol: "business",
+          };
+          const token = generateToken(entityToEncode);
+          const keyReset = Buffer.from(`${hashedPassowrd}|${token}`).toString("base64");
+
+          if (source === "email") {
+               await SendEmail(businessCreated.email, "Verificación de contraseña", "confirm", {
+                    endpoint: `setpassword/${keyReset}/${businessCreated._id}/1`,
+                    name: businessCreated.name.toUpperCase(),
+               });
+          } else {
+               const cryptSource = Buffer.from(source).toString("base64");
+               await SendEmail(businessCreated.email, "Confirmación cuenta", "confirm", {
+                    endpoint: `oauth/confirm/${keyReset}/${businessCreated._id}/1/${cryptSource}`,
+                    name: businessCreated.name.toUpperCase(),
+               });
+          }
+          await _businessRepository.update(businessCreated._id, {
+               urlConfirm: { url: keyReset, created: new Date() },
+          });
+          return businessCreated;
+     }
      /**
       *
       * @param {*} customer
@@ -87,51 +122,59 @@ class AuthService {
                error.status = 400;
                error.message = "Customer already exists";
                throw error;
-          } else {
-               const customerEntity = customer;
-               // delete customerEntity.source;
-               if (!!source && source !== "email") {
-                    const saltSource = genSaltSync(10);
-                    if (source === "facebook") {
-                         const { id } = await GetFacebookId(jwt);
+          }
+          const customerEntity = customer;
+          // delete customerEntity.source;
+          if (!!source && source !== "email") {
+               const saltSource = genSaltSync(10);
+               if (source === "facebook") {
+                    const { id } = await GetFacebookId(jwt);
 
-                         if (id) customerEntity.password = hashSync(id, saltSource);
-                         else {
-                              error.status = 400;
-                              error.message = "Invalid token";
-                              throw error;
-                         }
-                    } else {
-                         const payload = decodeToken(jwt);
-                         if (payload.sub) customerEntity.password = hashSync(payload.sub, saltSource);
-                         else {
-                              error.status = 400;
-                              error.message = "Invalid token";
-                              throw error;
-                         }
+                    if (id) customerEntity.password = hashSync(id, saltSource);
+                    else {
+                         error.status = 400;
+                         error.message = "Invalid token";
+                         throw error;
+                    }
+               } else {
+                    const payload = decodeToken(jwt);
+                    if (payload.sub) customerEntity.password = hashSync(payload.sub, saltSource);
+                    else {
+                         error.status = 400;
+                         error.message = "Invalid token";
+                         throw error;
                     }
                }
-               const customerCreated = await _customerRepository.create(customerEntity);
-               const salt = genSaltSync(5);
-               const hashedPassowrd = hashSync(`${JWT_SECRET}${customerCreated._id}`, salt);
-               const keyReset = Buffer.from(hashedPassowrd).toString("base64");
-               if (source === "email") {
-                    await SendEmail(customerCreated.email, "Verificación de contraseña", "confirm", {
-                         endpoint: `setpassword/${keyReset}/${customerCreated._id}/0`,
-                         name: customerCreated.name.toUpperCase(),
-                    });
-               } else {
-                    const cryptSource = Buffer.from(source).toString("base64");
-                    await SendEmail(customerCreated.email, "Confirmación de cuenta", "confirm", {
-                         endpoint: `oauth/confirm/${keyReset}/${customerCreated._id}/0/${cryptSource}`,
-                         name: customerCreated.name.toUpperCase(),
-                    });
-               }
-               await _customerRepository.update(customerCreated._id, {
-                    urlReset: { url: keyReset, created: new Date() },
-               });
-               return customerCreated;
           }
+          const customerCreated = await _customerRepository.create(customerEntity);
+          const salt = genSaltSync(5);
+          const hashedPassowrd = hashSync(`${JWT_SECRET}${customerCreated._id}`, salt);
+          // const keyReset = Buffer.from(hashedPassowrd).toString("base64");
+
+          const entityToEncode = {
+               id: customerCreated._id,
+               email,
+               rol: "customer",
+          };
+          const token = generateToken(entityToEncode);
+          const keyReset = Buffer.from(`${hashedPassowrd}|${token}`).toString("base64");
+
+          if (source === "email") {
+               await SendEmail(customerCreated.email, "Verificación de contraseña", "confirm", {
+                    endpoint: `setpassword/${keyReset}/${customerCreated._id}/0`,
+                    name: customerCreated.name.toUpperCase(),
+               });
+          } else {
+               const cryptSource = Buffer.from(source).toString("base64");
+               await SendEmail(customerCreated.email, "Confirmación de cuenta", "confirm", {
+                    endpoint: `oauth/confirm/${keyReset}/${customerCreated._id}/0/${cryptSource}`,
+                    name: customerCreated.name.toUpperCase(),
+               });
+          }
+          await _customerRepository.update(customerCreated._id, {
+               urlConfirm: { url: keyReset, created: new Date() },
+          });
+          return customerCreated;
      }
 
      async signInOauth(entity) {
@@ -161,7 +204,7 @@ class AuthService {
                error.status = 404;
                throw error;
           }
-          if (entityLogin.urlReset.url) {
+          if (entityLogin.urlConfirm.url) {
                error.message = "Account not confirmed yet";
                error.status = 400;
                throw error;
@@ -178,16 +221,47 @@ class AuthService {
                email: entityLogin.email,
                rol: entityRol,
           };
+          var payout = {};
+          if (entityRol === "business" && !!!entityLogin.admin) payout.admin = false;
+          if (entityRol === "business")entityLogin = entityLogin.toJSON();
           const token = generateToken(entityToEncode);
-          return { token, [entityRol]: entityLogin };
+          return { token, [entityRol]: entityLogin, payout };
      }
 
      async getDni(dni) {
-          return GetDNI(dni);
+          const error = new Error();
+          error.status = 400;
+          error.message = "Not found";
+          const dniexists = await _documentHistory.getByDNI(dni);
+          if (dniexists) return true;
+
+          const _dni = await GetDNI(dni);
+          if (!_dni) throw error;
+          await _documentHistory.create({ ..._dni, type: "dni" });
+          return true;
      }
 
      async getRuc(ruc) {
-          return GetRUC(ruc);
+          const error = new Error();
+
+          const rucexist = await _documentHistory.getByRUC(ruc);
+          if (rucexist) return true;
+
+          const _ruc = await GetRUC(ruc);
+          if (!_ruc) {
+               error.status = 400;
+               error.message = "Not found";
+               throw error;
+          }
+
+          const { condition, status } = _ruc;
+          if (condition === "HABIDO" && status === "ACTIVO") {
+               await _documentHistory.create({ ..._ruc, type: "ruc" });
+               return true;
+          }
+          error.status = 400;
+          error.message = "RUC not active";
+          throw error;
      }
 
      async forgotPassword(email) {
@@ -243,6 +317,7 @@ class AuthService {
           const error = new Error();
           let businessExists;
           let customerExists;
+          var field = "urlReset";
           if (rol === "0") {
                customerExists = await _customerRepository.get(id);
                if (!customerExists) {
@@ -250,7 +325,9 @@ class AuthService {
                     error.message = "User does not found";
                     throw error;
                }
-               if (customerExists.urlReset.url !== key) return false;
+               if (customerExists.urlConfirm?.url) field = "urlConfirm";
+
+               if (customerExists[field].url !== key) return false;
                return true;
           }
           if (rol === "1") {
@@ -260,7 +337,9 @@ class AuthService {
                     error.message = "User does not found";
                     throw error;
                }
-               if (businessExists.urlReset.url !== key) return false;
+               if (businessExists.urlConfirm?.url) field = "urlConfirm";
+
+               if (businessExists[field].url !== key) return false;
                return true;
           }
           error.status = 500;
@@ -281,7 +360,8 @@ class AuthService {
           const customerExists = await _customerRepository.get(id);
           if (!customerExists && !businessExists) return false;
 
-          const _data = { urlReset: { url: "", created: new Date() } };
+          // const _data = { urlConfirm: { url: "", created: new Date() } };
+          const _data = "urlConfirm";
           let _token;
           if (rsp && nst && knc && nfr && mth && vng && lgn && nbl && dsr) {
                _token = String(rsp).concat(nst, knc, nfr, mth, vng, lgn, nbl, dsr);
@@ -290,8 +370,10 @@ class AuthService {
                          const payload = decodeToken(_token);
                          if (payload.sub) {
                               let _result;
-                              if (customerExists) _result = _customerRepository.update(id, _data);
-                              else _result = _businessRepository.update(id, _data);
+                              // if (customerExists) _result = _customerRepository.update(id, _data);
+                              // else _result = _businessRepository.update(id, _data);
+                              if (customerExists) _result = _customerRepository.deleteField(id, _data);
+                              else _result = _businessRepository.deleteField(id, _data);
                               if (!_result) return false;
                               return true;
                          }
@@ -302,8 +384,10 @@ class AuthService {
                     const { id: idw } = await GetFacebookId(_token);
                     if (idw) {
                          let _result;
-                         if (customerExists) _result = _customerRepository.update(id, _data);
-                         else _result = _businessRepository.update(id, _data);
+                         // if (customerExists) _result = _customerRepository.update(id, _data);
+                         // else _result = _businessRepository.update(id, _data);
+                         if (customerExists) _result = _customerRepository.deleteField(id, _data);
+                         else _result = _businessRepository.deleteField(id, _data);
                          if (!_result) return false;
                          return true;
                     }
@@ -315,7 +399,7 @@ class AuthService {
 
      async deleteKeys() {
           const businesses = await _businessRepository.getAll();
-          const customers = await _customerRepository.getAll();         
+          const customers = await _customerRepository.getAll();
 
           businesses.map(async (key) => {
                if (moment().diff(key.urlReset.created, "hours") >= 4) {
@@ -327,6 +411,12 @@ class AuthService {
                     await _businessRepository.update(key._id, {
                          codeVerification: { code: "", created: new Date() },
                     });
+               }
+               if (!!key.urlConfirm?.url) {
+                    if (moment().diff(key.urlConfirm.created, "hours") >= 4) {
+                         await _historyRepository.create({ ...key, type: "business-not-confirmed" });
+                         await _businessRepository.delete(key._id);
+                    }
                }
                if (!!key.inactive?.created) {
                     if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {
@@ -361,6 +451,12 @@ class AuthService {
                     await _customerRepository.update(key._id, {
                          codeVerification: { code: "", created: new Date() },
                     });
+               }
+               if (!!key.urlConfirm?.url) {
+                    if (moment().diff(key.urlConfirm.created, "hours") >= 4) {
+                         await _historyRepository.create({ ...key, type: "customer-not-confirmed" });
+                         await _customerRepository.delete(key._id);
+                    }
                }
                if (!!key.inactive?.created) {
                     if (moment().diff(key.inactive.created, "days") === 7 && !key.inactive.seven_days) {

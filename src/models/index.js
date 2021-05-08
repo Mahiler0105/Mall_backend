@@ -7,4 +7,5 @@ module.exports = {
   Service: require('./Service.model'),
   Purchase: require('./Purchase.model'),
   History: require('./History.model'),
+  Document: require('./Document.model'),
 };
