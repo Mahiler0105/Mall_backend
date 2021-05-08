@@ -1,7 +1,10 @@
 // import Stripe from "stripe";
 import mercadopago from "mercadopago";
 import { Payment } from "../helpers";
-import moment from "moment";
+// import moment from "moment";
+import moment from "moment-timezone";
+// var moment = require('moment-timezone');
+// moment().tz("America/Los_Angeles");
 // const { KEY_STRIPE } = require("../config");
 
 mercadopago.configure({
@@ -356,8 +359,10 @@ class PaymentService {
           // return this.createPreference()
 
           return {
-               date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-               expiration_date_from: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               // date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               // expiration_date_from: moment().tz().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               date_of_expiration: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               expiration_date_from: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           };
      }
      async getCoupons() {
