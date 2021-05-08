@@ -1,4 +1,4 @@
-const moment = require("moment");
+const moment = require("moment-timezone");
 const departments = require("../lib/ubigeos/departamentos.json");
 const provinces = require("../lib/ubigeos/provincias.json");
 module.exports.createPreference = function ({ items, user }, shipment) {
@@ -65,9 +65,9 @@ module.exports.createPreference = function ({ items, user }, shipment) {
           statement_descriptor: "LERIT",
           auto_return: "approved",
           expires: true,
-          date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-          expiration_date_from: moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-          expiration_date_to: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          date_of_expiration: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          expiration_date_from: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          expiration_date_to: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           // marketplace_fee: 2.0,
      };
 };
