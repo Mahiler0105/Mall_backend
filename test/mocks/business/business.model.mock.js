@@ -57,14 +57,14 @@ module.exports = {
           socialNetwork: {
                instagram: "https://www.siama.com",
           },
-          payments: {
-               bankDeposit: false,
-               cash: false,
-               plin: false,
-               tunki: false,
-               wireTransfer: false,
-               yape: false,
-          },
+          // payments: {
+          //      bankDeposit: false,
+          //      cash: false,
+          //      plin: false,
+          //      tunki: false,
+          //      wireTransfer: false,
+          //      yape: false,
+          // },
           // codeVerification: {
           //      code: "",
           //      created: "2021-04-21T20:48:24.769Z",
@@ -80,10 +80,10 @@ module.exports = {
           telephone: "561245",
           category: "Deportes",
           cards: [],
-          counter: 0,
+          // counter: 0,
           delivery: true,
-          active: true,
-          plan: false,
+          // active: true,
+          plan: "",
           // urlReset: {
           //      created: "2020-11-06T16:10:30.272Z",
           //      url: "",
