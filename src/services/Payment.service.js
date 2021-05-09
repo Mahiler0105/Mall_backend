@@ -793,7 +793,7 @@ class PaymentService {
                          title,
                          unit_price,
                          category_id,
-                         currency_id,
+                         currency_id: "PEN",
                     };
                     const specs = _d[id].specifications;
                     var _bus = obj.business[business];
@@ -1026,17 +1026,13 @@ class PaymentService {
 
 module.exports = PaymentService;
 
-let a = `http://localhost:9080/?collection_id=1236157008
+let a = `http://localhost:9080/
+?collection_id=1236157008
 &collection_status=approved
-&payment_id=1236157008
+&payment_id=14469895663
 &status=approved
-&external_reference=null
-&payment_type=credit_card
-&merchant_order_id=2589636884
-&preference_id=744446817-c21bf717-6b18-4b76-9d68-353060838ad9
-&site_id=MPE
-&processing_mode=aggregator
-&merchant_account_id=null`;
+&merchant_order_id=2559332043
+&preference_id=744446817-aa70bb98-a6bd-4878-a921-ca59b60a506f`;
 
 let preference = {
      body: {
