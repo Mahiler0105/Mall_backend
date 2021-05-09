@@ -58,9 +58,9 @@ module.exports.createPreference = function ({ items, user }, shipment) {
           },
           ..._ship,
           back_urls: {
-               success: "http://localhost:9080/v1/api/payment/run/confirm",
-               pending: "http://localhost:9080/",
-               failure: "http://localhost:9080/",
+               success: "https://www.lerietmall.net/",
+               // pending: "http://localhost:9080/",
+               // failure: "http://localhost:9080/",
           },
           statement_descriptor: "LERIT",
           auto_return: "approved",

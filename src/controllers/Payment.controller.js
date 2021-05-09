@@ -233,7 +233,12 @@ class PaymentController {
           const getResult = await _paymentService.getSubscription(id);
           return res.status(200).send(getResult);
      }
-
+     
+     async afterPay(req, res) {
+          const { body } = req;
+          const result = await _paymentService.afterPay(body);
+          return res.status(200).send(result);
+     }
      // async createUserMP(req, res) {
      //     const userMp = await _paymentService.createUserMP();
      //     return res.status(200).send(userMp);

@@ -46,6 +46,7 @@ module.exports = function ({ PaymentController }) {
     router.delete('/deletekeys', PaymentController.deleteKeys);
     
     router.get('/test', PaymentController.getCoupons);
+    router.post('/after', PaymentController.afterPay);
     // Subscriptions are not available for this country yet
     // router.get('/subscription', PaymentController.createSubscription); //😁
     // router.get('/subscription/:id', PaymentController.getSubscription); //😁

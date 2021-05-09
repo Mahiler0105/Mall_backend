@@ -964,6 +964,25 @@ class PaymentService {
           });
           return true;
      }
+
+     async afterPay(entity) {
+          const error = new Error();
+          error.status = 400;
+          error.message = "Invalid parameters";
+
+          const { collection_id, collection_status, payment_id, merchant_order_id, preference_id } = entity;
+          if (!collection_id || !collection_status || !payment_id || !merchant_order_id || !preference_id) {
+               throw error;
+          }
+          var _payment, _merchant, _preference;
+          _payment = await this.getPayment(payment_id);
+          _merchant = await this.getOrder(merchant_order_id);
+          _preference = await this.getPreference(preference_id);
+          if (!_payment || !_merchant || !_preference) {
+               throw error;
+          }
+          return true;
+     }
      // async mercadoPago() {
      //     // {"access_token":"TEST-1063804438479518-040401-e9d75cb6094774e9d932fc874d137a22-738204784","token_type":"bearer","expires_in":15552000,"scope":"offline_access read write","user_id":738204784,"refresh_token":"TG-60691bf952841f00070fbeec-738204784","public_key":"TEST-384be34a-8435-4429-b164-df44ec3e62b8","live_mode":false}%
      //     // MARKETPLACE
