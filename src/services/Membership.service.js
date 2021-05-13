@@ -17,9 +17,21 @@ class MembershipService {
                if (String(key.first_paid) === "false") {
                     await _membershipRepository.delete(key._id);
                }
-               if (key.authorized === "confirmed" && moment(key.next_void).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")) {
-                    await _membershipRepository.update(key._id, { must_pay: true });
+               if (key.authorized === "confirmed") {
+                    if (moment(key.next_void).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")) {
+                         await _membershipRepository.update(key._id, { must_pay: true, days_without_activity: 0 });
+                    }
+
+                    if (String(key.must_pay) === "true") {
+                         if (!key.totally_annulled) {
+                              await _membershipRepository.update(key._id, { days_without_activity: moment().diff(moment(key.next_void), "days") });
+                         }
+                         if (key.days_without_activity === 30) {
+                              await _membershipRepository.update(key._id, { authorized: "rejected", totally_annulled: true });
+                         }
+                    }
                }
+
                if (key.authorized === "cancelled" && !key.totally_annulled) {
                     if (key.remain_days > 0) {
                          await _membershipRepository.update(key._id, { remain_days: moment(key.next_void).diff(moment().toNow(), "days") });
@@ -51,7 +63,7 @@ class MembershipService {
                error.message = "Not authorized";
                throw error;
           }
-          const member = _membershipRepository.byClient(id);
+          const member = await _membershipRepository.byClient(id);
           if (member.length === 1) {
                const last_cancelled_date = moment().tz("America/Lima").toISOString();
                let cancelled_dates;
@@ -90,7 +102,7 @@ class MembershipService {
                error.message = "Not authorized";
                throw error;
           }
-          const member = _membershipRepository.byClient(id);
+          const member = await _membershipRepository.byClient(id);
           if (member.length === 1) {
                if (member[0].remain_days > 0 && !member[0].totally_annulled) {
                     await _membershipRepository.update(member[0]._id, {

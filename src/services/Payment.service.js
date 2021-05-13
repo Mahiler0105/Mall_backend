@@ -944,7 +944,7 @@ class PaymentService {
 
                const { preference_id, status, order_status, cancelled, shipping_cost, total_amount, paid_amount, refunded_amount } =
                     _mp_merchant.body;
-               
+
                const userOrders = await _orderRepository.getOrdersByPreferenceId(preference_id);
                if (userOrders.length > 0) {
                     const { orders: _o, payment: _p } = Array.from(userOrders).reduce(
@@ -979,28 +979,31 @@ class PaymentService {
                     return true;
                }
                const businessMemberships = await _membershipRepository.byPreferenceId(preference_id);
-               
+
                if (businessMemberships.length === 1) {
                     const {
                          _id: idMembership,
                          current_period,
                          frecuency: { value, unit },
                          idBusiness: idClient,
+                         must_pay,
                     } = businessMemberships[0];
 
-                    await _membershipRepository.update(idMembership, {
-                         current_period: parseInt(current_period) + 1,
-                         last_paid: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-                         next_void: moment().tz("America/Lima").add(value, unit).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-                         must_pay: false,
-                         first_paid: true,
-                         authorized: "confirmed",
-                    });
-                    await _businessRepository.update(idClient, { admin: "authorized" });
+                    if (must_pay) {
+                         await _membershipRepository.update(idMembership, {
+                              current_period: parseInt(current_period) + 1,
+                              last_paid: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+                              next_void: moment().tz("America/Lima").add(value, unit).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+                              must_pay: false,
+                              first_paid: true,
+                              authorized: "confirmed",
+                         });
+                         await _businessRepository.update(idClient, { admin: "authorized" });
 
-                    var _fpayment = { ...payment, idClient, idMembership };
-                    await _purchaseRepository.create(_fpayment);
-                    return true;
+                         var _fpayment = { ...payment, idClient, idMembership };
+                         await _purchaseRepository.create(_fpayment);
+                         return true;
+                    }
                }
           }
           return false;

@@ -42,8 +42,9 @@ const MembershipSchema = new Schema(
 
           cancelled_dates: [{ type: Date }],
           last_cancelled_date: { type: Date },
-          remain_days: { type: Number },
-          totally_annulled: { type: Boolean },
+          remain_days: { type: Number }, //NEXT VOID-CURRENT DATE
+          totally_annulled: { type: Boolean }, //IF REMAIN DAYS ==0
+          days_without_activity: { type: Number },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );
