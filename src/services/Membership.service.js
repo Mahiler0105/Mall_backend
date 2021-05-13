@@ -14,6 +14,9 @@ class MembershipService {
      async refreshKeys() {
           const memberships = await _membershipRepository.getAll();
           await memberships.map(async (key) => {
+               if (String(key.first_paid) === "false") {
+                    await _membershipRepository.delete(key._id);
+               }
                if (key.authorized === "confirmed" && moment(key.next_void).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")) {
                     await _membershipRepository.update(key._id, { must_pay: true });
                }
