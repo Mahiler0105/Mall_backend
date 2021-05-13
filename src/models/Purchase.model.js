@@ -61,28 +61,39 @@ const PurchaseSchema = new Schema(
                required: true,
                autopopulate: false,
           },
+
           business: [
                {
                     type: Schema.Types.ObjectId,
                     ref: "business",
-                    required: true,
+                    required: false,
                     autopopulate: false,
                },
           ],
+
           // idBusiness: {
           //      type: Schema.Types.ObjectId,
           //      ref: "business",
           //      required: true,
           //      autopopulate: false,
           // },
+
           orders: [
                {
                     type: Schema.Types.ObjectId,
                     ref: "order",
-                    required: true,
+                    required: false,
                     autopopulate: false,
                },
           ],
+
+          idMembership: {
+               type: Schema.Types.ObjectId,
+               ref: "membership",
+               required: false,
+               autopopulate: false,
+          },
+
           // idOrder: {
           //      type: Schema.Types.ObjectId,
           //      ref: "order",

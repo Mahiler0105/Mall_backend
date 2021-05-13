@@ -8,4 +8,5 @@ module.exports = {
   ServiceRepository: require('./Service.repository'),
   HistoryRepository: require('./History.repository'),
   DocumentRepository: require('./Document.repository'),
+  MembershipRepository: require('./Membership.repository'),
 };

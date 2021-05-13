@@ -1,11 +1,8 @@
 // import Stripe from "stripe";
 import mercadopago from "mercadopago";
 import { Payment } from "../helpers";
-// import moment from "moment";
 import moment from "moment-timezone";
-// var moment = require('moment-timezone');
-// moment().tz("America/Los_Angeles");
-// const { KEY_STRIPE } = require("../config");
+import { modelName } from "../models/Membership.model";
 
 mercadopago.configure({
      access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
@@ -72,13 +69,15 @@ let _customerRepository = null;
 let _purchaseRepository = null;
 let _orderRepository = null;
 let _productService = null;
+let _membershipRepository = null;
 class PaymentService {
-     constructor({ BusinessRepository, CustomerRepository, ProductService, OrderRepository, PurchaseRepository }) {
+     constructor({ BusinessRepository, CustomerRepository, ProductService, OrderRepository, PurchaseRepository, MembershipRepository }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
           _productService = ProductService;
           _purchaseRepository = PurchaseRepository;
           _orderRepository = OrderRepository;
+          _membershipRepository = MembershipRepository;
      }
 
      // async getCustomers() {
@@ -358,12 +357,15 @@ class PaymentService {
           // return this.createMoneyRequest();
           // return this.createPreference()
 
-          return {
-               // date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-               // expiration_date_from: moment().tz().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-               date_of_expiration: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-               expiration_date_from: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-          };
+          // return {
+          //      // date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          //      // expiration_date_from: moment().tz().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          //      date_of_expiration: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          //      expiration_date_from: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+          // };
+          const a = await _orderRepository.getOrdersByPreferenceId("744446817-562c51e8-79ec-4eb7-98e1-f7eaa1606e44");
+          if (a.length > 0) return true;
+          else return false;
      }
      async getCoupons() {
           try {
@@ -732,23 +734,67 @@ class PaymentService {
                     error.message = "Not authorized to this action";
                     throw error;
                }
+
+               const LeritFreeInitial = true; //LERIT COUPON DISCOUNT
+
+               const items = Payment.createPlan(businessExists);
+               const membershipexists = await _membershipRepository.byClient(businessExists._id);
+
+               if (membershipexists.length === 0) {
+                    if (LeritFreeInitial) {
+                         let freemember = Payment.createMembership(businessExists, LeritFreeInitial);
+                         freemember.authorized = "confirmed";
+                         freemember.first_paid = true;
+                         freemember.next_void = moment().tz("America/Lima").add(3, "months");
+                         await _membershipRepository.create(freemember);
+
+                         await _businessRepository.update(businessExists._id, { admin: "authorized" });
+                         return {
+                              success: true,
+                              action: 1,
+                         };
+                    } else {
+                         // const items = Payment.createPlan(businessExists);
+                         const {
+                              body: { id: preference_id },
+                         } = await this.createPreference(
+                              Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false)
+                         );
+
+                         await _membershipRepository.create(Payment.createMembership(businessExists, LeritFreeInitial, preference_id));
+                         return {
+                              id: preference_id,
+                              success: true,
+                         };
+                    }
+               } else if (membershipexists.length === 1) {
+                    if (String(membershipexists[0].must_pay) === "true") {
+                         const {
+                              body: { id: preference_id },
+                         } = await this.createPreference(
+                              Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false)
+                         );
+                         await _membershipRepository.update(membershipexists[0]._id, { last_preference_id: preference_id });
+                         return {
+                              id: preference_id,
+                              success: true,
+                         };
+                    } else {
+                         error.status = 403;
+                         error.message = "Payment found";
+                         throw error;
+                    }
+               } else {
+                    error.status = 403;
+                    error.message = "Not authorized to this action";
+                    throw error;
+               }
+
                //basic10       basic_premium_ruc_10
                //basic20       basic_premium_ruc_20
                //platinum10    platinum_premium_ruc_10
                //platinum20    platinum_premium_ruc_20
-               //"https://www.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
-               //"https://sandbox.mercadopago.com.pe/checkout/v1/redirect?pref_id=744446817-33af65ee-7a0c-4858-9277-57bd4296179e",
-
-               // const items = Payment.createPlan(businessExists);
-               // const {
-               //      body: { id: preference_id },
-               // } = await this.createPreference(Payment.createPreference({ items, user: Payment.businessToCustomer(businessExists) }, false));
-               await _businessRepository.update(businessExists._id, { admin: "authorized" });
-               return {
-                    // id: preference_id,
-                    success: true,
-                    action: 1,
-               };
+               //"https://www.mercadopago.com.pe/checkout/v1/redirect?pref_id=",
           }
           const { cart, currency: currency_id, _id: idClient } = customerExists;
           if (!cart) {
@@ -896,62 +942,70 @@ class PaymentService {
                const { merchant_order_id, payment } = Payment.createPayment(_mp_payment.body);
                _mp_merchant = await this.getOrder(merchant_order_id);
 
-               const {
-                    preference_id,
-                    status,
-                    order_status,
-                    cancelled,
-                    shipping_cost,
-                    total_amount,
-                    paid_amount,
-                    refunded_amount,
-               } = _mp_merchant.body;
+               const { preference_id, status, order_status, cancelled, shipping_cost, total_amount, paid_amount, refunded_amount } =
+                    _mp_merchant.body;
+
                const userOrders = await _orderRepository.getOrdersByPreferenceId(preference_id);
+               if (userOrders.length > 0) {
+                    const { orders: _o, payment: _p } = Array.from(userOrders).reduce(
+                         (obj, item) => {
+                              const { _id, idClient, idBusiness, items } = item;
+                              obj.orders[_id] = {
+                                   merchant_order_id,
+                                   status,
+                                   order_status,
+                                   cancelled,
+                                   amounts: {
+                                        shipping_cost,
+                                        total_amount,
+                                        paid_amount,
+                                        refunded_amount,
+                                   },
+                              };
+                              obj.payment.idClient = idClient;
+                              obj.payment.business.push(idBusiness);
+                              obj.payment.orders.push(_id);
+                              obj.payment.items = obj.payment.items.concat(items);
 
-               console.log(JSON.stringify(userOrders, null, 2));
+                              return obj;
+                         },
+                         { orders: {}, payment: { business: [], orders: [], items: [] } }
+                    );
+                    var _fpayment = { ...payment, ..._p };
+                    Object.keys(_o).forEach(async (or) => {
+                         await _orderRepository.update(or, _o[or]);
+                    });
+                    await _purchaseRepository.create(_fpayment);
+                    return true;
+               }
+               const businessMemberships = await _membershipRepository.byPreferenceId(preference_id);
+               if (businessMemberships.length === 1) {
+                    const {
+                         _id: idMembership,
+                         current_period,
+                         frecuency: { value, unit },
+                         idBusiness: idClient,
+                    } = businessMemberships[0];
 
-               const { orders: _o, payment: _p } = Array.from(userOrders).reduce(
-                    (obj, item) => {
-                         const { _id, idClient, idBusiness, items } = item;
-                         obj.orders[_id] = {
-                              merchant_order_id,
-                              status,
-                              order_status,
-                              cancelled,
-                              amounts: {
-                                   shipping_cost,
-                                   total_amount,
-                                   paid_amount,
-                                   refunded_amount,
-                              },
-                         };
-                         obj.payment.idClient = idClient;
-                         obj.payment.business.push(idBusiness);
-                         obj.payment.orders.push(_id);
-                         obj.payment.items = obj.payment.items.concat(items);
+                    await _membershipRepository.update(idMembership, {
+                         current_period: parseInt(current_period) + 1,
+                         last_paid: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+                         next_void: moment().tz("America/Lima").add(value, unit).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+                         must_pay: false,
+                    });
 
-                         return obj;
-                    },
-                    { orders: {}, payment: { business: [], orders: [], items: [] } }
-               );
-               var _fpayment = { ...payment, ..._p };
-               console.log(_fpayment);
+                    var _fpayment = { ...payment, idClient, idMembership };
+                    await _purchaseRepository.create(_fpayment);
+                    return true;
+               }
+               error.status = 404;
+               error.message = "Not found";
+               throw error;
+               // console.log(JSON.stringify(userOrders, null, 2));
 
-               Object.keys(_o).forEach(async (or) => {
-                    // console.log(_o[or]);
-                    await _orderRepository.update(or, _o[or]);
-               });
-               return await _purchaseRepository.create(_fpayment);
                // return true;
           }
           return false;
-          // const _orders = await _orderRepository.getOrdersByPreferenceId(pref);
-
-          // return {
-          //      payment: _mp_payment.body,
-          //      merchant: _mp_merchant.body,
-          //      orders: _orders,
-          // };
      }
      async deleteKeys() {
           const orders = await _orderRepository.getAll();

@@ -8,4 +8,5 @@ module.exports = {
   Purchase: require('./Purchase.model'),
   History: require('./History.model'),
   Document: require('./Document.model'),
+  Membership: require('./Membership.model'),
 };

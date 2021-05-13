@@ -14,6 +14,7 @@ const {
      ProductRoutes,
      HomeRoutes,
      PaymentRoutes,
+     MembershipRoutes,
 } = require("../routes/index.routes");
 
 // CONTROLERS
@@ -24,7 +25,7 @@ const {
      BusinessController,
      ProductController,
      HomeController,
-     PaymentController,
+     PaymentController,MembershipController
 } = require("../controllers");
 
 // SERVICES
@@ -37,6 +38,7 @@ const {
      ServService,
      HomeService,
      PaymentService,
+     MembershipService
 } = require("../services");
 
 // REPOSITORIES
@@ -50,10 +52,11 @@ const {
      ServiceRepository,
      HistoryRepository,
      DocumentRepository,
+     MembershipRepository
 } = require("../repositories");
 
 // MODELS
-const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document } = require("../models");
+const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document, Membership } = require("../models");
 
 // INICIALIZAR APP
 const container = createContainer();
@@ -73,6 +76,7 @@ container.register({
      ProductRoutes: asFunction(ProductRoutes).singleton(),
      HomeRoutes: asFunction(HomeRoutes).singleton(),
      PaymentRoutes: asFunction(PaymentRoutes).singleton(),
+     MembershipRoutes: asFunction(MembershipRoutes).singleton(),
      /*-----------------------*/
      // CONTROLLERS REGISTER  //
      AuthController: asClass(AuthController.bind(AuthController)).singleton(),
@@ -82,6 +86,7 @@ container.register({
      CustomerController: asClass(CustomerController.bind(CustomerController)).singleton(),
      HomeController: asClass(HomeController.bind(HomeController)).singleton(),
      PaymentController: asClass(PaymentController.bind(PaymentController)).singleton(),
+     MembershipController: asClass(MembershipController.bind(MembershipController)).singleton(),
      /*--------------------*/
      // SERVICES REGISTER  //
      AuthService: asClass(AuthService).singleton(),
@@ -92,6 +97,7 @@ container.register({
      ServService: asClass(ServService).singleton(),
      HomeService: asClass(HomeService).singleton(),
      PaymentService: asClass(PaymentService).singleton(),
+     MembershipService: asClass(MembershipService).singleton(),
      /*------------------*/
      // REPOSITORIES REGISTER  //
      BusinessRepository: asClass(BusinessRepository).singleton(),
@@ -103,6 +109,7 @@ container.register({
      ServiceRepository: asClass(ServiceRepository).singleton(),
      HistoryRepository: asClass(HistoryRepository).singleton(),
      DocumentRepository: asClass(DocumentRepository).singleton(),
+     MembershipRepository: asClass(MembershipRepository).singleton(),
      /*------------------*/
      // MODELS REGISTER  //
      Customer: asValue(Customer),
@@ -114,6 +121,7 @@ container.register({
      Purchase: asValue(Purchase),
      History: asValue(History),
      Document: asValue(Document),
+     Membership: asValue(Membership),
 });
 
 module.exports = container;

@@ -9,13 +9,15 @@ let _businessRepository = null;
 let _customerRepository = null;
 let _historyRepository = null;
 let _documentHistory = null;
+let _membershipRepository = null;
 
 class AuthService {
-     constructor({ BusinessRepository, CustomerRepository, HistoryRepository, DocumentRepository }) {
+     constructor({ BusinessRepository, CustomerRepository, HistoryRepository, DocumentRepository, MembershipRepository }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
           _historyRepository = HistoryRepository;
           _documentHistory = DocumentRepository;
+          _membershipRepository = MembershipRepository;
      }
 
      /**
@@ -223,7 +225,21 @@ class AuthService {
           };
           var payout = {};
           if (entityRol === "business") {
-               payout.admin = entityLogin.admin === "authorized";
+               const _member = await _membershipRepository.byClient(entityLogin._id);
+               var must_pay, admin;
+
+               if (_member.length === 0) {
+                    admin = false;
+               } else if (_member.length === 1) {
+                    must_pay = _member[0].must_pay;
+                    admin = entityLogin.admin === "authorized";
+               } else {
+                    error.message = "An error occurred while signing";
+                    error.status = 500;
+                    throw error;
+               }
+               payout.admin = admin;
+               if (must_pay != undefined) payout.must_pay = must_pay;
                entityLogin = entityLogin.toJSON();
           }
           const token = generateToken(entityToEncode);
@@ -613,8 +629,7 @@ class AuthService {
                title_1: "Activación",
                title_2: "de cuenta",
                name: businessExists ? businessExists.name.toUpperCase() : customerExists.name.toUpperCase(),
-               message:
-                    "nos da gusto que vuelvas a estar con nosotros, no olvides que tienes una forma facil de comunicarte con nosotros, atte equipo Lerietmall.",
+               message: "nos da gusto que vuelvas a estar con nosotros, no olvides que tienes una forma facil de comunicarte con nosotros, atte equipo Lerietmall.",
           });
           return true;
      }

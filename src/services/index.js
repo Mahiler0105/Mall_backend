@@ -7,4 +7,5 @@ module.exports = {
   ServService: require("./Service.service"),
   HomeService: require("./Home.service"),
   PaymentService: require("./Payment.service"),
+  MembershipService: require("./Membership.service"),
 };

@@ -1,6 +1,42 @@
 const moment = require("moment-timezone");
 const departments = require("../lib/ubigeos/departamentos.json");
 const provinces = require("../lib/ubigeos/provincias.json");
+
+const plans = {
+     basic10: {
+          description: "BUSINESS RUC 10 BASIC PREMIUM",
+          picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+          title: "BASIC10",
+          // unit_price: 9.99,
+          unit_price: 0.99,
+     },
+     basic20: {
+          description: "BUSINESS RUC 20 BASIC PREMIUM",
+          picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+          title: "BASIC20",
+          unit_price: 0.99,
+          // unit_price: 14.99,
+     },
+     platinum10: {
+          description: "BUSINESS RUC 10 PLATINUM PREMIUM",
+          picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+          title: "PLATINUM10",
+          unit_price: 0.99,
+          // unit_price: 14.99,
+     },
+     platinum20: {
+          description: "BUSINESS RUC 20 PLATINUM PREMIUM",
+          picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
+          title: "PLATINUM20",
+          unit_price: 0.99,
+          // unit_price: 19.99,
+     },
+     // basic10: 9.99,
+     // basic20: 14.99,
+     // platinum10: 14.99,
+     // platinum20: 19.99,
+};
+
 module.exports.createPreference = function ({ items, user }, shipment) {
      const {
           first_lname: fname,
@@ -179,36 +215,7 @@ module.exports.businessToCustomer = function (business) {
 
 module.exports.createPlan = function (business) {
      const { plan } = business;
-     const plans = {
-          basic10: {
-               description: "BUSINESS RUC 10 BASIC PREMIUM",
-               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
-               title: "BASIC10",
-               unit_price: 9.99,
-          },
-          basic20: {
-               description: "BUSINESS RUC 20 BASIC PREMIUM",
-               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
-               title: "BASIC20",
-               unit_price: 14.99,
-          },
-          platinum10: {
-               description: "BUSINESS RUC 10 PLATINUM PREMIUM",
-               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
-               title: "PLATINUM10",
-               unit_price: 14.99,
-          },
-          platinum20: {
-               description: "BUSINESS RUC 20 PLATINUM PREMIUM",
-               picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
-               title: "PLATINUM20",
-               unit_price: 19.99,
-          },
-          // basic10: 9.99,
-          // basic20: 14.99,
-          // platinum10: 14.99,
-          // platinum20: 19.99,
-     };
+
      const { description, picture_url, title, unit_price } = plans[plan];
      return [
           {
@@ -222,4 +229,25 @@ module.exports.createPlan = function (business) {
                currency_id: "USD",
           },
      ];
+};
+
+module.exports.createMembership = function (business, free_initial = false, last_preference_id = "") {
+     const { plan, ruc, _id: idBusiness } = business;
+     const { unit_price: amount } = plans[plan];
+     return {
+          idBusiness,
+          ruc,
+          amount,
+          frecuency: { value: 1, unit: "months" },
+          plan,
+          renovals: 0,
+          current_period: 0,
+          free_initial,
+          // last_paid: "",
+          // next_void: "",
+          // must_pay: "",
+          last_preference_id,
+          authorized: "pending",
+          first_paid: false,
+     };
 };
