@@ -996,6 +996,7 @@ class PaymentService {
                          first_paid: true,
                          authorized: "confirmed",
                     });
+                    await _businessRepository.update(idClient, { admin: "authorized" });
 
                     var _fpayment = { ...payment, idClient, idMembership };
                     await _purchaseRepository.create(_fpayment);
