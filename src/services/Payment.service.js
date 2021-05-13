@@ -975,6 +975,7 @@ class PaymentService {
                     Object.keys(_o).forEach(async (or) => {
                          await _orderRepository.update(or, _o[or]);
                     });
+                    await _customerRepository.update(_p.idClient, { cart: [] });
                     await _purchaseRepository.create(_fpayment);
                     return true;
                }
