@@ -735,7 +735,7 @@ class PaymentService {
                     throw error;
                }
 
-               const LeritFreeInitial = true; //LERIT COUPON DISCOUNT
+               const LeritFreeInitial = false; //LERIT COUPON DISCOUNT
 
                const items = Payment.createPlan(businessExists);
                const membershipexists = await _membershipRepository.byClient(businessExists._id);
@@ -944,7 +944,7 @@ class PaymentService {
 
                const { preference_id, status, order_status, cancelled, shipping_cost, total_amount, paid_amount, refunded_amount } =
                     _mp_merchant.body;
-
+               
                const userOrders = await _orderRepository.getOrdersByPreferenceId(preference_id);
                if (userOrders.length > 0) {
                     const { orders: _o, payment: _p } = Array.from(userOrders).reduce(
@@ -979,6 +979,7 @@ class PaymentService {
                     return true;
                }
                const businessMemberships = await _membershipRepository.byPreferenceId(preference_id);
+               
                if (businessMemberships.length === 1) {
                     const {
                          _id: idMembership,
@@ -992,18 +993,14 @@ class PaymentService {
                          last_paid: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
                          next_void: moment().tz("America/Lima").add(value, unit).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
                          must_pay: false,
+                         first_paid: true,
+                         authorized: "confirmed",
                     });
 
                     var _fpayment = { ...payment, idClient, idMembership };
                     await _purchaseRepository.create(_fpayment);
                     return true;
                }
-               error.status = 404;
-               error.message = "Not found";
-               throw error;
-               // console.log(JSON.stringify(userOrders, null, 2));
-
-               // return true;
           }
           return false;
      }
