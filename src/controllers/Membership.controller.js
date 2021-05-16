@@ -18,6 +18,11 @@ class MembershipController {
           const result = await _membershipService.continueMembership(body);
           return res.send(result);
      }
+     async upgradeMembership(req, res) {
+          const { body } = req;
+          const result = await _membershipService.upgradeMembership(body);
+          return res.send(result);
+     }
 }
 
 module.exports = MembershipController;

@@ -6,5 +6,7 @@ module.exports = function ({ MembershipController }) {
      router.post("/refreshkeys", MembershipController.refreshKeys); // 😁
      router.post("/cancel", [AuthMiddleware], MembershipController.cancelMembership); // 😁
      router.post("/continue", [AuthMiddleware], MembershipController.continueMembership); // 😁
+     router.post("/upgrade", [AuthMiddleware], MembershipController.upgradeMembership); // 😁
+     // router.post("/upgrade", MembershipController.upgradeMembership); // 😁
      return router;
 };

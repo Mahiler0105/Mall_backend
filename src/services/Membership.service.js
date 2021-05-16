@@ -1,4 +1,5 @@
 const moment = require("moment");
+import { Payment } from "../helpers";
 
 let _membershipRepository = null;
 let _businessRepository = null;
@@ -115,6 +116,43 @@ class MembershipService {
           error.status = 500;
           error.message = "Membership deprecated or not found";
           throw error;
+     }
+
+     async upgradeMembership(entity) {
+          const error = new Error();
+          const { plan, email } = entity;
+          if (!plan && !email) {
+               error.status = 500;
+               error.message = "Plan and email are requested to proceed";
+               throw error;
+          }
+          delete entity.plan;
+          delete entity.email;
+          if (Object.keys(entity).length > 0) {
+               error.status = 500;
+               error.message = "Just plan and email are accepted in this route";
+               throw error;
+          }
+          const businessExists = await _businessRepository.getBusinessByEmail(email);
+          if (!businessExists) {
+               error.status = 404;
+               error.message = "Business not found";
+               throw error;
+          }
+          const { ruc } = businessExists;
+          const valid_plan = Array.from(String(ruc))[0];
+          const planexists = Object.keys(Payment.planDictionary).find((v) => {
+               return v === plan && v.includes(valid_plan);
+          });
+
+          if (!planexists) {
+               error.status = 500;
+               error.message = "Not a valid plan";
+               throw error;
+          }
+
+          await _businessRepository.update(businessExists._id, { plan });
+          return true;
      }
 }
 

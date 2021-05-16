@@ -11,9 +11,9 @@ class MembershipRepository extends BaseRepository {
           return _membershipModel.find({ idBusiness, authorized: "confirmed" });
      }
 
-     async byRuc(ruc) {
-          return _membershipModel.find({ ruc });
-     }
+     // async byRuc(ruc) {
+     //      return _membershipModel.find({ ruc });
+     // }
 
      async byPreferenceId(last_preference_id) {
           return _membershipModel.find({ last_preference_id });

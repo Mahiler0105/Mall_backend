@@ -36,6 +36,7 @@ const plans = {
      // platinum10: 14.99,
      // platinum20: 19.99,
 };
+module.exports.planDictionary = plans
 
 module.exports.createPreference = function ({ items, user }, shipment) {
      const {
