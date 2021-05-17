@@ -41,8 +41,19 @@ const DocumentSchema = new Schema(
                     { _id: false }
                ),
           },
+
+          compra: { type: Number },
+          venta: { type: Number },
+          anio: { type: String },
+          mes: { type: String },
+          dia: { type: String },
+          full: { type: Date },
+          change_4: { type: Number },
+          change_2: { type: Number },
+          currency: { type: String, enum: ["USD", "PEN"] },
+
           //COMMON
-          type: { type: String, enum: ["ruc", "dni"], required: true },
+          type: { type: String, enum: ["ruc", "dni", "currency"], required: true },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );

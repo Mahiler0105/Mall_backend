@@ -1,7 +1,7 @@
 const { genSaltSync, hashSync } = require("bcryptjs");
 const moment = require("moment");
 const { generateToken, decodeToken } = require("../helpers/jwt.helper");
-const { GetDNI, GetRUC, SendEmail, GetFacebookId } = require("../helpers");
+const { GetDNI, GetRUC, SendEmail, GetFacebookId, GetCurrency } = require("../helpers");
 
 const { JWT_SECRET } = require("../config");
 
@@ -280,6 +280,26 @@ class AuthService {
           error.status = 400;
           error.message = "RUC not active";
           throw error;
+     }
+
+     async updateCurrency(entity) {
+          const _currencyexists = await _documentHistory.getByCurrency("USD");
+          if (_currencyexists) {
+               const { full } = _currencyexists;
+               if (moment(full).format("YYYY-MM-DD") != moment().format("YYYY-MM-DD")) {
+                    const _currency = await GetCurrency(entity);
+                    if (_currency.success) return await _documentHistory.update(_currencyexists._id, { ..._currency });
+               }
+               return _currencyexists;
+          }
+          const _currency = await GetCurrency(entity);
+          if (_currency.success) return await _documentHistory.create({ ..._currency, currency: "USD", type: "currency" });
+          return false;
+     }
+     async getCurrency() {
+          const _currencyexists = await _documentHistory.getByCurrency("USD");
+          if (_currencyexists) return _currencyexists;
+          return false;
      }
 
      async forgotPassword(email) {

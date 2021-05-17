@@ -10,6 +10,8 @@ module.exports = function ({ AuthController }) {
     router.post('/validate/:emailUser', AuthController.validateUser);
     router.get('/dni/:dni', AuthController.getDni); // 😁
     router.get('/ruc/:ruc', AuthController.getRuc); // 😁
+    router.get('/currency', AuthController.getCurrency); // 😁
+    // router.get('/currencys', AuthController.updateCurrency); // 😁
     router.post('/forgotpassword/:email', AuthController.forgotPassword); // 😁
     router.post('/verifypasswords/:id', AuthController.verifyPassword); // 😁
     router.post('/changeemail', AuthController.changeEmail); // 😁
