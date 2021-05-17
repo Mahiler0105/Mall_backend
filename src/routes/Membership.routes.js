@@ -7,6 +7,6 @@ module.exports = function ({ MembershipController }) {
      router.post("/cancel", [AuthMiddleware], MembershipController.cancelMembership); // 😁
      router.post("/continue", [AuthMiddleware], MembershipController.continueMembership); // 😁
      router.post("/upgrade", [AuthMiddleware], MembershipController.upgradeMembership); // 😁
-     // router.post("/upgrade", MembershipController.upgradeMembership); // 😁
+     router.post("/coupon", [AuthMiddleware], MembershipController.createCoupon); // 😁
      return router;
 };

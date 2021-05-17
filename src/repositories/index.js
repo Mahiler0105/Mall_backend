@@ -9,4 +9,5 @@ module.exports = {
   HistoryRepository: require('./History.repository'),
   DocumentRepository: require('./Document.repository'),
   MembershipRepository: require('./Membership.repository'),
+  CouponRepository: require('./Coupon.repository'),
 };

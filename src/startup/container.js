@@ -25,7 +25,8 @@ const {
      BusinessController,
      ProductController,
      HomeController,
-     PaymentController,MembershipController
+     PaymentController,
+     MembershipController,
 } = require("../controllers");
 
 // SERVICES
@@ -38,7 +39,7 @@ const {
      ServService,
      HomeService,
      PaymentService,
-     MembershipService
+     MembershipService,
 } = require("../services");
 
 // REPOSITORIES
@@ -52,11 +53,12 @@ const {
      ServiceRepository,
      HistoryRepository,
      DocumentRepository,
-     MembershipRepository
+     MembershipRepository,
+     CouponRepository,
 } = require("../repositories");
 
 // MODELS
-const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document, Membership } = require("../models");
+const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document, Membership, Coupon } = require("../models");
 
 // INICIALIZAR APP
 const container = createContainer();
@@ -110,6 +112,7 @@ container.register({
      HistoryRepository: asClass(HistoryRepository).singleton(),
      DocumentRepository: asClass(DocumentRepository).singleton(),
      MembershipRepository: asClass(MembershipRepository).singleton(),
+     CouponRepository: asClass(CouponRepository).singleton(),
      /*------------------*/
      // MODELS REGISTER  //
      Customer: asValue(Customer),
@@ -122,6 +125,7 @@ container.register({
      History: asValue(History),
      Document: asValue(Document),
      Membership: asValue(Membership),
+     Coupon: asValue(Coupon),
 });
 
 module.exports = container;

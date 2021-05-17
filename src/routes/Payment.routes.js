@@ -45,8 +45,9 @@ module.exports = function ({ PaymentController }) {
     router.post('/instant-lerit', PaymentController.ipnSend);
     router.delete('/deletekeys', PaymentController.deleteKeys);
     
-    router.get('/test', PaymentController.getCoupons);
+    router.get('/test', PaymentController.test);
     router.post('/after', PaymentController.afterPay);
+    router.post('/coupon', PaymentController.applyCoupon);
     // Subscriptions are not available for this country yet
     // router.get('/subscription', PaymentController.createSubscription); //😁
     // router.get('/subscription/:id', PaymentController.getSubscription); //😁

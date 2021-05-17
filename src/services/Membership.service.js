@@ -3,13 +3,17 @@ import { Payment } from "../helpers";
 
 let _membershipRepository = null;
 let _businessRepository = null;
+let _productRepository = null;
 let _authService = null;
+let _couponRepository = null;
 
 class MembershipService {
-     constructor({ BusinessRepository, MembershipRepository, AuthService }) {
+     constructor({ BusinessRepository, MembershipRepository, AuthService, ProductRepository, CouponRepository }) {
           _membershipRepository = MembershipRepository;
           _businessRepository = BusinessRepository;
           _authService = AuthService;
+          _productRepository = ProductRepository;
+          _couponRepository = CouponRepository;
      }
 
      async refreshKeys() {
@@ -35,7 +39,7 @@ class MembershipService {
 
                if (key.authorized === "cancelled" && !key.totally_annulled) {
                     if (key.remain_days > 0) {
-                         await _membershipRepository.update(key._id, { remain_days: moment(key.next_void).diff(moment().toNow(), "days") });
+                         await _membershipRepository.update(key._id, { remain_days: moment(key.next_void).diff(moment(), "days") });
                     } else {
                          await _membershipRepository.update(key._id, { totally_annulled: true });
                     }
@@ -153,6 +157,85 @@ class MembershipService {
 
           await _businessRepository.update(businessExists._id, { plan });
           return true;
+     }
+
+     async createCoupon(ent) {
+          const error = new Error();
+          let entity = {
+               amount: 100,
+               unit: "percent",
+               label: "LERIT",
+               scope: { global: true, field: "membership" },
+               public: false,
+               // start_date: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+               start_date: "2021-05-18",
+               end_date: moment("2021-05-18").tz("America/Lima").add(5, "days"),
+          };
+          const { amount, unit, label, scope, public, start_date, end_date } = entity;
+          if (!amount || !unit || !label || !scope || !start_date || !end_date) {
+               error.status = 500;
+               error.message = "Invalid parameters";
+               throw error;
+          }
+          const couponexist = await _couponRepository.byLabel(label);
+          if (couponexist) {
+               error.status = 500;
+               error.message = "Invalid coupon";
+               throw error;
+          }
+          if (unit === "percent" && amount > 100) {
+               error.status = 500;
+               error.message = "Invalid amount";
+               throw error;
+          }
+          const { global, field, idBusiness, idProduct } = scope;
+          if (field != "membership" && field != "product") {
+               error.status = 500;
+               error.message = "Invalid field";
+               throw error;
+          }
+          if (field === "membership" && !global) {
+               error.status = 500;
+               error.message = "A global attribute must be set";
+               throw error;
+          }
+          if (field === "product") {
+               if (!idBusiness && !idProduct) {
+                    error.status = 500;
+                    error.message = "Invalid parameters";
+                    throw error;
+               }
+               const businessexist = await _businessRepository.get(idBusiness);
+               if (!businessexist) {
+                    error.status = 500;
+                    error.message = "Business not found";
+                    throw error;
+               }
+               const productexists = await _productRepository.get(idProduct);
+               if (!productexists) {
+                    error.status = 500;
+                    error.message = "Product not found";
+                    throw error;
+               }
+               const { available } = productexists;
+               if (String(available) === "false") {
+                    error.status = 500;
+                    error.message = "Product unavailable";
+                    throw error;
+               }
+          }
+
+          if (moment(start_date).tz("America/Lima").diff(moment(), "days") < 0) {
+               error.status = 500;
+               error.message = "Invalid start date";
+               throw error;
+          }
+          if (moment(end_date).tz("America/Lima").diff(start_date, "days") < 5) {
+               error.status = 500;
+               error.message = "Minimum 5 days of coupon availability";
+               throw error;
+          }
+          return await _couponRepository.create(entity);
      }
 }
 

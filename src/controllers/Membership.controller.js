@@ -23,6 +23,11 @@ class MembershipController {
           const result = await _membershipService.upgradeMembership(body);
           return res.send(result);
      }
+     async createCoupon(req, res) {
+          const { body } = req;
+          const result = await _membershipService.createCoupon(body);
+          return res.send(result);
+     }
 }
 
 module.exports = MembershipController;

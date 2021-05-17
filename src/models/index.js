@@ -9,4 +9,5 @@ module.exports = {
   History: require('./History.model'),
   Document: require('./Document.model'),
   Membership: require('./Membership.model'),
+  Coupon: require('./Coupon.model'),
 };

@@ -70,14 +70,24 @@ let _purchaseRepository = null;
 let _orderRepository = null;
 let _productService = null;
 let _membershipRepository = null;
+let _couponRepository = null;
 class PaymentService {
-     constructor({ BusinessRepository, CustomerRepository, ProductService, OrderRepository, PurchaseRepository, MembershipRepository }) {
+     constructor({
+          BusinessRepository,
+          CustomerRepository,
+          ProductService,
+          OrderRepository,
+          PurchaseRepository,
+          MembershipRepository,
+          CouponRepository,
+     }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
           _productService = ProductService;
           _purchaseRepository = PurchaseRepository;
           _orderRepository = OrderRepository;
           _membershipRepository = MembershipRepository;
+          _couponRepository = CouponRepository;
      }
 
      // async getCustomers() {
@@ -354,18 +364,23 @@ class PaymentService {
      //      return this.createOrder(id);
      // }
      async test() {
-          // return this.createMoneyRequest();
-          // return this.createPreference()
-
           // return {
           //      // date_of_expiration: moment().add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           //      // expiration_date_from: moment().tz().format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           //      date_of_expiration: moment().tz("America/Lima").add(5, "minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           //      expiration_date_from: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
           // };
-          const a = await _orderRepository.getOrdersByPreferenceId("744446817-562c51e8-79ec-4eb7-98e1-f7eaa1606e44");
-          if (a.length > 0) return true;
-          else return false;
+          // const a = await _orderRepository.getOrdersByPreferenceId("744446817-562c51e8-79ec-4eb7-98e1-f7eaa1606e44");
+          // if (a.length > 0) return true;
+          // else return false;
+          return await _couponRepository.create({
+               amount: 100,
+               unit: "percent",
+               label: "LERIT",
+               scope: { global: true, field: "membership" },
+               start_date: new Date(),
+               end_date: new Date(),
+          });
      }
      async getCoupons() {
           try {
@@ -735,7 +750,7 @@ class PaymentService {
                     throw error;
                }
 
-               const LeritFreeInitial = false; //LERIT COUPON DISCOUNT
+               const LeritFreeInitial = true; //LERIT COUPON DISCOUNT
 
                const items = Payment.createPlan(businessExists);
                const membershipexists = await _membershipRepository.byClient(businessExists._id);
@@ -1038,6 +1053,112 @@ class PaymentService {
                throw error;
           }
           return true;
+     }
+
+     async applyCoupon(entity) {
+          const error = new Error();
+          const { coupon, id } = entity;
+          if (!coupon && !id) {
+               error.status = 500;
+               error.message = "Invalid parameters";
+               throw error;
+          }
+          const couponexists = await _couponRepository.byLabel(coupon);
+          if (!couponexists) {
+               error.status = 500;
+               error.message = "Coupon does not exist";
+               throw error;
+          }
+          const { amount, unit, start_date, end_date, scope } = couponexists;
+          const now = moment();
+          if (now.diff(start_date, "days") < 0 || now.diff(end_date, "days") > 0) {
+               error.status = 500;
+               error.message = "Coupon is not available now";
+               throw error;
+          }
+
+          const customerexists = await _customerRepository.get(id);
+          const businessexists = await _businessRepository.get(id);
+          if (!customerexists && !businessexists) {
+               error.status = 500;
+               error.message = "User not found";
+               throw error;
+          }
+          const { field, idBusiness, idProduct } = scope;
+          if (customerexists) {
+               if (field != "product") {
+                    error.status = 500;
+                    error.message = "Coupon not valid for you";
+                    throw error;
+               }
+               const { cart } = customerexists;
+               if (!cart || cart.length === 0) {
+                    error.status = 500;
+                    error.message = "Empty cart";
+                    throw error;
+               }
+               const { products: ids, quantities: _d } = cart.reduce(
+                    (obj, { productId: _pId, quantity }) => {
+                         obj.products.push(_pId);
+                         obj.quantities[_pId] = quantity;
+                         return obj;
+                    },
+                    { products: [], quantities: {} }
+               );
+               const _products = await _productService.getProductsById({ ids });
+
+               const finalprice = Object.keys(_products).reduce((obj, item) => {
+                    const { _id: id, price: unit_price, available, stock, businessId } = _products[item];
+                    if (!available || stock === 0) {
+                         error.status = 500;
+                         error.message = "Invalid cart by insufficient stock";
+                         throw error;
+                    }
+                    
+                    const quantity = parseInt(_d[id].quantity);
+                    const price = unit_price * quantity;
+                    if(businessId===idBusiness &&id===idProduct){
+                         
+                    }
+
+                    return obj + price;
+               }, 0);
+
+               const { discount, result } = this.calcDiscount(unit, amount, finalprice);
+               if (result < 3) {
+                    error.status = 500;
+                    error.message = "No se puede aplicar este cupon";
+                    throw error;
+               }
+               return { discount, result };
+          }
+          if (field != "membership") {
+               error.status = 500;
+               error.message = "Coupon not valid for you";
+               throw error;
+          }
+          const { plan } = businessexists;
+          const { unit_price: finalprice } = Payment.planDictionary[plan];
+
+          const { discount, result } = this.calcDiscount(unit, amount, finalprice);
+          if (result < 3 && result != 0) {
+               error.status = 500;
+               error.message = "No se puede aplicar este cupon";
+               throw error;
+          }
+          return { discount, result };
+     }
+
+     calcDiscount(unit, amount, finalprice) {
+          var discount, result;
+          if (unit === "fixed") {
+               discount = amount;
+               result = finalprice - amount;
+          } else if (unit === "percent") {
+               discount = (finalprice * amount) / 100;
+               result = finalprice - discount;
+          }
+          return { discount, result };
      }
      // async mercadoPago() {
      //     // {"access_token":"TEST-1063804438479518-040401-e9d75cb6094774e9d932fc874d137a22-738204784","token_type":"bearer","expires_in":15552000,"scope":"offline_access read write","user_id":738204784,"refresh_token":"TG-60691bf952841f00070fbeec-738204784","public_key":"TEST-384be34a-8435-4429-b164-df44ec3e62b8","live_mode":false}%
