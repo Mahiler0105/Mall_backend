@@ -744,11 +744,11 @@ class PaymentService {
                throw error;
           }
           if (businessExists) {
-               if (businessExists.admin != "denied") {
-                    error.status = 403;
-                    error.message = "Not authorized to this action";
-                    throw error;
-               }
+               // if (businessExists.admin != "denied") {
+               //      error.status = 403;
+               //      error.message = "Not authorized to this action";
+               //      throw error;
+               // }
 
                const LeritFreeInitial = true; //LERIT COUPON DISCOUNT
 
@@ -756,6 +756,12 @@ class PaymentService {
                const membershipexists = await _membershipRepository.byClient(businessExists._id);
 
                if (membershipexists.length === 0) {
+                    if (businessExists.admin != "denied") {
+                         error.status = 403;
+                         error.message = "You are authorized but your membership does not exist";
+                         throw error;
+                    }
+
                     if (LeritFreeInitial) {
                          let freemember = Payment.createMembership(businessExists, LeritFreeInitial);
                          freemember.authorized = "confirmed";
@@ -783,6 +789,12 @@ class PaymentService {
                          };
                     }
                } else if (membershipexists.length === 1) {
+                    if (businessExists.admin != "authorized") {
+                         error.status = 403;
+                         error.message = "Just authorized members can call to this action";
+                         throw error;
+                    }
+
                     if (String(membershipexists[0].must_pay) === "true") {
                          const {
                               body: { id: preference_id },
@@ -1114,11 +1126,10 @@ class PaymentService {
                          error.message = "Invalid cart by insufficient stock";
                          throw error;
                     }
-                    
+
                     const quantity = parseInt(_d[id].quantity);
                     const price = unit_price * quantity;
-                    if(businessId===idBusiness &&id===idProduct){
-                         
+                    if (businessId === idBusiness && id === idProduct) {
                     }
 
                     return obj + price;
