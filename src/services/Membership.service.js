@@ -166,12 +166,12 @@ class MembershipService {
                unit: "percent",
                label: "LERIT",
                scope: { global: true, field: "membership" },
-               public: false,
+               capsule: false,
                // start_date: moment().tz("America/Lima").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
                start_date: "2021-05-18",
                end_date: moment("2021-05-18").tz("America/Lima").add(5, "days"),
           };
-          const { amount, unit, label, scope, public, start_date, end_date } = entity;
+          const { amount, unit, label, scope, capsule, start_date, end_date } = entity;
           if (!amount || !unit || !label || !scope || !start_date || !end_date) {
                error.status = 500;
                error.message = "Invalid parameters";

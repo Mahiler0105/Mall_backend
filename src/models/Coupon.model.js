@@ -32,7 +32,7 @@ const CouponSchema = new Schema(
                     { _id: false }
                ),
           },
-          public: { type: Boolean },
+          capsule: { type: Boolean },
           start_date: { type: Date },
           end_date: { type: Date },
      },
