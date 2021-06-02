@@ -42,6 +42,7 @@ const dniHandler = {
                     headers: {
                          "Content-Type": "application/json",
                          authentication: token,
+                         Origin: "https://app.aplicativoscontables.pe",
                     },
                     agent: httpAgent,
                     signal: controller.signal,

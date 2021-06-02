@@ -79,17 +79,27 @@ class CalificationService extends BaseService {
           return Promise.all(
                califications.map(async (element) => {
                     const customer = await _customerRepository.get(element.idClient);
-                    if (customer)
-                         return {
-                              _id: element._id,
-                              review: element.review,
-                              stars: element.stars,
-                              idClient: element.idClient,
-                              nameClient: `${customer.name} ${customer.first_lname} ${customer.second_lname}`,
-                              avatarClient: customer.avatar ? customer.avatar : "",
-                              date: element.createdAt,
-                              edit: moment().diff(element.createdAt, "hours") > 12 ? 0 : 1,
-                         };
+                    
+                    var _customer = {};
+                    if (!customer) {
+                         _customer.nameClient = `Usuario Anonimo`;
+                         _customer.avatarClient = ``;
+                    } else {
+                         _customer.nameClient = `${customer.name} ${customer.first_lname} ${customer.second_lname}`;
+                         _customer.avatarClient = customer.avatar ? customer.avatar : "";
+                    }
+
+                    return {
+                         _id: element._id,
+                         review: element.review,
+                         stars: element.stars,
+                         idClient: element.idClient,
+                         date: element.createdAt,
+                         edit: moment().diff(element.createdAt, "hours") > 12 ? 0 : 1,
+                         // nameClient: `${customer.name} ${customer.first_lname} ${customer.second_lname}`,
+                         // avatarClient: customer.avatar ? customer.avatar : "",
+                         ..._customer
+                    };
                     // else _calificationRepository.delete(element._id)
                })
           );

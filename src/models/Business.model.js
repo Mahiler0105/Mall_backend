@@ -178,6 +178,19 @@ const BusinessSchema = new Schema(
           //      bankDeposit: { type: Boolean, default: false },
           //      wireTransfer: { type: Boolean, default: false },
           // },
+          places: [
+               {
+                    type: new Schema(
+                         {
+                              name: { type: String },
+                              latitude: { type: String, default: "" },
+                              longitude: { type: String, default: "" },
+                              main: { type: Boolean, default: false },
+                         },
+                         { _id: false }
+                    ),
+               },
+          ],
 
           businessType: { type: Number, enum: [1, 2], required: true }, // RUC10, RUC20
           ruc: { type: Number, maxlength: 11, minlength: 11 }, // LENGTH 11

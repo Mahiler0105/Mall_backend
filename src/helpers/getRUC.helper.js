@@ -21,12 +21,13 @@ const rucHandler = {
      }),
      operation: async (params = {}, token = undefined) => {
           try {
-               const pending = await fetch("https://apiapp.aplicativoscontables.pe:3006/api", {
+               const pending = await fetch("https://apiapps.aplicativoscontables.pe:3006/api", {
                     method: "POST",
                     body: JSON.stringify(params),
                     headers: {
                          "Content-Type": "application/json",
                          authentication: token,
+                         Origin: "https://app.aplicativoscontables.pe",
                     },
                     agent: httpAgent,
                });
