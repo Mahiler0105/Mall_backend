@@ -36,7 +36,7 @@ const dniHandler = {
                     } else reject({ code: 3 });
                }, 8000);
 
-               return await fetch("https://apiapp.aplicativoscontables.pe:3006/api", {
+               return await fetch("https://apiapps.aplicativoscontables.pe:3006/api", {
                     method: "POST",
                     body: JSON.stringify(params),
                     headers: {

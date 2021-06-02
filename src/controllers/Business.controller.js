@@ -63,6 +63,12 @@ class BusinessController {
         const resCategory = await _businessService.getCategory(categoryName);
         return res.send(resCategory);
     }
+
+    async getStorage(req, res) {
+        const { businessId } = req.params;
+        const result = await _businessService.getStorage(businessId);
+        return res.send(result);
+    }
 }
 
 module.exports = BusinessController;

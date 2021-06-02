@@ -38,4 +38,23 @@ module.exports = {
                throw error;
           }
      },
+
+     getMeta: async (idBusiness) => {
+          return await gc
+               .bucket(BUCKET_NAME)
+               .getFiles({
+                    prefix: `${idBusiness}/`,
+               })
+               .then((results) => {
+                    const files = results[0];
+                    return files.reduce((o, v) => {
+                         const { name, contentType, size } = v.metadata;
+                         o.push({ name, contentType, size });
+                         return o;
+                    }, []);                    
+               })
+               .catch((err) => {
+                    console.error(err);
+               });
+     },
 };

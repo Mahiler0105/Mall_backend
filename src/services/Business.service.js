@@ -1,6 +1,8 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
 
+import { Payment } from "../helpers";
+
 let _businessRepository = null;
 let _calificationService = null;
 let _productService = null;
@@ -218,7 +220,7 @@ class BusinessService extends BaseService {
           return { business, califications, articles };
      }
 
-     async validate(id) {
+     async validate(id, object = false) {
           const error = new Error();
           if (!id) {
                error.status = 404;
@@ -231,11 +233,64 @@ class BusinessService extends BaseService {
                error.message = "Not found";
                throw error;
           }
+          if (object) return business;
           return true;
      }
 
      async getCategory(category) {
           return _productService.getByCategory(category);
+     }
+
+     async getStorage(businessId) {
+          const business = await this.validate(businessId, true);
+          const { plan } = business;
+          const { storage: remain_size } = Payment.planDictionary[plan];
+
+          const S = (v, p = "") => `${p}`.concat(v);
+          const I = (v) => parseInt(v);
+
+          const meta = await CloudStorage.getMeta(businessId);
+          const data = [].concat(meta).reduce(
+               (o, v) => {
+                    const { name, contentType, size } = v;
+                    const extension = S(S(contentType).split("/")[1], ".");
+                    var _no_ext = S(name).replace(extension, "");
+                    const _dirs = S(_no_ext).split("/");
+                    // _dirs.reduce((o, k) => (o[k] = o[k] || {}), o.tree);
+                    _dirs.reduce((o, k, ind, ori) => (o[k] = o[k] || (ind === ori.length - 1 ? { contentType, size } : {})), o.tree);
+                    o.types[contentType] = o.types[contentType] + 1 || 0;
+                    o.extensions.push(extension);
+                    o.extensions = [...new Set(o.extensions)];
+
+                    const _size = I(size);
+                    o.size_KB += _size / 1000;
+                    o.size_Kb += _size / 1024;
+                    o.size_MB += _size / 1000000;
+                    o.size_Mb += _size / 1024000;
+                    o.remain_size -= _size;
+                    o.length_files += 1;
+                    _dirs.splice(0, 1);
+                    _dirs.splice(_dirs.length - 1, 1);
+                    o.directories = o.directories.concat(_dirs);
+                    o.directories = [...new Set(o.directories)];
+                    o.length_directories = o.directories.length;
+                    return o;
+               },
+               {
+                    tree: {},
+                    types: {},
+                    extensions: [],
+                    size_KB: 0,
+                    size_Kb: 0,
+                    size_MB: 0,
+                    size_Mb: 0,
+                    remain_size,
+                    length_files: 0,
+                    directories: [],
+                    length_directories: 0,
+               }
+          );
+          return data;
      }
 }
 

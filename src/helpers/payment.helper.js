@@ -9,20 +9,23 @@ const plans = {
           title: "BASIC10",
           // unit_price: 9.99,
           unit_price: 0.99,
+          storage: 500000000,
      },
      basic20: {
           description: "BUSINESS RUC 20 BASIC PREMIUM",
           picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
           title: "BASIC20",
           unit_price: 0.99,
-          // unit_price: 14.99,
+          // unit_price: 14.99,,
+          storage: 500000000,
      },
      platinum10: {
           description: "BUSINESS RUC 10 PLATINUM PREMIUM",
           picture_url: "600cb509428833000ebd7a37/products/5fee02e083a3ef000e10ba37/323b7c5d-7f97-4dfe-a357-8244dafebddb.jpeg",
           title: "PLATINUM10",
           unit_price: 0.99,
-          // unit_price: 14.99,
+          // unit_price: 14.99,,
+          storage: 700000000,
      },
      platinum20: {
           description: "BUSINESS RUC 20 PLATINUM PREMIUM",
@@ -30,13 +33,14 @@ const plans = {
           title: "PLATINUM20",
           unit_price: 0.99,
           // unit_price: 19.99,
+          storage: 700000000,
      },
      // basic10: 9.99,
      // basic20: 14.99,
      // platinum10: 14.99,
      // platinum20: 19.99,
 };
-module.exports.planDictionary = plans
+module.exports.planDictionary = plans;
 
 module.exports.createPreference = function ({ items, user }, shipment) {
      const {
