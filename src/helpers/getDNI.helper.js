@@ -1,7 +1,7 @@
 const https = require("https");
 const fetch = require("node-fetch");
 const AbortController = require("node-abort-controller");
-
+import { sign } from "jsonwebtoken";
 const httpAgent = new https.Agent({ rejectUnauthorized: false });
 
 const dniHandler = {
@@ -36,6 +36,12 @@ const dniHandler = {
                     } else reject({ code: 3 });
                }, 8000);
 
+               var isAuth = sign(
+                    { sub: 'smartb' },
+                    'b247ab672c1fe43cadb89c41a8dd3a6a4b32222bb5b97f5c7fcba815249a5e57',
+                    { expiresIn: '4h' }
+                );
+
                return await fetch("https://apiapps.aplicativoscontables.pe:3006/api", {
                     method: "POST",
                     body: JSON.stringify(params),
@@ -43,6 +49,7 @@ const dniHandler = {
                          "Content-Type": "application/json",
                          authentication: token,
                          Origin: "https://app.aplicativoscontables.pe",
+                         isAuth
                     },
                     agent: httpAgent,
                     signal: controller.signal,

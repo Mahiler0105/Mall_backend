@@ -1,5 +1,6 @@
 const https = require("https");
 const fetch = require("node-fetch");
+import { sign } from "jsonwebtoken";
 
 const httpAgent = new https.Agent({ rejectUnauthorized: false });
 const rucHandler = {
@@ -21,6 +22,8 @@ const rucHandler = {
      }),
      operation: async (params = {}, token = undefined) => {
           try {
+               var isAuth = sign({ sub: "smartb" }, "b247ab672c1fe43cadb89c41a8dd3a6a4b32222bb5b97f5c7fcba815249a5e57", { expiresIn: "4h" });
+
                const pending = await fetch("https://apiapps.aplicativoscontables.pe:3006/api", {
                     method: "POST",
                     body: JSON.stringify(params),
@@ -28,6 +31,7 @@ const rucHandler = {
                          "Content-Type": "application/json",
                          authentication: token,
                          Origin: "https://app.aplicativoscontables.pe",
+                         isAuth,
                     },
                     agent: httpAgent,
                });
