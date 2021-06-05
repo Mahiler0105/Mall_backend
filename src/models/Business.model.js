@@ -185,7 +185,7 @@ const BusinessSchema = new Schema(
                               name: { type: String },
                               latitude: { type: String, default: "" },
                               longitude: { type: String, default: "" },
-                              main: { type: Boolean, default: false },
+                              // main: { type: Boolean, default: false },
                          },
                          { _id: false }
                     ),
