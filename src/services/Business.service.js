@@ -92,6 +92,14 @@ class BusinessService extends BaseService {
                     await CloudStorage.deleteImage(urlImage);
                });
           }
+          if (newEntity.places) {
+               if (String(businessExists.plan).includes("basic")) {
+                    error.status = 401;
+                    error.message = "Not authorized";
+                    throw error;
+               }
+          }
+
           return _businessRepository.update(id, newEntity);
      }
 
