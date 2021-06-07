@@ -7,4 +7,5 @@ module.exports = {
   HomeController: require("./Home.controller"),
   PaymentController: require("./Payment.controller"),
   MembershipController: require("./Membership.controller"),
+  SupportController: require("./Support.controller"),
 };

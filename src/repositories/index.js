@@ -10,4 +10,5 @@ module.exports = {
   DocumentRepository: require('./Document.repository'),
   MembershipRepository: require('./Membership.repository'),
   CouponRepository: require('./Coupon.repository'),
+  SupportRepository: require('./Support.repository'),
 };

@@ -8,4 +8,5 @@ module.exports = {
   HomeService: require("./Home.service"),
   PaymentService: require("./Payment.service"),
   MembershipService: require("./Membership.service"),
+  SupportService: require("./Support.service"),
 };

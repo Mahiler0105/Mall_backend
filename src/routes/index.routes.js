@@ -7,4 +7,5 @@ module.exports = {
   HomeRoutes: require("./Home.routes"),
   PaymentRoutes: require("./Payment.routes"),
   MembershipRoutes: require("./Membership.routes"),
+  SupportRoutes: require("./Support.routes"),
 };
