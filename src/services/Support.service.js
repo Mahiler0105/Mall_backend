@@ -72,6 +72,7 @@ class SupportService {
                const support_ticket = await _supportRepository.create({
                     code,
                     idBusiness: businessExists._id,
+                    variables: JSON.stringify(variables),
                });
                if (!support_ticket) _err("Not created");
                return true;

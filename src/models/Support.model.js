@@ -23,7 +23,7 @@ const SupportSchema = new Schema(
                required: false,
                autopopulate: false,
           },
-
+          variables: { type: String },
           status: { type: String, enum: statuses, default: "sent" },
           observations: [{ type: String }],
      },
