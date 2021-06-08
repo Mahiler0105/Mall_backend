@@ -1,6 +1,6 @@
 const multer = require("multer");
 const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4, v5 } = require("uuid");
 
 const storage = multer.diskStorage({
      destination: path.join(__dirname, "../../storage"),
@@ -16,7 +16,7 @@ const upload = multer({
      },
 });
 
-module.exports = upload.single('image');
+module.exports = upload.single("file");
 
 // FILE TYPES FILTER
 // fileFilter: (req, file, cb) => {

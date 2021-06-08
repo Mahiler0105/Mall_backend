@@ -26,6 +26,7 @@ const SupportSchema = new Schema(
           variables: { type: String },
           status: { type: String, enum: statuses, default: "sent" },
           observations: [{ type: String }],
+          files: [{ type: String }],
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );

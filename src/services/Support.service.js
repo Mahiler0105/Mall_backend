@@ -1,5 +1,5 @@
 const moment = require("moment");
-import { Support } from "../helpers";
+import { Support, CloudStorage } from "../helpers";
 
 let _businessRepository = null;
 let _customerRepository = null;
@@ -55,6 +55,24 @@ class SupportService {
           return await _supportRepository.search(_entity);
      }
 
+     async uploadFile(id, filename) {
+          if (!id) _err("Id must be sent");
+          const _support = await _supportRepository.get(id);
+          if (!_support) _err("Support not found");
+
+          const { idBusiness, idClient } = _support;
+          if (!idBusiness && !idClient) _err("Support without user");
+
+          var urlFiles = `support/${_support._id}/${filename}`;
+          if (idBusiness) urlFiles = `${idBusiness}/support/${_support._id}/${filename}`;
+
+          await CloudStorage.saveImage(filename, urlFiles);
+          const { files } = _support;
+          files.push(urlFiles);
+          await _supportRepository.update(id, { files });
+          return true;
+     }
+
      async createRequest(entity) {
           const { ruc, id, email, code, variables } = entity;
           if (!ruc && !id && !email && !code) _err("Please send required parameters");
@@ -77,7 +95,7 @@ class SupportService {
                     variables: JSON.stringify(variables),
                });
                if (!support_ticket) _err("Not created");
-               return true;
+               return support_ticket._id;
           } else return await this[valid_code.method](variables);
      }
 
