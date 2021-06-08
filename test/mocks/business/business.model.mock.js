@@ -8,7 +8,7 @@ module.exports = {
                name: "Fernando Mahile",
                first_lname: "Chullo",
                second_lname: "Mamani",
-               birthdate: "2020-10-25T21:06:30.696+00:00",
+               // birthdate: "2020-10-25T21:06:30.696+00:00",
                sex: true,
                dni: "72797033",
                phone: "945373476",
