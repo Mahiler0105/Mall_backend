@@ -39,14 +39,16 @@ class SupportService {
      }
 
      async searchRequest(entity) {
-          const _entity = entity;
+          const _entity = Object.assign({}, entity);
           const vars = ["code", "idBusiness", "idClient", "status", "seen"];
           vars.map((x) => delete entity[x]);
           if (Object.keys(entity).length > 0) _err("Invalid parameters");
 
-          var _user;
-          if (_entity.idBusiness) _user = await _businessRepository.get(_entity.idBusiness);
-          else if (_entity.idClient) _user = await _customerRepository.get(_entity.idClient);
+          const { idBusiness, idClient } = _entity;
+          if (!idBusiness && !idClient) _err("User must be send");
+
+          var _get = idClient ? idClient : idBusiness ? idBusiness : null;
+          var _user = await _businessRepository.get(_get);
 
           if (!_user) _err("User does not exist");
 
