@@ -104,7 +104,7 @@ class SupportService {
                }
           }
 
-          await _supportRepository.update(tax, { status: "cancelled" });
+          await _supportRepository.update(tax, { status: "cancelled", seen:true });
 
           return true;
      }

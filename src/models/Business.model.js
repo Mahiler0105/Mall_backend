@@ -78,9 +78,9 @@ const BusinessSchema = new Schema(
                name: { type: String },
                first_lname: { type: String },
                second_lname: { type: String },
-               // birthdate: { type: String },
                sex: { type: Boolean },
                phone: { type: String, maxlength: 9, minlength: 9 },
+               // birthdate: { type: String },
           },
           delivery: { type: Boolean },
           //     shipments: {

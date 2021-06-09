@@ -99,6 +99,32 @@ class BusinessService extends BaseService {
                     throw error;
                }
           }
+          if (newEntity.owner) {
+               const { owner } = businessExists;
+               if (owner) {
+                    const { dni: A, name: B, first_lname: C, second_lname: D } = newEntity.owner;
+                    const { dni: _A, name: _B, first_lname: _C, second_lname: _D } = owner;
+                    if (_A != A || _B != B || _C != C || _D != D) {
+                         error.status = 401;
+                         error.message = "Not authorized";
+                         throw error;
+                    }
+               } else {
+                    error.status = 400;
+                    error.message = "Invalid";
+                    throw error;
+               }
+          }
+
+          if (newEntity.subCategories) {
+               if (String(businessExists.plan).includes("basic")) {
+                    if (newEntity.subCategories.length > 3) {
+                         error.status = 401;
+                         error.message = "Not authorized";
+                         throw error;
+                    }
+               }
+          }
 
           return _businessRepository.update(id, newEntity);
      }
