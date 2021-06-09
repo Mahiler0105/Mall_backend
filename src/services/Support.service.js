@@ -73,6 +73,42 @@ class SupportService {
           return true;
      }
 
+     async cancelRequest(entity) {
+          const { ruc, id, email, tax } = entity;
+          if (!ruc && !id && !email && !tax) _err("Please send required parameters");
+
+          const businessExists = await _businessRepository.get(id);
+          if (!businessExists) _err("Business does not exist");
+
+          const { ruc: _r, email: _e } = businessExists;
+          if (_r != ruc || _e != email) _err("Invalid business");
+
+          const _support = await _supportRepository.get(tax);
+          if (!_support) _err("Support not found");
+
+          const { idBusiness, idClient, files } = _support;
+          if (!idBusiness && !idClient) _err("Not valid support");
+
+          var _user = idBusiness;
+          if (idClient) _user = idClient;
+
+          if (_user != id) _err("Not authorized");
+
+          if (files) {
+               if (files.length > 0) {
+                    const c = String(files[0]).split("/");
+                    c.splice(c.length - 1, 1);
+                    const prefix = c.join("/");
+
+                    await CloudStorage.deleteDirectory(prefix);
+               }
+          }
+
+          await _supportRepository.update(tax, { status: "cancelled" });
+
+          return true;
+     }
+
      async createRequest(entity) {
           const { ruc, id, email, code, variables } = entity;
           if (!ruc && !id && !email && !code) _err("Please send required parameters");

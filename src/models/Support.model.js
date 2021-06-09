@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const statuses = ["sent", "in_revision", "reviewed", "observed"];
+const statuses = ["sent", "in_revision", "reviewed", "observed", "cancelled"];
 
 const SupportSchema = new Schema(
      {

@@ -39,6 +39,18 @@ module.exports = {
           }
      },
 
+     deleteDirectory: async (prefix) => {
+          return gc.bucket(BUCKET_NAME).deleteFiles({ prefix }, function (err) {
+               if (err) {
+                    // console.log(err);
+                    const error = new Error();
+                    error.status = 500;
+                    error.message = err;
+                    throw error;
+               }
+          });
+     },
+
      getMeta: async (idBusiness) => {
           return await gc
                .bucket(BUCKET_NAME)
@@ -51,7 +63,7 @@ module.exports = {
                          const { name, contentType, size } = v.metadata;
                          o.push({ name, contentType, size });
                          return o;
-                    }, []);                    
+                    }, []);
                })
                .catch((err) => {
                     console.error(err);

@@ -7,5 +7,6 @@ module.exports = function ({ SupportController }) {
      router.post("/list", [AuthMiddleware], SupportController.listRequest); // 😁
      router.post("/search", [AuthMiddleware], SupportController.searchRequest); // 😁
      router.post("/file/:id", [AuthMiddleware, FileMiddleware], SupportController.uploadFile); // 😁
+     router.post("/cancel", [AuthMiddleware], SupportController.cancelRequest); // 😁
      return router;
 };
