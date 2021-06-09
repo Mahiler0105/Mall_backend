@@ -301,6 +301,28 @@ class BusinessService extends BaseService {
           return data;
      }
 
+     async getLines(businessId) {
+          const error = new Error();
+
+          const business = await this.validate(businessId, true);
+
+          const { subCategories } = business;
+          if (!subCategories) {
+               error.status = 500;
+               error.message = "No subcategories";
+               throw error;
+          }
+
+          return new Promise((r, n) => {
+               var f = {};
+               subCategories.forEach(async (v, i, o) => {
+                    await _productService.getBySubCategory(v, business._id).then((ar) => {
+                         f[v] = ar.length;
+                         if (Object.keys(f).length === o.length) r(f);
+                    });
+               });
+          });
+     }
 }
 
 module.exports = BusinessService;

@@ -69,6 +69,12 @@ class BusinessController {
           const result = await _businessService.getStorage(businessId);
           return res.send(result);
      }
+
+     async getLines(req, res) {
+          const { businessId } = req.params;
+          const result = await _businessService.getLines(businessId);
+          return res.send(result);
+     }
 }
 
 module.exports = BusinessController;

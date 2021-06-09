@@ -7,7 +7,8 @@ module.exports = function ({ BusinessController }) {
      router.get("/:businessId", BusinessController.get); // 😁
      router.get("/validate/:businessId", [AuthMiddleware], BusinessController.validate); // 😁
      router.get("/category/:categoryName", BusinessController.getCategory); // 😁
-     router.get("/storage/:businessId", BusinessController.getStorage); // 😁
+     router.get("/storage/:businessId",[AuthMiddleware], BusinessController.getStorage); // 😁
+     router.get("/lines/:businessId",[AuthMiddleware], BusinessController.getLines); // 😁
      router.post("/logo/:businessId", [StorageMiddleware], BusinessController.saveLogo); // 😁
      router.post("/images/:businessId", [StorageMiddleware], BusinessController.saveImages); // 😁
      router.patch("/:businessId", [AuthMiddleware], BusinessController.update); // 😁
