@@ -8,6 +8,9 @@ const validateEmail = function (email) {
      return re.test(email);
 };
 
+import subcategories from "../lib/categories/subcategories.json";
+import categories from "../lib/categories/categories.json";
+
 const BusinessSchema = new Schema(
      {
           name: { type: String },
@@ -43,31 +46,9 @@ const BusinessSchema = new Schema(
           telephone: { type: String, maxlength: 9, minlength: 9 },
           category: {
                type: String,
-               enum: [
-                    "consumer_electronic",
-                    "clothing_apparel",
-                    "home_kitchen",
-                    "health_beauty",
-                    "yewerly_watches",
-                    "computer_technology",
-                    "babies_moms",
-                    "sport_outdoor",
-                    "books_office",
-                    "vehicles",
-                    "home_improments",
-                    "services",
-                    "farming",
-                    "toy_store",
-                    "pets",
-                    "optical",
-                    "sexshop",
-                    "garden",
-                    "musical_instruments",
-                    "handicrafts",
-                    "gift_details",
-               ],
+               enum: categories,
           },
-          subCategories: [{ type: String }],
+          subCategories: [{ type: String, enum: subcategories }],
           owner: {
                dni: {
                     type: String,

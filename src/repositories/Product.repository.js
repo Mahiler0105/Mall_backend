@@ -27,6 +27,10 @@ class ProductRepository extends BaseRepository {
     async deleteProductsByBusinessId(businessId) {
         return _productModel.updateMany({ businessId }, { available: false, images: [] });
     }
+
+    async updateManySubcategory(businessId, subCategory, to) {
+        return _productModel.updateMany({ businessId, subCategory }, { subCategory:to });
+    }
 }
 
 module.exports = ProductRepository;

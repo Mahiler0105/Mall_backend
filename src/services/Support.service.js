@@ -27,7 +27,7 @@ class SupportService {
 
      async listRequest(entity) {
           const { ruc, id, email } = entity;
-          if (!ruc && !id && !email) _err("Please send required parameters");
+          if (!ruc || !id || !email) _err("Please send required parameters");
 
           const businessExists = await _businessRepository.get(id);
           if (!businessExists) _err("Business does not exist");
@@ -75,7 +75,7 @@ class SupportService {
 
      async cancelRequest(entity) {
           const { ruc, id, email, tax } = entity;
-          if (!ruc && !id && !email && !tax) _err("Please send required parameters");
+          if (!ruc || !id || !email || !tax) _err("Please send required parameters");
 
           const businessExists = await _businessRepository.get(id);
           if (!businessExists) _err("Business does not exist");
@@ -111,7 +111,7 @@ class SupportService {
 
      async createRequest(entity) {
           const { ruc, id, email, code, variables } = entity;
-          if (!ruc && !id && !email && !code) _err("Please send required parameters");
+          if (!ruc || !id || !email || !code) _err("Please send required parameters");
 
           const businessExists = await _businessRepository.get(id);
           if (!businessExists) _err("Business does not exist");

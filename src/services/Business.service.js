@@ -9,6 +9,13 @@ let _productService = null;
 let _servService = null;
 let _historyRepository = null;
 
+function _err(msg, code = 500) {
+     const err = new Error();
+     err.code = code;
+     err.message = msg;
+     throw err;
+}
+
 class BusinessService extends BaseService {
      constructor({ BusinessRepository, CalificationService, ProductService, ServService, HistoryRepository }) {
           super(BusinessRepository);
@@ -348,6 +355,35 @@ class BusinessService extends BaseService {
                     });
                });
           });
+     }
+
+     async changeLine(entity) {
+          const { id, from, to, ruc, email } = entity;
+
+          if (!id || !from || !to || !ruc || !email) _err("Invalid parameters");
+
+          if (from === to) _err("Cannot be the same");
+
+          const business = await this.validate(id, true);
+
+          const { ruc: _r, email: _e } = business;
+          if (_r != ruc || _e != email) _err("Invalid business");
+
+          const { subCategories } = business;
+
+          if (!subCategories) _err("Invalid subcategories");
+
+          const _from = subCategories.findIndex((v) => v === from);
+
+          if (_from === -1) _err("Invalid subcategory");
+
+          const _to = subCategories.find((v) => v === to);
+          if (_to) _err("Cannot be a subcategory already registered");
+
+          subCategories[_from] = to;
+          await _businessRepository.update(id, { subCategories });
+          await _productService.updateMany(id, from, to);
+          return true;
      }
 }
 
