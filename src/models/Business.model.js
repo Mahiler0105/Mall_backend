@@ -64,22 +64,38 @@ const BusinessSchema = new Schema(
                // birthdate: { type: String },
           },
           delivery: { type: Boolean },
-          //     shipments: {
-          //         enabled: { type: Boolean },
-          //         options: [
-          //              {
-          //                   type: new Schema(
-          //                        {
-          //                             name: { type: String },
-          //                             type: { type: String, enum: ["own", "third_party"] },
-          //                             places: [{ type: String, maxlength: 4, minlength: 4 }],
-          //                             price: { type: Number },
-          //                        },
-          //                        { _id: false }
-          //                   ),
-          //              },
-          //         ],
-          //    },
+
+          shipments: [
+               {
+                    type: new Schema(
+                         {
+                              id: { type: String, maxlength: 4, minlength: 4 },
+                              enabled: { type: Boolean, default: true },
+                              service_type: { type: String, enum: ["national", "local", "own"] },
+                              service: { type: String, enum: ["olva", "shalom", "flores", "rappi", "other"] },
+                              other_service: { type: String, default: null },
+                              places: [{ type: String, maxlength: 4, minlength: 4 }],
+                              all_places: { type: Boolean, default: false },
+                              estimated_days: { type: Number },
+                              rate_type: { type: String, enum: ["fixed", "range"] },
+                              fixed_rate: { type: Number },
+                              start_rate: { type: Number, default: null },
+                              end_rate: { type: Number, default: null },
+                              shared_products: { type: Number, default: 1 },
+                         },
+                         { _id: false }
+                    ),
+               },
+          ],
+
+          // availability: {
+          //      days: { s: false, m: false, t: false, w: false, t: false, f: false, s: false },
+          //      hours: {
+          //           start: new Date(),
+          //           end: new Date(),
+          //      },
+          // },
+
           bankAccount: { type: String },
           stripeId: { type: String },
           cards: [

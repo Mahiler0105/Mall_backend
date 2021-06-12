@@ -84,7 +84,8 @@ module.exports = {
           delivery: true,
           // active: true,
           plan: "",
-          places:[]
+          places: [],
+          shipments: [],
           // urlReset: {
           //      created: "2020-11-06T16:10:30.272Z",
           //      url: "",
