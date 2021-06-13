@@ -63,25 +63,17 @@ class BusinessService extends BaseService {
       * @param {*} jwt
       */
      async update(id, entity) {
-          const error = new Error();
-          if (!id) {
-               error.status = 400;
-               error.message = "ID must be sent";
-               throw error;
-          }
+          if (!id) _err("ID must be sent", 401);
+
           const { admin, source, urlConfirm, urlReset, codeVerification, counter, active, plan, businessType, ruc } = entity;
           if (admin || source || urlConfirm || urlReset || codeVerification || counter || active || plan || businessType || ruc) {
-               error.status = 400;
-               error.message = "You do not have permission";
-               throw error;
+               _err("You do not have permission", 401);
           }
 
           const businessExists = await _businessRepository.get(id);
 
           if (!businessExists || businessExists?.inactive?.reason) {
-               error.status = 400;
-               error.message = "Business does not found";
-               throw error;
+               _err("Business not found", 400);
           }
           const newEntity = entity;
 
@@ -99,38 +91,26 @@ class BusinessService extends BaseService {
                     await CloudStorage.deleteImage(urlImage);
                });
           }
-          if (newEntity.places) {
-               if (String(businessExists.plan).includes("basic")) {
-                    error.status = 401;
-                    error.message = "Not authorized";
-                    throw error;
-               }
-          }
+          const _plan = String(businessExists.plan);
+          const BASIC = _plan.includes("basic");
+
+          if (newEntity.places && BASIC)  _err("Not authorized", 401);
+               
           if (newEntity.owner) {
                const { owner } = businessExists;
                if (owner) {
                     const { dni: A, name: B, first_lname: C, second_lname: D } = newEntity.owner;
                     const { dni: _A, name: _B, first_lname: _C, second_lname: _D } = owner;
-                    if (_A != A || _B != B || _C != C || _D != D) {
-                         error.status = 401;
-                         error.message = "Not authorized";
-                         throw error;
-                    }
-               } else {
-                    error.status = 400;
-                    error.message = "Invalid";
-                    throw error;
-               }
+                    if (_A != A || _B != B || _C != C || _D != D) _err("Not authorized", 401);
+               } else _err("Invalid", 400);
           }
 
-          if (newEntity.subCategories) {
-               if (String(businessExists.plan).includes("basic")) {
-                    if (newEntity.subCategories.length > 3) {
-                         error.status = 401;
-                         error.message = "Not authorized";
-                         throw error;
-                    }
-               }
+          if (newEntity.subCategories && BASIC) {
+               if (newEntity.subCategories.length > 3) _err("Not authorized", 401);
+          }
+
+          if (newEntity.shipments && BASIC) {
+               if (newEntity.shipments.length > 2) _err("Not authorized", 401);
           }
 
           return _businessRepository.update(id, newEntity);

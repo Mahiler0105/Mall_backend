@@ -68,6 +68,7 @@ const ProductSchema = new Schema(
                required: false,
                autopopulate: false,
           },
+          shipmentId: { type: String },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );
