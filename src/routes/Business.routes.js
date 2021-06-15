@@ -10,6 +10,7 @@ module.exports = function ({ BusinessController }) {
      router.get("/storage/:businessId",[AuthMiddleware], BusinessController.getStorage); // 😁
      router.get("/lines/:businessId",[AuthMiddleware], BusinessController.getLines); // 😁
      router.post("/lines/update",[AuthMiddleware], BusinessController.changeLine); // 😁
+     router.get("/shipments/:businessId",[AuthMiddleware], BusinessController.getShipments); // 😁
      router.post("/logo/:businessId", [StorageMiddleware], BusinessController.saveLogo); // 😁
      router.post("/images/:businessId", [StorageMiddleware], BusinessController.saveImages); // 😁
      router.patch("/:businessId", [AuthMiddleware], BusinessController.update); // 😁

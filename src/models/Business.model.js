@@ -111,6 +111,8 @@ const BusinessSchema = new Schema(
           advertisement: {
                title: { type: String },
                description: { type: String },
+               image: { type: String },
+               scheduled: { start: new Date(), end: new Date() },
           },
           openClose: {
                l: {

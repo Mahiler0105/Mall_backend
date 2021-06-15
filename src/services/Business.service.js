@@ -365,6 +365,24 @@ class BusinessService extends BaseService {
           await _productService.updateMany(id, from, to);
           return true;
      }
+
+     async getShipments(businessId) {
+          const business = await this.validate(businessId, true);
+
+          const { shipments } = business;
+          if (!shipments) _err("No shipments found", 500)
+
+          return new Promise((r, n) => {
+               var f = {};
+               shipments.forEach(async (v, i, o) => {
+                    await _productService.getByShipment(v, business._id).then((ar) => {
+                         f[v] = ar.length;
+                         if (Object.keys(f).length === o.length) r(f);
+                    });
+               });
+          });
+     }
+     
 }
 
 module.exports = BusinessService;

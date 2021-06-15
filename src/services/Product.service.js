@@ -109,6 +109,10 @@ class ProductService extends BaseService {
           return _productRepository.getProductCategory(category);
      }
 
+     async getByShipment(id, idBusiness) {
+          return _productRepository.getByShipment(id, idBusiness);
+     }
+
      async getProductsById(entity) {
           const { ids } = entity;
           if (!ids) {

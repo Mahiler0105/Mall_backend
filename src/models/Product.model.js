@@ -68,7 +68,7 @@ const ProductSchema = new Schema(
                required: false,
                autopopulate: false,
           },
-          shipmentId: { type: String },
+          shipments: [{ type: String, maxlength: 4, minlength: 4 }],
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );

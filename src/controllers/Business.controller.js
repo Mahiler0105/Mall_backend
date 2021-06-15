@@ -75,10 +75,16 @@ class BusinessController {
           const result = await _businessService.getLines(businessId);
           return res.send(result);
      }
-
+     
      async changeLine(req, res) {
           const { body } = req;
           const result = await _businessService.changeLine(body);
+          return res.send(result);
+     }
+
+     async getShipments(req, res) {
+          const { businessId } = req.params;
+          const result = await _businessService.getShipments(businessId);
           return res.send(result);
      }
 }
