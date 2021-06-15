@@ -109,10 +109,23 @@ const BusinessSchema = new Schema(
           ],
           subscription: { type: String },
           advertisement: {
-               title: { type: String },
-               description: { type: String },
-               image: { type: String },
-               scheduled: { start: new Date(), end: new Date() },
+               type: new Schema(
+                    {
+                         title: { type: String },
+                         description: { type: String },
+                         image: { type: String },
+                         scheduled: {
+                              type: new Schema(
+                                   {
+                                        start: { type: Date },
+                                        end: { type: Date },
+                                   },
+                                   { _id: false }
+                              ),
+                         },
+                    },
+                    { _id: false }
+               ),
           },
           openClose: {
                l: {
