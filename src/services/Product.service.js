@@ -5,6 +5,12 @@ let _productRepository = null;
 let _businessRepository = null;
 let _calificationService = null;
 
+function _err(msg, code = 500) {
+     const err = new Error();
+     err.code = code;
+     err.message = msg;
+     throw err;
+}
 class ProductService extends BaseService {
      constructor({ ProductRepository, BusinessRepository, CalificationService }) {
           super(ProductRepository);
@@ -56,24 +62,34 @@ class ProductService extends BaseService {
      }
 
      async update(id, entity) {
-          if (!id) {
-               const error = new Error();
-               error.status = 400;
-               error.message = "ID must be sent";
-               throw error;
-          }
+          if (!id) _err("ID must be sent", 400);
+
           const productExists = await _productRepository.get(id);
-          if (!productExists) {
-               const error = new Error();
-               error.status = 400;
-               error.message = "Product does not found";
-               throw error;
-          }
+          if (!productExists) _err("Product does not found", 400);
+
+          const { businessId } = productExists;
+          const business = await this.validate(businessId, true);
+
           if (entity.images) {
                const imagesDelete = productExists.images.filter((image) => !entity.images.includes(image));
                imagesDelete.forEach(async (urlImage) => {
                     await CloudStorage.deleteImage(urlImage);
                });
+          }
+          const { shipments: _sh } = business;
+          if (entity.shipments) {
+               const list = _sh.reduce(
+                    (o, v) => ({
+                         ...o,
+                         [v.id]: true,
+                    }),
+                    {}
+               );
+               const shipments = [...new Set(entity.shipments)];
+               const valid = shipments.reduce((o, v) => [...o, !!list[v]], []).filter((x) => x).length === shipments.length;
+
+               if (!valid) _err("Invalid shipments codes", 500);
+               entity.shipments = shipments;
           }
           return _productRepository.update(id, entity);
      }
@@ -151,6 +167,14 @@ class ProductService extends BaseService {
 
      async updateMany(id, from, to) {
           return _productRepository.updateManySubcategory(id, from, to);
+     }
+
+     async validate(id, object = false) {
+          if (!id) _err("Id must be sent", 404);
+          const business = await _businessRepository.get(id);
+          if (!business) _err("Not found", 404);
+          if (object) return business;
+          return true;
      }
 }
 

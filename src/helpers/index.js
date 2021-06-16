@@ -8,5 +8,6 @@ module.exports = {
   GetCurrency: require('./getCurrency.helper'),
   GetFacebookId: require('./facebook.helper'),
   Payment: require('./payment.helper'),
-  Support: require('./support.helper')
+  Support: require('./support.helper'),
+  Utils: require('./utils.helper')
 };

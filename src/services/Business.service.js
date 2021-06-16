@@ -1,7 +1,7 @@
 const BaseService = require("./base.service");
 const { CloudStorage } = require("../helpers");
 
-import { Payment, Support } from "../helpers";
+import { Payment, Support, Utils } from "../helpers";
 
 let _businessRepository = null;
 let _calificationService = null;
@@ -76,6 +76,8 @@ class BusinessService extends BaseService {
                _err("Business not found", 400);
           }
           const newEntity = entity;
+          const _plan = String(businessExists.plan);
+          const BASIC = _plan.includes("basic");
 
           if (newEntity.password) {
                if (businessExists.urlConfirm?.url) await _businessRepository.deleteField(businessExists._id, "urlConfirm");
@@ -91,11 +93,9 @@ class BusinessService extends BaseService {
                     await CloudStorage.deleteImage(urlImage);
                });
           }
-          const _plan = String(businessExists.plan);
-          const BASIC = _plan.includes("basic");
 
-          if (newEntity.places && BASIC)  _err("Not authorized", 401);
-               
+          if (newEntity.places && BASIC) _err("Not authorized", 401);
+
           if (newEntity.owner) {
                const { owner } = businessExists;
                if (owner) {
@@ -105,12 +105,16 @@ class BusinessService extends BaseService {
                } else _err("Invalid", 400);
           }
 
-          if (newEntity.subCategories && BASIC) {
-               if (newEntity.subCategories.length > 3) _err("Not authorized", 401);
+          if (newEntity.subCategories) {
+               const subCategories = [...new Set(newEntity.subCategories)];
+
+               if (subCategories.length < 3) _err("At least three subcategories", 500);
+               if (BASIC && subCategories.length > 3) _err("Not authorized", 401);
           }
 
-          if (newEntity.shipments && BASIC) {
-               if (newEntity.shipments.length > 2) _err("Not authorized", 401);
+          if (newEntity.shipments) {
+               if (BASIC && newEntity.shipments.length > 2) _err("Not authorized", 401);
+               if (Utils.compare({ exclude: ["enabled", "id", "places"] }, null, ...newEntity.shipments)) _err("There are objects equals");
           }
 
           return _businessRepository.update(id, newEntity);
@@ -242,18 +246,9 @@ class BusinessService extends BaseService {
      }
 
      async validate(id, object = false) {
-          const error = new Error();
-          if (!id) {
-               error.status = 404;
-               error.message = "Id must be sent";
-               throw error;
-          }
+          if (!id) _err("Id must be sent", 404);
           const business = await _businessRepository.get(id);
-          if (!business) {
-               error.status = 404;
-               error.message = "Not found";
-               throw error;
-          }
+          if (!business) _err("Not found", 404);
           if (object) return business;
           return true;
      }
@@ -315,26 +310,14 @@ class BusinessService extends BaseService {
      }
 
      async getLines(businessId) {
-          const error = new Error();
-
           const business = await this.validate(businessId, true);
 
           const { subCategories } = business;
-          if (!subCategories) {
-               error.status = 500;
-               error.message = "No subcategories";
-               throw error;
-          }
+          if (!subCategories) _err("No subcategories", 500);
 
-          return new Promise((r, n) => {
-               var f = {};
-               subCategories.forEach(async (v, i, o) => {
-                    await _productService.getBySubCategory(v, business._id).then((ar) => {
-                         f[v] = ar.length;
-                         if (Object.keys(f).length === o.length) r(f);
-                    });
-               });
-          });
+          return await subCategories.reduce(async (o, v) => {
+               return { ...(await o), [v]: Array.from(await _productService.getBySubCategory(v, business._id)).length };
+          }, {});
      }
 
      async changeLine(entity) {
@@ -370,19 +353,12 @@ class BusinessService extends BaseService {
           const business = await this.validate(businessId, true);
 
           const { shipments } = business;
-          if (!shipments) _err("No shipments found", 500)
+          if (!shipments) _err("No shipments found", 500);
 
-          return new Promise((r, n) => {
-               var f = {};
-               shipments.forEach(async (v, i, o) => {
-                    await _productService.getByShipment(v.id, business._id).then((ar) => {
-                         f[v.id] = ar.length;
-                         if (Object.keys(f).length === o.length) r(f);
-                    });
-               });
-          });
+          return await shipments.reduce(async (o, v) => {
+               return { ...(await o), [v.id]: Array.from(await _productService.getByShipment(v.id, business._id)).length };
+          }, {});
      }
-     
 }
 
 module.exports = BusinessService;
