@@ -113,8 +113,8 @@ const BusinessSchema = new Schema(
                     type: new Schema(
                          {
                               // id: { type: String },
-                              title: { type: String, required: true },
-                              description: { type: String, required: true },
+                              title: { type: String },
+                              description: { type: String },
                               page: { type: String, enum: ["business", "home"], required: true },
                               image: { type: String },
                               scheduled: {
