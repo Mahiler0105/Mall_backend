@@ -25,7 +25,7 @@ module.exports = {
           }
      },
      deleteImage: async (filename) => {
-          await gc.bucket(BUCKET_NAME).file(puStorage(filename)).delete();
+          await gc.bucket(BUCKET_NAME).file(filename).delete();
      },
 
      deleteLocalImage: (filename) => {

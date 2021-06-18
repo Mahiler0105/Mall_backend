@@ -87,6 +87,30 @@ class BusinessService extends BaseService {
                _businessRepository.deleteField(businessExists._id, "advertisement");
                delete newEntity.advertisement;
           }
+          if (newEntity.advertisement) {
+               const { advertisement } = businessExists;
+               const with_id = JSON.parse(JSON.stringify(newEntity.advertisement))
+                    .filter((v) => !!v._id)
+                    .reduce((o, v) => ({ ...o, [String(v._id)]: v }), {});
+               if (Utils.compare({ exclude: ["page", "_id"] }, null, ...JSON.parse(JSON.stringify(newEntity.advertisement))))
+                    _err("There are objects equals");
+
+               if (advertisement) {
+                    const moving_image =
+                         advertisement.filter((x) => {
+                              const itm = with_id[x._id];
+                              if (itm) return itm.image != x.image || String(itm._id) != String(x._id);
+
+                              return false;
+                         }).length > 0;
+
+                    if (moving_image) _err("Unauthorized change for key or lack of keys", 401);
+
+                    const todelete = advertisement.filter((x) => !with_id[String(x._id)]);
+                    await todelete.reduce(async (o, v) => ({ ...(await o), [v._id]: await CloudStorage.deleteImage(v.image) }), []);
+               }
+          }
+
           if (newEntity.images) {
                const imagesDelete = businessExists.images.filter((image) => !newEntity.images.includes(image));
                imagesDelete.forEach(async (urlImage) => {
@@ -114,7 +138,7 @@ class BusinessService extends BaseService {
 
           if (newEntity.shipments) {
                if (BASIC && newEntity.shipments.length > 2) _err("Not authorized", 401);
-               if (Utils.compare({ exclude: ["enabled", "id", "places"] }, null, ...newEntity.shipments)) _err("There are objects equals");
+               if (Utils.compare({ exclude: ["enabled", "id", "places"] }, null, ...JSON.parse(JSON.stringify(newEntity.shipments)))) _err("There are objects equals");
           }
 
           return _businessRepository.update(id, newEntity);
@@ -359,6 +383,45 @@ class BusinessService extends BaseService {
                return { ...(await o), [v.id]: Array.from(await _productService.getByShipment(v.id, business._id)).length };
           }, {});
      }
+
+     async uploadImageAdvertise(businessId, filename, advertiseId) {
+          if (!businessId) _err("Id must be sent");
+          const { advertisement, plan } = await this.validate(businessId, true);
+          if (!advertisement || !plan) _err("No keys found", 404);
+          if (!plan.includes("platinum")) _err("Not authorized", 401);
+
+          const valid = advertisement.findIndex((v) => String(v._id) === advertiseId);
+          if (valid === -1) _err("No advertisement item found", 404);
+
+          var urlFiles = `${businessId}/advertisement/${advertiseId}/${filename}`;
+
+          await CloudStorage.saveImage(filename, urlFiles);
+          const old = !!advertisement[valid].image;
+          if (old) await CloudStorage.deleteImage(advertisement[valid].image);
+
+          advertisement[valid].image = urlFiles;
+          await _businessRepository.update(businessId, { advertisement });
+          return true;
+     }
+
+     // async removeImageAdvertise(entity) {
+     //      const { advertiseId, id } = entity;
+     //      if (!advertiseId || !id) _err("Invalid parameters", 500);
+
+     //      const { advertisement, plan } = await this.validate(id, true);
+     //      if (!advertisement || !plan) _err("No keys found", 404);
+
+     //      if (!plan.includes("platinum")) _err("Not authorized", 401);
+
+     //      const valid = advertisement.findIndex((v) => v.id === advertiseId);
+     //      if (valid === -1) _err("No advertisement item found", 404);
+
+     //      await CloudStorage.deleteImage(advertisement[valid].image);
+     //      advertisement[valid].image = "";
+
+     //      await _businessRepository.update(id, { advertisement });
+     //      return true;
+     // }
 }
 
 module.exports = BusinessService;

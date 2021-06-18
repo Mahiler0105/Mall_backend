@@ -75,7 +75,7 @@ class BusinessController {
           const result = await _businessService.getLines(businessId);
           return res.send(result);
      }
-     
+
      async changeLine(req, res) {
           const { body } = req;
           const result = await _businessService.changeLine(body);
@@ -87,6 +87,21 @@ class BusinessController {
           const result = await _businessService.getShipments(businessId);
           return res.send(result);
      }
+
+     async postAdvertise(req, res) {
+          const {
+               file: { filename },
+               params: { busId, adId },
+          } = req;
+          const result = await _businessService.uploadImageAdvertise(busId, filename, adId);
+          return res.send(result);
+     }
+
+     // async delImgAd(req, res) {
+     //      const { body } = req;
+     //      const result = await _businessService.removeImageAdvertise(body);
+     //      return res.send(result);
+     // }
 }
 
 module.exports = BusinessController;

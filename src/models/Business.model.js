@@ -108,25 +108,29 @@ const BusinessSchema = new Schema(
                },
           ],
           subscription: { type: String },
-          advertisement: {
-               type: new Schema(
-                    {
-                         title: { type: String },
-                         description: { type: String },
-                         image: { type: String },
-                         scheduled: {
-                              type: new Schema(
-                                   {
-                                        start: { type: Date },
-                                        end: { type: Date },
-                                   },
-                                   { _id: false }
-                              ),
+          advertisement: [
+               {
+                    type: new Schema(
+                         {
+                              // id: { type: String },
+                              title: { type: String, required: true },
+                              description: { type: String, required: true },
+                              page: { type: String, enum: ["business", "home"], required: true },
+                              image: { type: String },
+                              scheduled: {
+                                   type: new Schema(
+                                        {
+                                             start: { type: Date },
+                                             end: { type: Date },
+                                        },
+                                        { _id: false }
+                                   ),
+                              },
                          },
-                    },
-                    { _id: false }
-               ),
-          },
+                         { _id: true }
+                    ),
+               },
+          ],
           openClose: {
                l: {
                     open: { type: Date },
