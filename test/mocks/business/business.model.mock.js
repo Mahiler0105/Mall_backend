@@ -13,10 +13,13 @@ module.exports = {
                dni: "72797033",
                phone: "945373476",
           },
-          advertisement: {
-               title: "Cierre por temporada de conejo",
-               description: "Cerramos por temporada de conejo plox",
-          },
+          advertisement: [
+               {
+                    _id: "5f9b4d844c990017f381a76a",
+                    title: "Cierre por temporada de conejo",
+                    description: "Cerramos por temporada de conejo plox",
+               },
+          ],
           openClose: {
                l: {
                     open: "2020-10-25T21:06:30.696Z",
