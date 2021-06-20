@@ -39,7 +39,7 @@
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "memory-cache": "^0.2.0",
-    "mercadopago": "^1.5.7",
+    "mercadopago": "^1.5.8",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mongoose": "^5.9.26",

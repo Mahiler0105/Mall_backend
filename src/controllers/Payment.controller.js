@@ -97,6 +97,17 @@ class PaymentController {
      //     return res.status(200).send(getPayment);
      // }
 
+     async createConnected(req, res) {
+     //     const { id } = req.params;
+         const result = await _paymentService.createConnectedAccound();
+         return res.status(200).send(result);
+     }
+     async createOboard(req, res) {
+     //     const { id } = req.params;
+         const result = await _paymentService.createLinkOnboarding();
+         return res.status(200).send(result);
+     }
+
      // async mercadoPago(req, res) {
      //     const { body } = req;
      //     const getPaymentMercadoPago = await _paymentService.mercadoPago(body);

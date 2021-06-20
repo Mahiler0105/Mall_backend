@@ -20,6 +20,9 @@ module.exports = function ({ PaymentController }) {
 
     // router.post('/paymentintent', PaymentController.postPaymentIntent);
     // router.get('/paymentintent/:id', PaymentController.getPaymentIntent);
+    // router.get('/connected/', PaymentController.createConnected);
+    // router.get('/link/', PaymentController.createOboard);
+
     router.get('/customers', PaymentController.getAllCustomers); //😁
     router.get('/customer/:id', PaymentController.getCustomer); //😁
     router.post('/customers/search', PaymentController.searchCustomers); // 😁

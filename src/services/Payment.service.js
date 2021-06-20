@@ -1,15 +1,16 @@
-// import Stripe from "stripe";
+import Stripe from "stripe";
 import mercadopago from "mercadopago";
 import { Payment } from "../helpers";
 import moment from "moment-timezone";
 import { modelName } from "../models/Membership.model";
-
+import { KEY_STRIPE } from "../config";
 mercadopago.configure({
      access_token: "APP_USR-8398124184745252-041616-29814031a220e54f1bdc59dfdbfde955-744446817",
      // access_token: "TEST-8398124184745252-041616-ddb78f859cd70097f67d201c3e567f3a-744446817",
 });
 
-// const stripe = new Stripe(KEY_STRIPE);
+const stripe = new Stripe(KEY_STRIPE);
+
 const entity = {
      cart: {
           details: {
@@ -241,6 +242,40 @@ class PaymentService {
      //           throw error;
      //      }
      // }
+
+     async createConnectedAccound() {
+          try {
+               return await stripe.accounts.create({
+                    type: "custom",
+                    country: "US",
+                    email: "benjy01278@gmail.com",
+                    capabilities: {
+                         card_payments: { requested: true },
+                         transfers: { requested: true },
+                    },
+                    account_token: "ct_1J4Sl1BDSGoFPZfd6ApGZRbY",
+               });
+          } catch (err) {
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
+
+     async createLinkOnboarding() {
+          try {
+               return await stripe.accountLinks.create({
+                    account: "acct_1J4SoQPg08Z8zhlh",
+                    refresh_url: "https://example.com/reauth",
+                    return_url: "https://example.com/return",
+                    type: "account_onboarding",
+               });
+          } catch (err) {
+               const error = new Error(err.message);
+               error.status = 500;
+               throw error;
+          }
+     }
 
      async mercadoPago(entity) {
           // {

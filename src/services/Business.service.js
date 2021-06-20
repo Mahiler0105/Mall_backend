@@ -385,6 +385,15 @@ class BusinessService extends BaseService {
           }, {});
      }
 
+     async getAdvertisement(businessId) {
+          const business = await this.validate(businessId, true);
+
+          const { advertisement } = business;
+          if (!advertisement) _err("No advertisements found", 500);
+
+          return advertisement;
+     }
+
      async uploadImageAdvertise(businessId, filename, advertiseId) {
           if (!businessId) _err("Id must be sent");
           const { advertisement, plan } = await this.validate(businessId, true);

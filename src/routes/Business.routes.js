@@ -10,6 +10,7 @@ module.exports = function ({ BusinessController }) {
      router.get("/storage/:businessId", [AuthMiddleware], BusinessController.getStorage); // 😁
      router.get("/lines/:businessId", [AuthMiddleware], BusinessController.getLines); // 😁
      router.post("/lines/update", [AuthMiddleware], BusinessController.changeLine); // 😁
+     router.get("/advertisement/:businessId", [AuthMiddleware], BusinessController.getAdvertisement); // 😁
      router.post("/advertisement/:busId/:adId", [AuthMiddleware, FileMiddleware], BusinessController.postAdvertise); // 😁
      // router.post("/advertisement/remove", [AuthMiddleware], BusinessController.delImgAd); // 😁
      router.get("/shipments/:businessId", [AuthMiddleware], BusinessController.getShipments); // 😁

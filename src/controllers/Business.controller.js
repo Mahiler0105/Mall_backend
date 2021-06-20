@@ -87,6 +87,12 @@ class BusinessController {
           const result = await _businessService.getShipments(businessId);
           return res.send(result);
      }
+     
+     async getAdvertisement(req, res) {
+          const { businessId } = req.params;
+          const result = await _businessService.getAdvertisement(businessId);
+          return res.send(result);
+     }
 
      async postAdvertise(req, res) {
           const {
