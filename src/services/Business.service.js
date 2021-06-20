@@ -93,7 +93,7 @@ class BusinessService extends BaseService {
                     .filter((v) => !!v._id)
                     .reduce((o, v) => ({ ...o, [String(v._id)]: v }), {});
                if (Utils.compare({ exclude: ["page", "_id"] }, null, ...JSON.parse(JSON.stringify(newEntity.advertisement))))
-                    _err("There are objects equals");
+                    _err("Tienes un anuncio similar");
 
                if (advertisement) {
                     const moving_image =
@@ -106,7 +106,7 @@ class BusinessService extends BaseService {
 
                     if (moving_image) _err("Unauthorized change for key or lack of keys", 401);
 
-                    const todelete = advertisement.filter((x) => !with_id[String(x._id)]);
+                    const todelete = advertisement.filter((x) => !with_id[String(x._id)]).filter((x) => x.image);
                     await todelete.reduce(async (o, v) => ({ ...(await o), [v._id]: await CloudStorage.deleteImage(v.image) }), []);
                }
           }
@@ -138,7 +138,8 @@ class BusinessService extends BaseService {
 
           if (newEntity.shipments) {
                if (BASIC && newEntity.shipments.length > 2) _err("Not authorized", 401);
-               if (Utils.compare({ exclude: ["enabled", "id", "places"] }, null, ...JSON.parse(JSON.stringify(newEntity.shipments)))) _err("There are objects equals");
+               if (Utils.compare({ exclude: ["enabled", "id", "places"] }, null, ...JSON.parse(JSON.stringify(newEntity.shipments))))
+                    _err("There are objects equals");
           }
 
           return _businessRepository.update(id, newEntity);
