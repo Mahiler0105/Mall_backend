@@ -131,6 +131,7 @@ const BusinessSchema = new Schema(
                     ),
                },
           ],
+          // fullTime: { type: Boolean },
           openClose: {
                l: {
                     open: { type: Date },

@@ -298,7 +298,7 @@ class BusinessService extends BaseService {
                     var _no_ext = S(name).replace(extension, "");
                     const _dirs = S(_no_ext).split("/");
                     // _dirs.reduce((o, k) => (o[k] = o[k] || {}), o.tree);
-                    _dirs.reduce((o, k, ind, ori) => (o[k] = o[k] || (ind === ori.length - 1 ? { contentType, size } : {})), o.tree);
+                    _dirs.reduce((o, k, ind, ori) => (o[k] = o[k] || (ind === ori.length - 1 ? { contentType, size, name } : {})), o.tree);
                     
                     o.types[contentType] = o.types[contentType] != undefined ? o.types[contentType] + 1 : 1;                    
                     o.extensions.push(extension);
