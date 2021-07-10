@@ -45,7 +45,7 @@ class MembershipService {
                     }
                }
           });
-          await _authService.updateCurrency()
+          // await _authService.updateCurrency()
           return true;
      }
 

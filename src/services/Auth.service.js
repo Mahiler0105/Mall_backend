@@ -288,9 +288,9 @@ class AuthService {
      async updateCurrency(entity) {
           const _currencyexists = await _documentHistory.getByCurrency("USD");
           if (_currencyexists) {
-               const { full } = _currencyexists;
+               const { full } = _currencyexists;               
                if (moment(full).format("YYYY-MM-DD") != moment().format("YYYY-MM-DD")) {
-                    const _currency = await GetCurrency(entity);
+                    const _currency = await GetCurrency(entity);                    
                     if (_currency.success) return await _documentHistory.update(_currencyexists._id, { ..._currency });
                }
                return _currencyexists;

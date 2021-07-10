@@ -5,6 +5,7 @@ import { sign } from "jsonwebtoken";
 
 const httpAgent = new https.Agent({ rejectUnauthorized: false });
 const currencyHandler = {
+     intoken: null,
      token: {
           operationName: "createToken",
           variables: { email: "benjy01278@gmail.com", password: "Benja271999" },
@@ -36,7 +37,8 @@ const currencyHandler = {
                // return await pending.json();
                return await pending.json().then(async (e) => {
                     if (params.operationName === "createToken") {
-                         return e.data.login.authentication;
+                         currencyHandler.intoken = e.data.login.authentication;
+                         return currencyHandler.intoken;
                     }
                     return e?.data?.tipoCambioSunat?.data?.result ? { data: e.data.tipoCambioSunat.data.result, entity: params.variables } : {};
                });
@@ -51,7 +53,7 @@ const currencyHandler = {
                if (anio && mes && dia) return { anio, mes, dia };
                if (anio && mes) return { anio, mes };
           }
-          const [anio, mes, dia] = moment().tz("America/Lima").format("YYYY-MM-DD").split("-");
+          const [anio, mes, dia] = moment().tz("America/Lima").subtract(1, "day").format("YYYY-MM-DD").split("-");
           return { anio, mes, dia };
      },
      changing: (compra, digits) => {
@@ -60,15 +62,42 @@ const currencyHandler = {
      result: ({ data, entity }) => {
           if (data) {
                const { anio, mes, dia } = entity;
+               var Compra, Venta;
 
-               const { Compra, Venta } = data;
+               var day = dia;
+
+               if (Array.isArray(data)) {
+                    var row = data[0];
+                    var keys = Object.keys(row);
+                    var calc = keys.reduce((o, v) => {
+                         var value = row[v];
+                         if (!Array.isArray(value)) {
+                              o.Compra = value.Compra;
+                              o.Venta = value.Venta;
+                              o.Dia = String(v).split("/")[0].padStart(2, "0");
+                         }
+                         return o;
+                    }, {});
+                    if (calc.Compra && calc.Venta) {
+                         Compra = calc.Compra;
+                         Venta = calc.Venta;
+                    }
+                    if (calc.Dia) day = calc.Dia;
+               } else {
+                    Compra = data.Compra;
+                    Venta = data.Venta;
+               }
+
+               if (!day) day = moment().format("DD");
+
                if (Compra && Venta)
                     return {
                          success: true,
                          compra: parseFloat(Compra),
                          venta: parseFloat(Venta),
                          ...entity,
-                         full: moment(`${anio}-${mes}-${dia}`),
+                         dia: day,
+                         full: moment(`${anio}-${mes}-${day}`),
                          change_4: currencyHandler.changing(Compra, 4),
                          change_2: currencyHandler.changing(Compra, 2),
                     };
@@ -79,12 +108,18 @@ const currencyHandler = {
           // error.message = "Sin data";
           // throw error;
      },
+     async evalFalse(data) {
+          if (data.success) return data;
+          const { anio, mes } = currencyHandler.currentDate();
+          return currencyHandler.result(await currencyHandler.operation(currencyHandler.currencySave({ anio, mes }), currencyHandler.intoken));
+     },
 };
 module.exports = async (entity) =>
-     currencyHandler
+     await currencyHandler
           .operation(currencyHandler.token)
-          .then(async (token) => currencyHandler.operation(currencyHandler.currencySave(currencyHandler.currentDate(entity)), token))
-          .then(async (data) => currencyHandler.result(data));
+          .then(async (token) => await currencyHandler.operation(currencyHandler.currencySave(currencyHandler.currentDate(entity)), token))
+          .then(async (data) => currencyHandler.result(data))
+          .then(async (data) => await currencyHandler.evalFalse(data));
 // .catch((error) => {
 //      console.log(error);
 // });
