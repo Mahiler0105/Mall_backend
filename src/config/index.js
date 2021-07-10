@@ -14,4 +14,5 @@ module.exports = {
     PASS_EMAIL: process.env.PASS_EMAIL,
     KEY_STRIPE: process.env.PUBLISHABLE_KEY,
     MERCADO_PAGO: process.env.MERCADO_PAGO,
+    ADMIN_SECRET: process.env.ADMIN_SECRET,
 };

@@ -1,4 +1,5 @@
 module.exports = {
+  AdminController: require("./Admin.controller"),
   AuthController: require("./Auth.controller"),
   BusinessController: require("./Business.controller"),
   CalificationController: require("./Calification.controller"),

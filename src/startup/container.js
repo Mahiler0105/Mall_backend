@@ -7,6 +7,7 @@ const app = require(".");
 // ROTUTES
 const Routes = require("../routes");
 const {
+     AdminRoutes,
      AuthRoutes,
      BusinessRoutes,
      CalificationRoutes,
@@ -16,10 +17,12 @@ const {
      PaymentRoutes,
      MembershipRoutes,
      SupportRoutes,
+     StripeRoutes
 } = require("../routes/index.routes");
 
 // CONTROLERS
 const {
+     AdminController,
      AuthController,
      CalificationController,
      CustomerController,
@@ -43,6 +46,7 @@ const {
      PaymentService,
      MembershipService,
      SupportService,
+     StripeService
 } = require("../services");
 
 // REPOSITORIES
@@ -75,6 +79,7 @@ container.register({
      config: asValue(config),
      /*------------------*/
      // ROUTES REGISTER  //
+     AdminRoutes: asFunction(AdminRoutes).singleton(),
      BusinessRoutes: asFunction(BusinessRoutes).singleton(),
      AuthRoutes: asFunction(AuthRoutes).singleton(),
      CalificationRoutes: asFunction(CalificationRoutes).singleton(),
@@ -84,8 +89,10 @@ container.register({
      PaymentRoutes: asFunction(PaymentRoutes).singleton(),
      MembershipRoutes: asFunction(MembershipRoutes).singleton(),
      SupportRoutes: asFunction(SupportRoutes).singleton(),
+     StripeRoutes: asFunction(StripeRoutes).singleton(),
      /*-----------------------*/
      // CONTROLLERS REGISTER  //
+     AdminController: asClass(AdminController.bind(AdminController)).singleton(),
      AuthController: asClass(AuthController.bind(AuthController)).singleton(),
      ProductController: asClass(ProductController.bind(ProductController)).singleton(),
      CalificationController: asClass(CalificationController.bind(CalificationController)).singleton(),
@@ -107,6 +114,7 @@ container.register({
      PaymentService: asClass(PaymentService).singleton(),
      MembershipService: asClass(MembershipService).singleton(),
      SupportService: asClass(SupportService).singleton(),
+     StripeService: asClass(StripeService).singleton(),
      /*------------------*/
      // REPOSITORIES REGISTER  //
      BusinessRepository: asClass(BusinessRepository).singleton(),

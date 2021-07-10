@@ -9,4 +9,5 @@ module.exports = {
   PaymentService: require("./Payment.service"),
   MembershipService: require("./Membership.service"),
   SupportService: require("./Support.service"),
+  StripeService: require("./Stripe.service"),
 };

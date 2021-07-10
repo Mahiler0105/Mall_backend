@@ -11,6 +11,7 @@ const { NotFoundMiddleware, ErrorMiddleware } = require("../middlewares");
 const { SWAGGER_PATH } = require("../config");
 
 const swaggerDocument = require(SWAGGER_PATH);
+// const adminRoutes = require('./admin/Admin.routes');
 
 module.exports = function ({
      AuthRoutes,
@@ -22,6 +23,7 @@ module.exports = function ({
      PaymentRoutes,
      MembershipRoutes,
      SupportRoutes,
+     AdminRoutes
 }) {
      const router = express.Router();
      const apiRoutes = express.Router();
@@ -47,6 +49,7 @@ module.exports = function ({
 
      // URL BASE
      router.use("/v1/api", apiRoutes);
+     router.use("/admin", AdminRoutes);
      router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
      // ADD LOGIC MIDDLEWARE
      router.use(NotFoundMiddleware);

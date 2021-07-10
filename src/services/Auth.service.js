@@ -1,6 +1,6 @@
 const { genSaltSync, hashSync } = require("bcryptjs");
 const moment = require("moment");
-const { generateToken, decodeToken } = require("../helpers/jwt.helper");
+const { generateToken, decodeToken, adminToken } = require("../helpers/jwt.helper");
 const { GetDNI, GetRUC, SendEmail, GetFacebookId, GetCurrency } = require("../helpers");
 
 const { JWT_SECRET } = require("../config");
@@ -288,9 +288,9 @@ class AuthService {
      async updateCurrency(entity) {
           const _currencyexists = await _documentHistory.getByCurrency("USD");
           if (_currencyexists) {
-               const { full } = _currencyexists;               
+               const { full } = _currencyexists;
                if (moment(full).format("YYYY-MM-DD") != moment().format("YYYY-MM-DD")) {
-                    const _currency = await GetCurrency(entity);                    
+                    const _currency = await GetCurrency(entity);
                     if (_currency.success) return await _documentHistory.update(_currencyexists._id, { ..._currency });
                }
                return _currencyexists;
@@ -671,6 +671,17 @@ class AuthService {
                message: "Tiene 15 días para volver a activarla sino la cuenta se eliminará indefinidamente.",
           });
           return true;
+     }
+
+     async key(entity) {
+          var data = {};
+          const { id, dni, ruc, email } = entity;
+          if (id) data.id = id;
+          if (dni) data.dni = dni;
+          if (ruc) data.ruc = ruc;
+          if (email) data.email = email;
+
+          return { token: adminToken(data) };
      }
 }
 

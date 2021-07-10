@@ -4,4 +4,5 @@ module.exports = {
   AuthMiddleware: require("./auth.middleware"),
   StorageMiddleware: require("./storage.middleware"),
   FileMiddleware: require("./file.middleware"),
+  AdminMiddleware: require("./admin.middleware"),
 };
