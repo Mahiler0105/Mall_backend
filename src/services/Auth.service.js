@@ -227,6 +227,7 @@ class AuthService {
           if (entityRol === "business") {
                const _member = await _membershipRepository.byClient(entityLogin._id);
                var must_pay, admin;
+               var posted;
 
                if (_member.length === 0) {
                     admin = false;
@@ -240,7 +241,9 @@ class AuthService {
                }
                payout.admin = admin;
                if (must_pay != undefined) payout.must_pay = must_pay;
+               posted = entityLogin.active;
                entityLogin = entityLogin.toJSON();
+               entityLogin = { ...entityLogin, posted };
           }
           const token = generateToken(entityToEncode);
           return { token, [entityRol]: entityLogin, payout };
