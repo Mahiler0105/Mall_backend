@@ -96,6 +96,12 @@ class AuthController {
           return res.send(responseVCE);
      }
 
+     async refreshCurrency(req, res) {
+          const { body } = req;
+          const response = await _authService.updateCurrency(body);
+          return res.send(response);
+     }
+
      async reactivate(req, res) {
           const {
                body,
