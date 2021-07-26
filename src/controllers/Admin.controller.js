@@ -15,12 +15,7 @@ class AdminController {
      //STRIPE
      async getCustomers(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getCustomers();
-          return res.send(result);
-     }
-     async getCustomers(req, res) {
-          const { body, params } = req;
-          const result = await _stripeService.getCustomers();
+          const result = await _stripeService.getCustomers(body);
           return res.send(result);
      }
      async getCustomer(req, res) {
@@ -45,7 +40,7 @@ class AdminController {
      }
      async getSetupIntents(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getSetupIntents();
+          const result = await _stripeService.getSetupIntents(body);
           return res.send(result);
      }
      async getSetupIntent(req, res) {
@@ -75,7 +70,7 @@ class AdminController {
      }
      async getPaymentIntents(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getPaymentIntents();
+          const result = await _stripeService.getPaymentIntents(body);
           return res.send(result);
      }
      async getPaymentIntent(req, res) {
@@ -105,7 +100,7 @@ class AdminController {
      }
      async getPaymentMethods(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getPaymentMethods();
+          const result = await _stripeService.getPaymentMethods(body);
           return res.send(result);
      }
      async getPaymentMethod(req, res) {
@@ -135,7 +130,7 @@ class AdminController {
      }
      async getSubscriptions(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getSubscriptions();
+          const result = await _stripeService.getSubscriptions(body);
           return res.send(result);
      }
      async getSubscription(req, res) {
@@ -160,7 +155,7 @@ class AdminController {
      }
      async getInvoices(req, res) {
           const { body, params } = req;
-          const result = await _stripeService.getInvoices();
+          const result = await _stripeService.getInvoices(body);
           return res.send(result);
      }
      async getInvoice(req, res) {
@@ -201,6 +196,131 @@ class AdminController {
      async upcomingInvoice(req, res) {
           const { body, params } = req;
           const result = await _stripeService.upcomingInvoice(body);
+          return res.send(result);
+     }
+     async getTaxes(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getTaxes(body);
+          return res.send(result);
+     }
+     async getTax(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getTax(params.id);
+          return res.send(result);
+     }
+     async createTax(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.createTax(body);
+          return res.send(result);
+     }
+     async updateTax(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.updateTax(params.id, body);
+          return res.send(result);
+     }
+     async getProducts(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getProducts(body);
+          return res.send(result);
+     }
+     async getProduct(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getProduct(params.id);
+          return res.send(result);
+     }
+     async createProduct(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.createProduct(body);
+          return res.send(result);
+     }
+     async updateProduct(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.updateProduct(params.id, body);
+          return res.send(result);
+     }
+     async deleteProduct(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.deleteProduct(params.id);
+          return res.send(result);
+     }
+     async getPrices(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getPrices(body);
+          return res.send(result);
+     }
+     async getPrice(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getPrice(params.id);
+          return res.send(result);
+     }
+     async createPrice(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.createPrice(body);
+          return res.send(result);
+     }
+     async updatePrice(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.updatePrice(params.id, body);
+          return res.send(result);
+     }
+     async getCoupons(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getCoupons(body);
+          return res.send(result);
+     }
+     async getCoupon(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getCoupon(params.id);
+          return res.send(result);
+     }
+     async createCoupon(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.createCoupon(body);
+          return res.send(result);
+     }
+     async updateCoupon(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.updateCoupon(params.id, body);
+          return res.send(result);
+     }
+     async deleteCoupon(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.deleteCoupon(params.id);
+          return res.send(result);
+     }
+     async getCodes(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getCodes(body);
+          return res.send(result);
+     }
+     async getCode(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getCode(params.id);
+          return res.send(result);
+     }
+     async createCode(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.createCode(body);
+          return res.send(result);
+     }
+     async updateCode(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.updateCode(params.id, body);
+          return res.send(result);
+     }
+     async deleteDiscountC(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.deleteDiscountC(params.id);
+          return res.send(result);
+     }
+     async deleteDiscountS(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.deleteDiscountS(params.id);
+          return res.send(result);
+     }
+     async getSpecs(req, res) {
+          const { body, params } = req;
+          const result = await _stripeService.getSpecs(body);
           return res.send(result);
      }
 }

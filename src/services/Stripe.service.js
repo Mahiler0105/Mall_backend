@@ -16,7 +16,7 @@ class StripeService {
           throw error;
      }
      //ALL CUSTOMERS
-     async getCustomers(entity = {}) {
+     async getCustomers(entity) {
           return await stripe.customers.list(entity).catch(this.err);
      }
      //CUSTOMER BY ID
@@ -170,6 +170,115 @@ class StripeService {
      async upcomingInvoice(entity = {}) {
           return await stripe.invoices.retrieveUpcoming(entity).catch(this.err);
      }
+
+     //ALL TAXES
+     async getTaxes(entity = {}) {
+          return await stripe.taxRates.list(entity).catch(this.err);
+     }
+     //TAXES BY ID
+     async getTax(idTax) {
+          return await stripe.taxRates.retrieve(idTax).catch(this.err);
+     }
+     //CREATE TAX
+     async createTax(entity) {
+          return await stripe.taxRates.create(entity).catch(this.err);
+     }
+     //UPDATE TAX
+     async updateTax(idTax, entity) {
+          return await stripe.taxRates.update(idTax, entity).catch(this.err);
+     }
+
+     //ALL PRODUCTS
+     async getProducts(entity) {
+          return await stripe.products.list(entity).catch(this.err);
+     }
+     //PRODUCT BY ID
+     async getProduct(idProd) {
+          return await stripe.products.retrieve(idProd).catch(this.err);
+     }
+     //CREATE PRODUCT
+     async createProduct(entity) {
+          return await stripe.products.create(entity).catch(this.err);
+     }
+     //UPDATE PRODUCT
+     async updateProduct(idProd, entity) {
+          return await stripe.products.update(idProd, entity).catch(this.err);
+     }
+     //DELETE PRODUCT
+     async deleteProduct(idProd) {
+          return await stripe.products.del(idProd).catch(this.err);
+     }
+
+     //ALL PRICES
+     async getPrices(entity) {
+          return await stripe.prices.list(entity).catch(this.err);
+     }
+     //PRICE BY ID
+     async getPrice(idPrice) {
+          return await stripe.prices.retrieve(idPrice).catch(this.err);
+     }
+     //CREATE PRICE
+     async createPrice(entity) {
+          return await stripe.prices.create(entity).catch(this.err);
+     }
+     //UPDATE PRICE
+     async updatePrice(idPrice, entity) {
+          return await stripe.prices.update(idPrice, entity).catch(this.err);
+     }
+
+     //ALL COUPONS
+     async getCoupons(entity) {
+          return await stripe.coupons.list(entity).catch(this.err);
+     }
+     //COUPON BY ID
+     async getCoupon(idCou) {
+          return await stripe.coupons.retrieve(idCou).catch(this.err);
+     }
+     //CREATE COUPON
+     async createCoupon(entity) {
+          return await stripe.coupons.create(entity).catch(this.err);
+     }
+     //UPDATE COUPON
+     async updateCoupon(idCou, entity) {
+          return await stripe.coupons.update(idCou, entity).catch(this.err);
+     }
+     //DELETE COUPON
+     async deleteCoupon(idCou) {
+          return await stripe.coupons.del(idCou).catch(this.err);
+     }
+
+     //ALL PROMOTION CODES
+     async getCodes(entity) {
+          return await stripe.promotionCodes.list(entity).catch(this.err);
+     }
+     //PROMOTION CODE BY ID
+     async getCode(idPromo) {
+          return await stripe.promotionCodes.retrieve(idPromo).catch(this.err);
+     }
+     //CREATE PROMOTION CODE
+     async createCode(entity) {
+          return await stripe.promotionCodes.create(entity).catch(this.err);
+     }
+     //UPDATE PROMOTION CODE
+     async updateCode(idPromo, entity) {
+          return await stripe.promotionCodes.update(idPromo, entity).catch(this.err);
+     }
+
+     //DELETE DISCOUNT CUSTOMER
+     async deleteDiscountC(idCus) {
+          return await stripe.customers.deleteDiscount(idCus).catch(this.err);
+     }
+     //DELETE DISCOUNT SUBSCRIPTION
+     async deleteDiscountS(idSubs) {
+          return await stripe.subscriptions.deleteDiscount(idSubs).catch(this.err);
+     }
+
+     //SPECS
+     async getSpecs(entity) {
+          return await stripe.countrySpecs.retrieve(entity.country).catch(this.err);
+     }
+
+
 }
 
 module.exports = StripeService;
