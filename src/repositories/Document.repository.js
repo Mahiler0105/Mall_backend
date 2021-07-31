@@ -18,6 +18,14 @@ class DocumentRepository extends BaseRepository {
      async getByCurrency(currency) {
           return _documentModel.findOne({ currency });
      }
+
+     async getBySorter() {
+          return _documentModel.findOne({ type:'sorter' });
+     }
+
+     async sortDNI(asc) {
+          return _documentModel.find({ type: "dni" }, null, { sort: { dni: asc ? 1 : -1 } });
+     }
 }
 
 module.exports = DocumentRepository;

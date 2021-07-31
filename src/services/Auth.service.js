@@ -5,6 +5,8 @@ const { GetDNI, GetRUC, SendEmail, GetFacebookId, GetCurrency } = require("../he
 
 const { JWT_SECRET } = require("../config");
 
+const puppeteer = require("puppeteer");
+
 let _businessRepository = null;
 let _customerRepository = null;
 let _historyRepository = null;
@@ -249,7 +251,26 @@ class AuthService {
           return { token, [entityRol]: entityLogin, payout };
      }
 
-     async getDni(dni) {
+     eval_dni(result) {
+          const { dni, digito, apellido_paterno, apellido_materno, nombres, f_nacimiento, sexo, direccion, departamento, provincia, distrito } =
+               result;
+          if (
+               !dni ||
+               !digito ||
+               !apellido_paterno ||
+               !apellido_materno ||
+               !nombres ||
+               !f_nacimiento ||
+               !sexo ||
+               !direccion ||
+               !departamento ||
+               !provincia ||
+               !distrito
+          )
+               return false;
+          return true;
+     }
+     async getDni(dni, withData = false) {
           const error = new Error();
           error.status = 400;
           error.message = "Not found";
@@ -258,8 +279,12 @@ class AuthService {
 
           const _dni = await GetDNI(dni);
           if (!_dni) throw error;
-          await _documentHistory.create({ ..._dni, type: "dni" });
-          return true;
+
+          const _eval = this.eval_dni(_dni);
+          if (_eval) await _documentHistory.create({ ..._dni, type: "dni" });
+
+          if (withData) return { success: _eval, ..._dni };
+          return _eval;
      }
 
      async getRuc(ruc) {
@@ -682,6 +707,40 @@ class AuthService {
           if (email) data.email = email;
 
           return { token: adminToken(data) };
+     }
+
+     async autorecursive() {
+          const SORTER = await _documentHistory.getBySorter();
+          var SEARCH = null;
+          if (SORTER) {
+               const { value } = SORTER;
+               const LAST_DNI = parseInt(value);
+               var AUMENTED_DNI = LAST_DNI + 1;
+               AUMENTED_DNI = String(AUMENTED_DNI).padStart(8, "0");
+               await _documentHistory.update(SORTER._id, { value: AUMENTED_DNI });
+               SEARCH = AUMENTED_DNI;
+          } else {
+               var INI = "00000000";
+               await _documentHistory.create({ value: INI, type: "sorter" });
+               SEARCH = INI;
+          }
+          // return SEARCH;
+          const DNI = await this.getDni(SEARCH, true);
+          const SUCCESS = DNI.success;
+
+          return SUCCESS;
+     }
+     async autofill(entity) {
+          await _documentHistory.create({ ruc: entity.ruc, value: entity.token, type: "sorter" });
+     }
+     async sunat(entity) {
+          if (String(entity).length === 11) {
+               const browser = await puppeteer.launch({ headless: true });
+               const page = await browser.newPage();
+               await page.goto(`https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}`);
+               return true;
+          }
+          return false;
      }
 }
 
