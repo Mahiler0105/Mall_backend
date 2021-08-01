@@ -735,7 +735,7 @@ class AuthService {
      }
      async sunat(entity) {
           if (String(entity).length === 11) {
-               const browser = await puppeteer.launch({ headless: true });
+               const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
                const page = await browser.newPage();
                await page.goto(`https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}`);
                return true;
