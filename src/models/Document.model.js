@@ -53,6 +53,7 @@ const DocumentSchema = new Schema(
           currency: { type: String, enum: ["USD", "PEN"] },
 
           value: { type: String, maxlength: 8, minlength: 8 },
+          token: { type: String },
           //COMMON
           type: { type: String, enum: ["ruc", "dni", "currency", "sorter"], required: true },
      },
