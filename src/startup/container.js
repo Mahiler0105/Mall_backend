@@ -17,7 +17,7 @@ const {
      PaymentRoutes,
      MembershipRoutes,
      SupportRoutes,
-     StripeRoutes
+     StripeRoutes,
 } = require("../routes/index.routes");
 
 // CONTROLERS
@@ -46,7 +46,7 @@ const {
      PaymentService,
      MembershipService,
      SupportService,
-     StripeService
+     StripeService,
 } = require("../services");
 
 // REPOSITORIES
@@ -63,10 +63,25 @@ const {
      MembershipRepository,
      CouponRepository,
      SupportRepository,
+     TokenRepository,
 } = require("../repositories");
 
 // MODELS
-const { Customer, Business, Product, Calification, Order, Service, Purchase, History, Document, Membership, Coupon, Support } = require("../models");
+const {
+     Customer,
+     Business,
+     Product,
+     Calification,
+     Order,
+     Service,
+     Purchase,
+     History,
+     Document,
+     Membership,
+     Coupon,
+     Support,
+     Token,
+} = require("../models");
 
 // INICIALIZAR APP
 const container = createContainer();
@@ -129,6 +144,7 @@ container.register({
      MembershipRepository: asClass(MembershipRepository).singleton(),
      CouponRepository: asClass(CouponRepository).singleton(),
      SupportRepository: asClass(SupportRepository).singleton(),
+     TokenRepository: asClass(TokenRepository).singleton(),
      /*------------------*/
      // MODELS REGISTER  //
      Customer: asValue(Customer),
@@ -143,6 +159,7 @@ container.register({
      Membership: asValue(Membership),
      Coupon: asValue(Coupon),
      Support: asValue(Support),
+     Token: asValue(Token),
 });
 
 module.exports = container;
