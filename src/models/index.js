@@ -11,4 +11,5 @@ module.exports = {
   Membership: require('./Membership.model'),
   Coupon: require('./Coupon.model'),
   Support: require('./Support.model'),
+  Token: require('./Token.model'),
 };
