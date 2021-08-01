@@ -731,13 +731,15 @@ class AuthService {
           return SUCCESS;
      }
      async autofill(entity) {
-          await _documentHistory.create({ ruc: entity.ruc, value: entity.token, type: "sorter" });
+          console.log(entity);
+          await _documentHistory.create({ ruc: entity.ruc, token: entity.token, type: "sorter" }).catch((err)=>console.log(err));
      }
      async sunat(entity) {
           if (String(entity).length === 11) {
                const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
                const page = await browser.newPage();
                await page.goto(`https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}`);
+
                return true;
           }
           return false;
