@@ -747,7 +747,7 @@ class AuthService {
                const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
                const page = await browser.newPage();
                // await page.goto(`https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}`);
-               await page.goto('https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp');              
+               await page.goto('https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias');              
                await page.addScriptTag({ url: `https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}` });
 
                var intents = 20;
