@@ -52,10 +52,8 @@ const DocumentSchema = new Schema(
           change_2: { type: Number },
           currency: { type: String, enum: ["USD", "PEN"] },
 
-          // value: { type: String, maxlength: 8, minlength: 8 },
-          // token: { type: String },
           //COMMON
-          type: { type: String, enum: ["ruc", "dni", "currency", "sorter"], required: true },
+          type: { type: String, enum: ["ruc", "dni", "currency"], required: true },
      },
      { timestamps: { createdAt: true, updatedAt: true } }
 );

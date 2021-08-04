@@ -122,20 +122,6 @@ class AuthController {
           return res.send(deactivateResponse);
      }
 
-     async autorecursive(req, res) {
-          const response = await _authService.autorecursive();
-          return res.send(response);
-     }
-     async autofill(req, res) {
-          const { body } = req;
-          const response = await _authService.autofill(body);
-          return res.send(response);
-     }
-     async sunat(req, res) {
-          const { query } = req;
-          const response = await _authService.sunat(query.ruc);
-          return res.send(response);
-     }
 }
 
 module.exports = AuthController;

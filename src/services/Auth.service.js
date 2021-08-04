@@ -5,23 +5,19 @@ const { GetDNI, GetRUC, SendEmail, GetFacebookId, GetCurrency } = require("../he
 
 const { JWT_SECRET } = require("../config");
 
-const puppeteer = require("puppeteer");
-
 let _businessRepository = null;
 let _customerRepository = null;
 let _historyRepository = null;
 let _documentHistory = null;
 let _membershipRepository = null;
-let _tokenRepository = null;
 
 class AuthService {
-     constructor({ BusinessRepository, CustomerRepository, HistoryRepository, DocumentRepository, MembershipRepository, TokenRepository }) {
+     constructor({ BusinessRepository, CustomerRepository, HistoryRepository, DocumentRepository, MembershipRepository }) {
           _businessRepository = BusinessRepository;
           _customerRepository = CustomerRepository;
           _historyRepository = HistoryRepository;
           _documentHistory = DocumentRepository;
           _membershipRepository = MembershipRepository;
-          _tokenRepository = TokenRepository;
      }
 
      /**
@@ -711,99 +707,7 @@ class AuthService {
           return { token: adminToken(data) };
      }
 
-     async autorecursive() {
-          const SORTER = await _documentHistory.getBySorter();
-          var SEARCH = null;
-          if (SORTER) {
-               const { value } = SORTER;
-               const LAST_DNI = parseInt(value);
-               var AUMENTED_DNI = LAST_DNI + 1;
-               AUMENTED_DNI = String(AUMENTED_DNI).padStart(8, "0");
-               await _documentHistory.update(SORTER._id, { value: AUMENTED_DNI });
-               SEARCH = AUMENTED_DNI;
-          } else {
-               var INI = "00000000";
-               await _documentHistory.create({ value: INI, type: "sorter" });
-               SEARCH = INI;
-          }
-          // return SEARCH;
-          const DNI = await this.getDni(SEARCH, true);
-          const SUCCESS = DNI.success;
-
-          return SUCCESS;
-     }
-     async autofill(entity) {
-          const _document = await _tokenRepository.getDoc(entity.ruc);
-          if (_document) {
-               return await _tokenRepository.update(_document._id, { token: entity.token });
-          }
-          return await _tokenRepository.create({ document: entity.ruc, token: entity.token, type: "ruc" }).catch((err) => console.log(err));
-     }
-     async sunat(entity) {
-          if (String(entity).length === 11) {
-               const _exists_document = await _tokenRepository.getDoc(entity);
-               if (_exists_document) await _tokenRepository.delete(_exists_document._id);
-
-               const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
-               const page = await browser.newPage();
-               // await page.goto(`https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}`);
-               await page.goto('https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias');              
-               await page.addScriptTag({ url: `https://lerit-admin-qmxvc2akkq-ue.a.run.app/v1/api/lerietmall/ruc?ruc=${entity}` });
-
-               var intents = 20;
-               var interval = null;
-               var success = false;
-               interval = setInterval(async () => {
-                    if (intents > 0) {
-                         const _new_token = await _tokenRepository.getDoc(entity);
-                         intents -= 1;
-                         if (_new_token) {
-                              clearInterval(interval);
-                         }
-                    } else {
-                         success = true;
-                         clearInterval(interval);
-                    }
-               }, 100);
-               return success;
-          }
-          return false;
-     }
-
-     async decodeHTML() {
-          var urlencoded = new URLSearchParams();
-          urlencoded.append("accion", "consPorRuc");
-          urlencoded.append("codigo", "");
-          urlencoded.append("contexto", "ti-it");
-          urlencoded.append("modo", "1");
-          urlencoded.append("nroRuc", "20607778362");
-          urlencoded.append("nrodoc", "");
-          urlencoded.append("razSoc", "");
-          urlencoded.append("rbtnTipo", "1");
-          urlencoded.append("search1", "20607778362");
-          urlencoded.append("search2", "");
-          urlencoded.append("search3", "");
-          urlencoded.append("tipdoc", "1");
-          urlencoded.append(
-               "token",
-               "03AGdBq24zZ2d9Yh7IBVtlBj4x5aBI8CCKy1T9IPG-iglg66tqu3-TwF-R7Cn1cUhxEjh3mfyDrePbMIUQxnWFAOFrZFOW0v9JNIcLvRRIeA0PFOVF9z0PvF3-a_VB8JoSz5jvHNrsxrqbZGsa4mvenLwized9ktVfqzdnOa8394roQYhyqcCmBYFImHdo1BVAdtDoePYBuZSBzaDhfcLV2VPdIiV4-QSac-9qJ9cQL0y48lVUbQvciDaB2tCYhn_3DmqXNaNJ1Hfx_Ow3R9VXrt8MUoTWcUTxt_m5yMSUMAA1vlg514-hGpvUlgLmF58LRpYwi-7US273yPC9_vNgdisZ7E0oNLtsef6oDN3byIbrlViVQIQESU_7UNetY60a91K-3mF_GG-cdREh6j99iXNKvAD_POZlOJHseDgFlF4xw-G5pQm48q_s8RWPjrYdNFYmFbWO6PM58Cl1l0XoVtU2aICV4swG5g"
-          );
-
-          var requestOptions = {
-               method: "POST",
-               headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-               },
-               body: urlencoded,
-               redirect: "follow",
-          };
-
-          fetch("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias", requestOptions)
-               .then((response) => response.text())
-               .then((result) => console.log(result))
-               .catch((error) => console.log("error", error));
-     }
+     
 }
 
 module.exports = AuthService;

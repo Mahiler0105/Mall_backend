@@ -20,8 +20,5 @@ module.exports = function ({ AuthController }) {
      router.post("/currency", AuthController.refreshCurrency); // 😁
      router.post("/deactivate/:idUser", [AuthMiddleware], AuthController.deactivate); // 😁
      router.post("/reactivate/:email", AuthController.reactivate); // 😁
-     router.get("/autofill/dni", AuthController.autorecursive); // 😁
-     router.post("/autofill", AuthController.autofill); // 😁
-     router.get("/sunat", AuthController.sunat); // 😁
      return router;
 };
