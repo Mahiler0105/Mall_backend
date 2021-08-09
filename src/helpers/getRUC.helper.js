@@ -1,102 +1,75 @@
-const https = require("https");
-const fetch = require("node-fetch");
-import { sign } from "jsonwebtoken";
+const axios = require("axios").default;
 
-const httpAgent = new https.Agent({ rejectUnauthorized: false });
+// const { Admin, Utils } = require("../helpers");
+const Admin = require("./admin.helper");
+const Utils = require("./utils.helper");
+
+const moment = require("moment");
+
 const rucHandler = {
-     token: {
-          operationName: "createToken",
-          variables: { email: "benjy01278@gmail.com", password: "Benja271999" },
-          query: `query createToken($email: String!, $password: String!)
-              {login(email: $email, password: $password) {authentication}}`,
-     },
-     rucSave: (numdoc) => ({
-          operationName: "consultarRuc",
-          variables: {
-               path: "getRuc",
-               data: {
-                    ruc: numdoc,
-               },
-          },
-          query: "query consultarRuc($path: String!, $data: JSON!) {apirest(path: $path, data: $data) {response,__typename}}",
-     }),
-     operation: async (params = {}, token = undefined) => {
-          try {
-               var isAuth = sign({ sub: "smartb" }, "b247ab672c1fe43cadb89c41a8dd3a6a4b32222bb5b97f5c7fcba815249a5e57", { expiresIn: "4h" });
+     operation: async (ruc = null) => {
+          var query = new URLSearchParams();
+          query.set("ruc", ruc);
 
-               const pending = await fetch("https://apiapps.aplicativoscontables.pe:3006/api", {
-                    method: "POST",
-                    body: JSON.stringify(params),
-                    headers: {
-                         "Content-Type": "application/json",
-                         authentication: token,
-                         Origin: "https://app.aplicativoscontables.pe",
-                         isAuth,
-                    },
-                    agent: httpAgent,
-               });
-               // return await pending.json();
-               return await pending.json().then(async (e) => {
-                    if (params.operationName === "createToken") {
-                         return e.data.login.authentication;
-                    }
-                    return e.data.apirest.response.result;
-               });
-          } catch (e) {
-               console.log(e);
-               throw new Error(e);
-          }
+          const url = Admin.API("RUC");
+
+          if (url)
+               return await axios
+                    .get(url.concat("?", query.toString()))
+                    .then((res) => res.data)
+                    .catch((err) => Utils.err(err));
+          return null;
      },
      result: (data) => {
-          var person;
-          if (data.RUC) {
-               if (String(data.RUC).startsWith(1)) {
-                    person = {
-                         dni: String(data.RUC).substr(2, 8),
-                         name: data.RazonSocial,
-                         address: data.Direccion,
-                         department: data.Departamento,
-                         province: data.Provincia,
-                         district: data.Distrito,
-                         date_from: new Date(
-                              String(data.FechaInicio ? data.FechaInicio : "23/03/2021")
-                                   .split("/")
-                                   .reverse()
-                                   .join("-")
-                         ),
-                    };
-               } else {
-                    const CEO = data.RepresentanteLegal[0];
-                    person = CEO
-                         ? {
-                                document: CEO.Documento || null,
-                                doc_number: CEO.NroDocumento || null,
-                                name: CEO.Nombre || null,
-                                charge: CEO.Cargo || null,
-                                date_from: new Date(
-                                     String(CEO.FechaDesde ? CEO.FechaDesde : "23/03/2021")
-                                          .split("/")
-                                          .reverse()
-                                          .join("-")
-                                ),
-                           }
-                         : {};
+          if (data) {
+               var persons = [];
+               if (data.ruc) {
+                    if (String(data.ruc).startsWith(1)) {
+                         persons = [
+                              {
+                                   dni: String(data.ruc).substr(2, 8),
+                                   name: data.razonSocial,
+                                   address: data.direccion,
+                                   department: data.departamento,
+                                   province: data.provincia,
+                                   district: data.distrito,
+                                   date_from: moment(data.fechaInscripcion).tz("America/Lima").format("YYYY-MM-DD"),
+                              },
+                         ];
+                    } else {
+                         const CEOS = data.representantes;
+                         if (Array.isArray(CEOS)) {
+                              persons = Array.from(data.representantes).reduce(
+                                   (o, v) => [
+                                        ...o,
+                                        {
+                                             document: v.documento || null,
+                                             doc_number: v.nro_documento || null,
+                                             name: v.nombre || null,
+                                             charge: v.cargo || null,
+                                             date_from: moment(v.fecha_desde).tz("America/Lima").format("YYYY-MM-DD"),
+                                        },
+                                   ],
+                                   []
+                              );
+                         }
+                    }
                }
+               return {
+                    ruc: data.ruc,
+                    denomination: data.razonSocial,
+                    comercial_name: data.nombreComercial,
+                    type_society: data.tipo,
+                    status: data.estado,
+                    condition: data.condicion,
+                    persons,
+               };
           }
-          return {
-               ruc: data.RUC,
-               denomination: data.RazonSocial,
-               comercial_name: data.NombreComercial,
-               type_society: data.Tipo,
-               status: data.Estado,
-               condition: data.Condicion,
-               person,
-          };
+          throw new Error("Wrong request");
      },
 };
 module.exports = async (ruc) =>
-     rucHandler
-          .operation(rucHandler.token)
-          .then(async (token) => rucHandler.operation(rucHandler.rucSave(ruc), token))
-          .then(async (data) => rucHandler.result(data))
+     await rucHandler
+          .operation(ruc)
+          .then((data) => rucHandler.result(data))
           .catch((error) => new Error(error));

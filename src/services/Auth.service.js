@@ -292,6 +292,7 @@ class AuthService {
           if (rucexist) return true;
 
           const _ruc = await GetRUC(ruc);
+          console.log(_ruc);
           if (!_ruc) {
                error.status = 400;
                error.message = "Not found";

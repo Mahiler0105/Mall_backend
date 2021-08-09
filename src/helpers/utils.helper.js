@@ -26,10 +26,12 @@ module.exports.compare = function compare(e, t, ...n) {
                     if (e) return t + 1;
                })
                .filter((e) => !!e);
-          (f = `The objects ${e.map((e) => e).join(", ")} are equal.`),
-               2 === s.length && (f = `The object ${e[0]} is equal to ${e[1]}`),
-               (a = !0);
+          (f = `The objects ${e.map((e) => e).join(", ")} are equal.`), 2 === s.length && (f = `The object ${e[0]} is equal to ${e[1]}`), (a = !0);
      }
      if (!t) return r ? f : a;
      t(r ? f : a);
-}
+};
+
+module.exports.err = function err({ response, request, message }) {
+     return { success: false, message: response ? response.data.message : request ? "ERR CONNECTION" : message };
+};

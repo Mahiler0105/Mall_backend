@@ -15,4 +15,5 @@ module.exports = {
     KEY_STRIPE: process.env.PUBLISHABLE_KEY,
     MERCADO_PAGO: process.env.MERCADO_PAGO,
     ADMIN_SECRET: process.env.ADMIN_SECRET,
+    ADMIN_URL: process.env.ADMIN_URL,
 };

@@ -23,24 +23,26 @@ const DocumentSchema = new Schema(
           type_society: { type: String },
           status: { type: String },
           condition: { type: String },
-          person: {
-               type: new Schema(
-                    {
-                         dni: { type: String, maxlength: 8, minlength: 8 },
-                         name: { type: String },
-                         address: { type: String },
-                         department: { type: String },
-                         province: { type: String },
-                         district: { type: String },
-                         date_from: { type: Date },
+          persons: [
+               {
+                    type: new Schema(
+                         {
+                              dni: { type: String, maxlength: 8, minlength: 8 },
+                              name: { type: String },
+                              address: { type: String },
+                              department: { type: String },
+                              province: { type: String },
+                              district: { type: String },
+                              date_from: { type: Date },
 
-                         document: { type: String },
-                         doc_number: { type: String, maxlength: 11, minlength: 8 },
-                         charge: { type: String },
-                    },
-                    { _id: false }
-               ),
-          },
+                              document: { type: String },
+                              doc_number: { type: String, maxlength: 11, minlength: 8 },
+                              charge: { type: String },
+                         },
+                         { _id: false }
+                    ),
+               },
+          ],
 
           compra: { type: Number },
           venta: { type: Number },

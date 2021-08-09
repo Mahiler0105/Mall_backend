@@ -9,5 +9,6 @@ module.exports = {
   GetFacebookId: require('./facebook.helper'),
   Payment: require('./payment.helper'),
   Support: require('./support.helper'),
-  Utils: require('./utils.helper')
+  Utils: require('./utils.helper'),
+  Admin: require('./admin.helper')
 };
