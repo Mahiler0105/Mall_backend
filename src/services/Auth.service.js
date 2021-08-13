@@ -257,13 +257,13 @@ class AuthService {
                !digito ||
                !apellido_paterno ||
                !apellido_materno ||
-               !nombres ||
-               !f_nacimiento ||
-               !sexo ||
-               !direccion ||
-               !departamento ||
-               !provincia ||
-               !distrito
+               !nombres
+               // !f_nacimiento ||
+               // !sexo ||
+               // !direccion ||
+               // !departamento ||
+               // !provincia ||
+               // !distrito
           )
                return false;
           return true;
