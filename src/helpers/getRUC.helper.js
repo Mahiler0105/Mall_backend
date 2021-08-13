@@ -1,6 +1,5 @@
 const axios = require("axios").default;
 
-// const { Admin, Utils } = require("../helpers");
 const Admin = require("./admin.helper");
 const Utils = require("./utils.helper");
 
@@ -22,20 +21,24 @@ const rucHandler = {
      },
      result: (data) => {
           if (data) {
-               var persons = [];
                if (data.ruc) {
+                    var persons = [];
                     if (String(data.ruc).startsWith(1)) {
-                         persons = [
-                              {
-                                   dni: String(data.ruc).substr(2, 8),
-                                   name: data.razonSocial,
-                                   address: data.direccion,
-                                   department: data.departamento,
-                                   province: data.provincia,
-                                   district: data.distrito,
-                                   date_from: moment(data.fechaInscripcion).tz("America/Lima").format("YYYY-MM-DD"),
-                              },
-                         ];
+                         const CEO = data.representante;
+
+                         if (CEO) {
+                              persons = [
+                                   {
+                                        dni: CEO.dni,
+                                        name: CEO.nombre,
+                                        address: CEO.direccion,
+                                        department: CEO.departamento,
+                                        province: CEO.provincia,
+                                        district: CEO.distrito,
+                                        date_from: moment(data.fechaInscripcion).tz("America/Lima").format("YYYY-MM-DD"),
+                                   },
+                              ];
+                         }
                     } else {
                          const CEOS = data.representantes;
                          if (Array.isArray(CEOS)) {
@@ -54,16 +57,21 @@ const rucHandler = {
                               );
                          }
                     }
+                    return {
+                         ruc: data.ruc,
+                         denomination: data.razonSocial,
+                         comercial_name: data.nombreComercial,
+                         type_society: data.tipo,
+                         status: data.estado,
+                         condition: data.condicion,
+                         persons,
+                    };
                }
-               return {
-                    ruc: data.ruc,
-                    denomination: data.razonSocial,
-                    comercial_name: data.nombreComercial,
-                    type_society: data.tipo,
-                    status: data.estado,
-                    condition: data.condicion,
-                    persons,
-               };
+
+               const error = new Error();
+               error.status = 500;
+               error.message = data.message;
+               throw error;
           }
           throw new Error("Wrong request");
      },

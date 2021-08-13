@@ -1,5 +1,6 @@
 const apis = {
      RUC: "/sunat",
+     DNI: "/reniec",
 };
 const { ADMIN_URL } = require("../config");
 
