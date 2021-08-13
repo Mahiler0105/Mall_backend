@@ -73,8 +73,10 @@ class AuthService {
           }
           const {
                denomination,
-               person: { dni, doc_number, name: person_name },
+               persons,
           } = rucexist;
+
+          const { dni, doc_number, name: person_name } = persons[0]
 
           if (businessEntity.businessType === 2) businessEntity.name = denomination;
           businessEntity.owner.name = person_name;

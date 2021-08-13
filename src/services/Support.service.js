@@ -149,8 +149,10 @@ class SupportService {
                if (!ruc_store) _err("Ruc not found");
                const {
                     ruc: type_ruc,
-                    person: { dni: dni_natural_person, doc_number: dni_juridic_person },
+                    persons,
                } = ruc_store;
+
+               const { dni: dni_natural_person, doc_number: dni_juridic_person } = persons[0]
 
                var _compare_dni = type_ruc.startsWith("2") ? dni_juridic_person : dni_natural_person;
 
