@@ -1231,8 +1231,8 @@ class PaymentService {
      //             email: 'fernando.chullo@ucsm.edu.pe',
      //         },
      //         back_urls: {
-     //             success: 'https://www.lerietmall.net',
-     //             failure: 'https://www.lerietmall.net',
+     //             success: 'https://providers.lerietmall.net',
+     //             failure: 'https://providers.lerietmall.net',
      //         },
      //         auto_return: 'approved',
      //     };

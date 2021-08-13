@@ -99,7 +99,7 @@ module.exports.createPreference = function ({ items, user }, shipment) {
           },
           ..._ship,
           back_urls: {
-               success: "https://www.lerietmall.net/",
+               success: "https://providers.lerietmall.net/",
                // pending: "http://localhost:9080/",
                // failure: "http://localhost:9080/",
           },

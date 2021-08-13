@@ -11,7 +11,7 @@ module.exports.generateToken = function (user) {
     // return sign({ user }, JWT_SECRET, { expiresIn: '4h' });
     return sign({ user }, PRIVATE_KEY, {
         expiresIn: '30m',
-        audience: 'https://www.lerietmall.net',
+        audience: 'https://providers.lerietmall.net',
         issuer: 'legion@lerietmall-302923.iam.gserviceaccount.com',
         subject: String(user.id) || String(user.sessionId),
         algorithm: 'RS256',
@@ -27,7 +27,7 @@ module.exports.decodeToken = function (token) {
 module.exports.adminToken = function (data) {
     return sign(data, ADMIN_SECRET, {
         expiresIn: '15m',
-        audience: 'https://www.lerietmall.net',
+        audience: 'https://providers.lerietmall.net',
         issuer: 'legion@lerietmall-302923.iam.gserviceaccount.com',
         subject: "admin@gmail.com",
         algorithm: 'RS256',
